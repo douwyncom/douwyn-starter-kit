@@ -1,0 +1,185 @@
+name: Quality
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  public-boundary:
+    name: Open-source boundary
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          coverage: none
+
+      - name: Reject tracked private sources
+        run: |
+          tracked="$(git ls-files -- \
+            'modules/**' \
+            tests/Feature/LedgerCoreIntegrationTest.php \
+            tests/Feature/LedgerModuleDocumentationTest.php \
+            tests/Feature/LedgerModuleIntegrationTest.php \
+            tests/Integration/DistributedLedgerTest.php \
+            tests/Support/distributed_ledger_worker.php)"
+          if [ -n "$tracked" ]; then
+            echo 'Commercial module sources or private integration tests are tracked:'
+            echo "$tracked"
+            exit 1
+          fi
+
+          ignored_tracked="$(git ls-files -ci --exclude-standard)"
+          if [ -n "$ignored_tracked" ]; then
+            echo 'Files matched by .gitignore must not remain tracked:'
+            echo "$ignored_tracked"
+            exit 1
+          fi
+
+      - name: Verify public package and generated-contract boundary
+        run: php scripts/check-public-boundary.php
+
+  php:
+    name: PHP 8.5 / SQLite
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, intl, gd, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Validate Composer packages
+        run: |
+          composer validate --strict
+          composer validate --strict stubs/module/composer.json
+          composer check-platform-reqs
+          composer check:runtime
+
+      - name: Check PHP style
+        run: vendor/bin/pint --test
+
+      - name: Run application tests
+        run: php artisan test --compact
+
+  nuxt:
+    name: Bun / Nuxt API package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build starter assets
+        run: bun run build
+
+      - name: Type-check Nuxt API package
+        run: bun run nuxt-api:typecheck
+
+      - name: Test Nuxt API package
+        run: bun run nuxt-api:test
+
+      - name: Build Nuxt API package
+        run: bun run nuxt-api:build
+
+  distributed-auth:
+    name: PostgreSQL / Redis concurrency
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: douwyn_starter_kit_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d douwyn_starter_kit_test"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_DATABASE: douwyn_starter_kit_test
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, intl, gd, pdo_pgsql, redis
+          coverage: none
+          tools: composer:v2
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan migrate --force
+
+      - name: Run distributed authentication tests
+        run: vendor/bin/pest --configuration phpunit.distributed.xml

@@ -1,0 +1,153 @@
+# Douwyn Starter Kit Platform Contract
+
+## Identity
+
+Starter-kit is the required application host, not a generic Laravel package.
+The following identifiers are public and must remain stable throughout
+Platform 2:
+
+| Purpose | Identifier |
+| --- | --- |
+| Root Composer project | `douwyncom/douwyn-starter-kit` |
+| Virtual Composer capability | `douwyncom/starter-kit-platform` |
+| Current platform contract | `2.0.0` |
+| Public PHP namespace | `Douwyn\StarterKit\` |
+| Official module prefix | `douwyncom/starter-kit-` |
+
+Do not rename the root Composer package in customer projects. A project may
+change `APP_NAME`, its Git repository, domain, and product branding, but the
+Composer root name identifies the Douwyn platform host.
+
+## What the lock guarantees
+
+The lock has three layers:
+
+1. The starter-kit root provides `douwyncom/starter-kit-platform: 2.0.0`.
+2. Every private module requires a compatible capability, for example `^2.0`.
+   Composer therefore refuses to install it into a plain Laravel project.
+3. `Douwyn\StarterKit\Platform` verifies the root package name during boot and
+   `ModuleRegistry` verifies each module's runtime constraint before the
+   application serves work.
+
+This is a compatibility and distribution boundary, not DRM. Anyone who can
+edit all source code can imitate a Composer capability. Actual commercial
+access must still be enforced by private Git/Composer repository permissions,
+read-only credentials, and the product licence.
+
+## Platform 2 invariants
+
+Private modules may rely on these Platform 2 contracts:
+
+| Contract | Platform 2 value |
+| --- | --- |
+| PHP | `^8.5` |
+| Laravel | `^13.0` |
+| Filament | `^5.0` |
+| Filament panel ID | `admin` |
+| Authentication guard | `web` |
+| User primary key | `uuid` |
+| Versioned API prefix | `/api/v1` |
+| Authenticated API middleware group | `starter-kit.api-authenticated` |
+
+Changing an invariant in a way that breaks existing modules requires Platform
+3. Additive contracts may be released without changing the platform major.
+Platform 2 specifically raises the minimum runtime from PHP 8.4 to PHP 8.5;
+Platform 1 modules must publish matching Composer and runtime constraints before
+they can be installed into this host.
+
+## Platform 2 extension points
+
+Platform 2 exposes public, container-resolved contracts so private modules do
+not need to import application classes under `App\`:
+
+| Extension point | Public API |
+| --- | --- |
+| Authenticated API stack | `Platform::API_AUTHENTICATED_MIDDLEWARE` |
+| User model, table, and key | `Contracts\UserModelResolver` |
+| Web/API locale selection | `Contracts\LocaleResolver` |
+| API error catalogue | `Api\ApiErrorCodeRegistry` |
+| Issued token abilities | `Auth\TokenAbilityRegistry` and `Auth\TokenAbilityProfile` |
+
+The authenticated API group executes locale resolution, `auth:sanctum`, the
+active-account check, and login-session tracking in that order. Package route
+files loaded directly by a module must also apply Laravel's `api` group:
+
+```php
+Route::middleware(['api', Platform::API_AUTHENTICATED_MIDDLEWARE])
+    ->prefix('api/v1/example')
+    ->group(__DIR__.'/example.php');
+```
+
+Resolve the configured user model rather than importing `App\Models\User`:
+
+```php
+$users = app(UserModelResolver::class);
+
+$modelClass = $users->modelClass();
+$table = $users->table();
+$primaryKey = $users->keyName();
+```
+
+The resolver validates that the `web` guard uses an Eloquent model which
+implements Laravel's authenticatable contract. The current host resolves to
+the `users` table and the `uuid` primary key.
+
+Both Filament/web and API locale middleware use the public locale resolver.
+They prefer the authenticated profile locale, then the appropriate request
+preference (web session or API `Accept-Language`), then the General Settings
+locale, and finally application configuration. Only configured `en` and `vi`
+values are accepted.
+
+Registries are singletons. A module may extend them during its provider's
+`boot()` method; registrations then affect subsequently issued credentials,
+the metadata endpoint, and generated Scramble documentation:
+
+```php
+app(ApiErrorCodeRegistry::class)->register(
+    'example_conflict',
+    409,
+    'The example conflicts with its current state.',
+);
+
+app(TokenAbilityRegistry::class)->extend(
+    TokenAbilityProfile::MOBILE,
+    ['example:read'],
+);
+```
+
+Duplicate identical error definitions are idempotent; conflicting definitions
+fail fast. Token abilities retain insertion order and are de-duplicated. The
+root defaults remain `user:read` and `user:update` for legacy tokens, with
+`devices:read` and `devices:revoke` added for mobile token families.
+
+## Independent versions
+
+Do not use one version number for every artifact:
+
+- Platform contract: currently `2.0.0`.
+- Starter-kit Git release: the application release, for example `v1.3.0`.
+- HTTP API contract: configured separately through `API_VERSION`.
+- Private module: its own Git tags, for example Blog `v0.4.0`.
+- Nuxt client: its own npm package version.
+
+A Blog module at `v0.4.0` can correctly require
+`douwyncom/starter-kit-platform:^2.0`. The module and the platform do not need
+matching versions.
+
+## Compatibility policy
+
+- Module `requiresPlatform: ^2.0` and Composer `^2.0` must match.
+- A module may narrow its requirement when it needs a newly added platform
+  contract, for example `^2.1` after the capability is raised to `2.1.0`.
+- Never widen a module constraint only to make Composer install; add a real
+  compatibility implementation and tests first.
+- Keep `Platform::VERSION` and the root Composer `provide` value synchronized.
+  The platform contract test and CI enforce this.
+- Never reuse a released Git tag. Publish a new SemVer tag.
+
+Inspect the active contract and registered modules with:
+
+```bash
+php artisan starter-kit:platform
+php artisan starter-kit:platform --json
+```

@@ -1,0 +1,84 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* Remove default simple layout background and outer card styling */
+.fi-simple-main {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* Button base styling */
+.fi-btn {
+    border-radius: 14px;
+    font-weight: 600;
+}
+
+/* Form field styling */
+.fi-fo-field-wrp input,
+.fi-fo-field-wrp textarea {
+    border-radius: 14px;
+}
+
+/* =========================================
+   Authentication Card (Custom Styling)
+   ========================================= */
+
+.fi-auth-card {
+    border-radius: 24px;
+    padding: 2rem;
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+/* LIGHT MODE:
+   Clean white surface with layered soft shadows
+*/
+html:not(.dark) .fi-auth-card {
+    background: rgba(255, 255, 255, .90);
+    border: 1px solid rgba(0, 0, 0, .06);
+
+    /* Layered shadow system:
+       - subtle inner highlight
+       - medium depth shadow
+       - wide soft shadow for elevation
+    */
+    box-shadow:
+        0 1px 0 rgba(255,255,255,.95) inset,
+        0 10px 30px rgba(0,0,0,.10),
+        0 28px 90px rgba(0,0,0,.16);
+}
+
+/* DARK MODE:
+   Reduce visual heaviness while keeping depth separation
+*/
+html.dark .fi-auth-card {
+    background: rgba(18, 18, 18, .68);
+    border: 1px solid rgba(255, 255, 255, .10);
+
+    /* Depth layers:
+       - subtle inner rim
+       - deep primary shadow
+       - extended soft shadow
+       - minimal outline separation
+    */
+    box-shadow:
+        0 1px 0 rgba(255,255,255,.06) inset,
+        0 18px 55px rgba(0,0,0,.62),
+        0 40px 120px rgba(0,0,0,.55),
+        0 0 0 1px rgba(255,255,255,.04);
+
+    backdrop-filter: blur(12px);
+}
+
+/* Responsive adjustments */
+@media (min-width: 640px) {
+    .fi-auth-card {
+        padding: 1.9rem;
+    }
+
+    html.dark .fi-auth-card {
+        padding: 1.75rem;
+    }
+}

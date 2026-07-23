@@ -1,0 +1,24 @@
+* text=auto eol=lf
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+/.github export-ignore
+/modules export-ignore
+/modules/** export-ignore
+/.ai export-ignore
+/.junie export-ignore
+/public/css/filament export-ignore
+/public/fonts/filament export-ignore
+/public/js/filament export-ignore
+/tests/Feature/LedgerCoreIntegrationTest.php export-ignore
+/tests/Feature/LedgerModuleDocumentationTest.php export-ignore
+/tests/Feature/LedgerModuleIntegrationTest.php export-ignore
+/tests/Feature/LedgerUserProvisioningFilamentTest.php export-ignore
+/tests/Integration/DistributedLedgerTest.php export-ignore
+/tests/Support/distributed_ledger_worker.php export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore

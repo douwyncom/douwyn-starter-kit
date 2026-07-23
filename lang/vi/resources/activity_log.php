@@ -1,0 +1,47 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'navigation_label' => 'Nhật ký hoạt động',
+    'navigation_group' => 'Logs',
+    'resource_label' => 'Nhật ký hoạt động',
+    'plural_resource_label' => 'Nhật ký hoạt động',
+    'fields' => [
+        'log_name' => 'Tên nhật ký',
+        'description' => 'Mô tả',
+        'event' => 'Sự kiện',
+        'subject_type' => 'Loại đối tượng',
+        'subject_id' => 'ID đối tượng',
+        'causer' => 'Người thực hiện',
+        'causer_type' => 'Loại người thực hiện',
+        'causer_id' => 'ID người thực hiện',
+        'properties' => 'Dữ liệu thay đổi',
+        'created_at' => 'Thời gian ghi',
+        'field' => 'Trường',
+        'value' => 'Giá trị',
+        'old' => 'Giá trị cũ',
+        'new' => 'Giá trị mới',
+    ],
+    'events' => [
+        'created' => 'Đã tạo',
+        'updated' => 'Đã cập nhật',
+        'deleted' => 'Đã xóa',
+        'restored' => 'Đã khôi phục',
+        'login_succeeded' => 'Đăng nhập thành công',
+        'login_failed' => 'Đăng nhập thất bại',
+        'two_factor_challenge_issued' => 'Đã tạo yêu cầu 2FA',
+        'two_factor_verification_failed' => 'Xác thực 2FA thất bại',
+        'two_factor_verified' => 'Xác thực 2FA thành công',
+        'refresh_token_reused' => 'Phát hiện tái sử dụng refresh token',
+        'browser_session_revoked' => 'Đã thu hồi phiên trình duyệt',
+        'device_session_revoked' => 'Đã thu hồi phiên thiết bị',
+        'password_changed' => 'Đã đổi mật khẩu',
+        'security_changed' => 'Đã thay đổi thiết lập bảo mật',
+    ],
+    'sections' => [
+        'general' => 'Thông tin chung',
+        'subject_causer' => 'Đối tượng & Người thực hiện',
+        'properties' => 'Thuộc tính',
+    ],
+];
