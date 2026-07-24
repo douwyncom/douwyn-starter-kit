@@ -17,6 +17,7 @@
 node_modules
 /scripts/*
 !/scripts/check-public-boundary.php
+!/scripts/check-runtime.php
 /modules/
 /public/build
 /public/css/filament

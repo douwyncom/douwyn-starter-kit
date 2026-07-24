@@ -110,6 +110,7 @@ foreach ([
     'docs/commercial-modules.md',
     'packages/nuxt-api/LICENSE',
     'packages/nuxt-api/NOTICE',
+    'scripts/check-runtime.php',
 ] as $file) {
     if (! is_file($root.'/'.$file)) {
         $errors[] = sprintf('Required open-source policy file is missing: %s', $file);
