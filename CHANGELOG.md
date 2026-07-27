@@ -14,6 +14,8 @@ and private modules maintain their own compatibility versions.
 - Commercial-module boundary documentation plus Git and CI guards that reject
   private module sources and dependencies from the public repository.
 - Platform 2 authenticated API middleware and configured user-model resolver.
+- Platform 2.1 locale-only middleware for public, translated module APIs.
+- Platform 2.1 public media-disk convention with local-public and S3 support.
 - Shared `en`/`vi` locale resolution for web and API requests.
 - Extensible API error-code and token-ability profile registries.
 - Platform 2 compatibility capability and runtime host validation.
@@ -27,7 +29,7 @@ and private modules maintain their own compatibility versions.
 ### Changed
 
 - Raised the minimum runtime to PHP 8.5 and the commercial-module platform
-  contract to `2.0.0`; modules targeting Platform 1 must publish a compatible
+  contract to `2.1.0`; modules targeting Platform 1 must publish a compatible
   Platform 2 release before installation.
 - Adopted the PHP 8.5 driver-specific `Pdo\Mysql` SSL option constants.
 - Require native Mbstring for authentication normalization and bounded text

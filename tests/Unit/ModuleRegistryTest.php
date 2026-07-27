@@ -65,7 +65,7 @@ it('rejects modules for an incompatible platform', function () {
     $registry = new ModuleRegistry;
 
     expect(fn () => $registry->register(registryTestModule(requiresPlatform: '^3.0')))
-        ->toThrow(IncompatibleModuleException::class, 'but [2.0.0] is installed');
+        ->toThrow(IncompatibleModuleException::class, 'but [2.1.0] is installed');
 });
 
 it('rejects invalid platform constraints', function () {

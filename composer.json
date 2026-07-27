@@ -38,6 +38,7 @@
         "laravel/prompts": "^0.3.11",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
+        "league/flysystem-aws-s3-v3": "^3.25.1",
         "pragmarx/google2fa": "^9.0",
         "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-permission": "^6.24"
@@ -55,7 +56,7 @@
         "pestphp/pest-plugin-laravel": "^4.1"
     },
     "provide": {
-        "douwyncom/starter-kit-platform": "2.0.0"
+        "douwyncom/starter-kit-platform": "2.1.0"
     },
     "autoload": {
         "psr-4": {

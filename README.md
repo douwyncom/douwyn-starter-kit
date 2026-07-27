@@ -257,13 +257,13 @@ PostgreSQL and Redis services and runs both the standard and distributed suites.
 - [x] **Unified Security Telemetry:** Structured login, 2FA, refresh-reuse, password/security-change, and revocation audit events with permission-gated dashboard widgets.
 - [x] **Distributed Auth CI:** PostgreSQL + Redis tests with truly concurrent refresh requests covering idempotent replay and refresh-token reuse revocation.
 - [x] **Private Module Platform:** Root identity lock, Composer capability, runtime compatibility registry, Filament plugin bridge, and reusable module scaffold.
+- [x] **Commerce Module:** Localized products, custom fields, inventory reservations, multi-seller orders, notifications, reporting, APIs, and optional Ledger/Telegram bridges.
 - [ ] **Security Alerts:** Queue-backed, deduplicated email/push/webhook alerts for a new device, refresh-token reuse, and repeated 2FA failures.
 - [ ] **Native Client Reference Kits:** Swift and Kotlin examples for atomic secure-storage rotation, app/universal links, and offline-safe retry behavior.
 - [ ] **Passkeys / WebAuthn:** Phishing-resistant sign-in and step-up authentication while retaining recovery controls.
 - [ ] **Contract Compatibility Gate:** Detect breaking OpenAPI changes in CI and require an explicit version/migration note.
 - [ ] **Media Manager:** Advanced local and S3 compatible file management.
 - [ ] **Blog Module:** SEO-optimized content management system.
-- [ ] **E-commerce Lite:** Product and inventory management.
 - [ ] **Billing & Subscriptions:** Integrated financial tracking and SaaS billing.
 - [ ] **Multi-tenancy:** Support for isolated team/organization environments.
 

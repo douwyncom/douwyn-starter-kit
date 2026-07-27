@@ -19,7 +19,7 @@ final class Platform
     /**
      * Version of the public starter-kit contract, not the HTTP API contract.
      */
-    public const VERSION = '2.0.0';
+    public const VERSION = '2.1.0';
 
     public const ADMIN_PANEL_ID = 'admin';
 
@@ -30,6 +30,22 @@ final class Platform
     public const API_PREFIX = '/api/v1';
 
     public const API_AUTHENTICATED_MIDDLEWARE = 'starter-kit.api-authenticated';
+
+    /**
+     * Locale-only API stack for public module endpoints such as storefront
+     * catalogues. It deliberately does not authenticate the request.
+     */
+    public const API_LOCALIZED_MIDDLEWARE = 'starter-kit.api-localized';
+
+    /**
+     * Configuration key used by modules for publicly addressable media.
+     */
+    public const MEDIA_DISK_CONFIG = 'filesystems.media';
+
+    /**
+     * The local public disk used when the configured media disk is invalid.
+     */
+    public const LOCAL_PUBLIC_MEDIA_DISK = 'public';
 
     private function __construct() {}
 
@@ -52,6 +68,15 @@ final class Platform
     public static function supports(string $constraint): bool
     {
         return Semver::satisfies(self::VERSION, trim($constraint));
+    }
+
+    public static function mediaDisk(): string
+    {
+        $disk = config(self::MEDIA_DISK_CONFIG, self::LOCAL_PUBLIC_MEDIA_DISK);
+
+        return is_string($disk) && trim($disk) !== ''
+            ? trim($disk)
+            : self::LOCAL_PUBLIC_MEDIA_DISK;
     }
 
     /**
@@ -77,6 +102,8 @@ final class Platform
                 'user_key' => self::USER_KEY,
                 'api_prefix' => self::API_PREFIX,
                 'api_authenticated_middleware' => self::API_AUTHENTICATED_MIDDLEWARE,
+                'api_localized_middleware' => self::API_LOCALIZED_MIDDLEWARE,
+                'media_disk_config' => self::MEDIA_DISK_CONFIG,
             ],
         ];
     }

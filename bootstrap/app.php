@@ -38,6 +38,9 @@ return Application::configure(basePath: dirname(__DIR__))
             AuthenticatesRequests::class,
             SetApiLocale::class,
         );
+        $middleware->group(Platform::API_LOCALIZED_MIDDLEWARE, [
+            SetApiLocale::class,
+        ]);
         $middleware->group(Platform::API_AUTHENTICATED_MIDDLEWARE, [
             SetApiLocale::class,
             'auth:sanctum',

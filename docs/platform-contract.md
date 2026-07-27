@@ -10,7 +10,7 @@ Platform 2:
 | --- | --- |
 | Root Composer project | `douwyncom/douwyn-starter-kit` |
 | Virtual Composer capability | `douwyncom/starter-kit-platform` |
-| Current platform contract | `2.0.0` |
+| Current platform contract | `2.1.0` |
 | Public PHP namespace | `Douwyn\StarterKit\` |
 | Official module prefix | `douwyncom/starter-kit-` |
 
@@ -22,8 +22,8 @@ Composer root name identifies the Douwyn platform host.
 
 The lock has three layers:
 
-1. The starter-kit root provides `douwyncom/starter-kit-platform: 2.0.0`.
-2. Every private module requires a compatible capability, for example `^2.0`.
+1. The starter-kit root provides `douwyncom/starter-kit-platform: 2.1.0`.
+2. Every private module requires a compatible capability, for example `^2.1`.
    Composer therefore refuses to install it into a plain Laravel project.
 3. `Douwyn\StarterKit\Platform` verifies the root package name during boot and
    `ModuleRegistry` verifies each module's runtime constraint before the
@@ -48,6 +48,8 @@ Private modules may rely on these Platform 2 contracts:
 | User primary key | `uuid` |
 | Versioned API prefix | `/api/v1` |
 | Authenticated API middleware group | `starter-kit.api-authenticated` |
+| Public localized API middleware group | `starter-kit.api-localized` |
+| Public media disk configuration | `filesystems.media` |
 
 Changing an invariant in a way that breaks existing modules requires Platform
 3. Additive contracts may be released without changing the platform major.
@@ -63,6 +65,8 @@ not need to import application classes under `App\`:
 | Extension point | Public API |
 | --- | --- |
 | Authenticated API stack | `Platform::API_AUTHENTICATED_MIDDLEWARE` |
+| Public localized API stack | `Platform::API_LOCALIZED_MIDDLEWARE` |
+| Public module media disk | `Platform::mediaDisk()` |
 | User model, table, and key | `Contracts\UserModelResolver` |
 | Web/API locale selection | `Contracts\LocaleResolver` |
 | API error catalogue | `Api\ApiErrorCodeRegistry` |
@@ -77,6 +81,30 @@ Route::middleware(['api', Platform::API_AUTHENTICATED_MIDDLEWARE])
     ->prefix('api/v1/example')
     ->group(__DIR__.'/example.php');
 ```
+
+Public module endpoints that require locale negotiation but not authentication
+use the locale-only group:
+
+```php
+Route::middleware(['api', Platform::API_LOCALIZED_MIDDLEWARE])
+    ->prefix('api/v1/example')
+    ->group(__DIR__.'/public-example.php');
+```
+
+Module media must use `Platform::mediaDisk()` rather than the private
+`filesystems.default` disk directly. By default, a host using Laravel's
+`local` disk stores public media on the `public` disk; a host using `s3`
+inherits `s3`. `MEDIA_DISK` can override either choice:
+
+```php
+$disk = Storage::disk(Platform::mediaDisk());
+$path = $disk->putFile('example', $upload);
+```
+
+Use `MEDIA_DISK=public` with `php artisan storage:link` for local deployments,
+or `MEDIA_DISK=s3` with the `AWS_*` settings for S3-compatible storage. Store
+the disk name and relative object path in module records, not an absolute or
+temporary URL, so storage migrations remain possible.
 
 Resolve the configured user model rather than importing `App\Models\User`:
 
@@ -124,15 +152,16 @@ root defaults remain `user:read` and `user:update` for legacy tokens, with
 
 Do not use one version number for every artifact:
 
-- Platform contract: currently `2.0.0`.
+- Platform contract: currently `2.1.0`.
 - Starter-kit Git release: the application release, for example `v1.3.0`.
 - HTTP API contract: configured separately through `API_VERSION`.
 - Private module: its own Git tags, for example Blog `v0.4.0`.
 - Nuxt client: its own npm package version.
 
-A Blog module at `v0.4.0` can correctly require
-`douwyncom/starter-kit-platform:^2.0`. The module and the platform do not need
-matching versions.
+A module using only the original Platform 2 contracts may correctly require
+`douwyncom/starter-kit-platform:^2.0`. A Blog module using the localized public
+API or media-disk contracts requires `^2.1`. Module and platform release
+numbers do not need to match.
 
 ## Compatibility policy
 
