@@ -26,10 +26,10 @@ fixtures, snapshots, and public tests must also be generated from the core
 without a paid module installed. This keeps a fresh public clone installable,
 testable, and releasable without private credentials.
 
-CI enforces the boundary by rejecting tracked files below `modules/` and
-commercial package requirements in the root Composer manifest. Before a public
-release, also search generated artifacts for private route names, schemas,
-namespaces, and package names.
+`composer check:public-boundary` enforces the boundary by rejecting tracked
+files below `modules/` and commercial package requirements in the root Composer
+manifest. Run it before every public push or release, then search generated
+artifacts for private route names, schemas, namespaces, and package names.
 
 ## Installing a purchased module
 

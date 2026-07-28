@@ -61,7 +61,7 @@ provider auto-discovery:
     "require": {
         "php": "^8.5",
         "composer-runtime-api": "^2.2",
-        "douwyncom/starter-kit-platform": "^2.0",
+        "douwyncom/starter-kit-platform": "^2.1",
         "filament/filament": "^5.0",
         "illuminate/support": "^13.0"
     },
@@ -148,10 +148,30 @@ Route::middleware(['api', Platform::API_AUTHENTICATED_MIDDLEWARE])
     });
 ```
 
+Public translated endpoints use the locale-only Platform 2.1 group and do not
+copy authentication middleware:
+
+```php
+Route::middleware(['api', Platform::API_LOCALIZED_MIDDLEWARE])
+    ->prefix('api/v1/blog')
+    ->group(__DIR__.'/../routes/public-api.php');
+```
+
 The platform middleware resolves `en` or `vi` using the starter-kit profile,
 request/session, General Settings, and application fallbacks. A module should
 only load namespaced translations; it must not install another locale
 middleware.
+
+Public media uses the host convention instead of a module-specific hard-coded
+disk:
+
+```php
+$disk = Storage::disk(Platform::mediaDisk());
+```
+
+The host maps its private `local` default to the public `public` disk and
+inherits remote defaults such as `s3`. Operators may override the choice with
+`MEDIA_DISK`; module records should retain both disk and relative path.
 
 Modules register domain error codes and token abilities in `boot()`:
 
@@ -171,8 +191,8 @@ app(TokenAbilityRegistry::class)->extend(
 Error-code extensions automatically appear in `/api/v1/meta/error-codes` and
 the Scramble `ApiErrorCode` schema. Ability extensions affect newly issued
 tokens; existing tokens retain the abilities recorded when they were issued.
-If a module uses these contracts, its Composer requirement and runtime
-`requiresPlatform` value must both be `^2.0` or narrower.
+If a module uses the localized-public-API or media-disk contracts, its Composer
+requirement and runtime `requiresPlatform` value must both be `^2.1`.
 
 ## Develop through a starter-kit host
 

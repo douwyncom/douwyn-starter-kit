@@ -52,7 +52,7 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(function (User $user) {
             $user->profile()->create(
-                UserProfile::factory()->make()->toArray()
+                UserProfile::factory()->raw()
             );
         });
     }

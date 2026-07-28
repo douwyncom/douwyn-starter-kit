@@ -158,6 +158,13 @@ Raw Laravel session IDs and raw user-agent strings are never returned. A Nuxt
 request that revokes its current/all browser sessions is logged out immediately;
 a Bearer request can revoke browser sessions without revoking its own token.
 
+Authorized profile resources return reviewed plaintext fields after Eloquent
+decryption. Identity, contact, address, biography, preference, and metadata
+values are stored as authenticated ciphertext in `user_profiles` and excluded
+from generic model serialization. See
+[user profile data encryption](profile-data-encryption.md) for the
+protected-field list, deployment constraints, and key rotation.
+
 Account Security lives at `/api/v1/account/security`:
 
 - `GET /` returns 2FA status and recovery-code count without secrets.

@@ -11,8 +11,8 @@ and private modules maintain their own compatibility versions.
 - Apache-2.0 licensing for the public core and official Nuxt API package.
 - Community contribution, conduct, security, support, notice, and trademark
   policies for public-source development.
-- Commercial-module boundary documentation plus Git and CI guards that reject
-  private module sources and dependencies from the public repository.
+- Commercial-module boundary documentation plus Git and Composer guards that
+  reject private module sources and dependencies from the public repository.
 - Platform 2 authenticated API middleware and configured user-model resolver.
 - Platform 2.1 locale-only middleware for public, translated module APIs.
 - Platform 2.1 public media-disk convention with local-public and S3 support.
@@ -22,9 +22,15 @@ and private modules maintain their own compatibility versions.
 - Stable `Douwyn\StarterKit` contracts, module registry, and diagnostic command.
 - Auto-discovered module provider with optional Filament plugin integration.
 - Private module scaffold and Git/module release documentation.
-- GitHub quality workflow for PHP, Nuxt, and distributed authentication tests.
+- Local release-check procedure for PHP, Nuxt, and distributed authentication
+  tests.
 - A runtime guard for PHP 8.5, native GD/Mbstring, and the built-in OPcache
   extension.
+- Authenticated at-rest encryption for personal data in `user_profiles`,
+  including typed encrypted date/enum casts, verified legacy-data migration,
+  tamper detection, and a current-key re-encryption command.
+- Profile encryption deployment, backup, query-limitation, and `APP_KEY`
+  rotation documentation.
 
 ### Changed
 
@@ -41,3 +47,13 @@ and private modules maintain their own compatibility versions.
 - Removed the commercial Ledger package and local path repository from the
   public root dependency graph; paid modules are installed only by authorized
   customer applications or private integration fixtures.
+- Disabled database search/sort operations that depended on encrypted profile
+  names, and redacted profile PII keys from security activity properties.
+
+### Security
+
+- Protected profile fields are hidden from generic model serialization while
+  authorized API resources and Filament forms continue to receive decrypted
+  values.
+- Added `APP_PREVIOUS_KEYS` guidance and a verified
+  `app:user-profiles-reencrypt` workflow for safe application-key rotation.

@@ -44,8 +44,7 @@ class ActivityLogsTable
                     ->sortable(),
                 TextColumn::make('causer.profile.first_name')
                     ->label(__('resources/activity_log.fields.causer'))
-                    ->placeholder('System')
-                    ->sortable(),
+                    ->placeholder('System'),
                 TextColumn::make('created_at')
                     ->label(__('resources/activity_log.fields.created_at'))
                     ->dateTime(format: 'Y-m-d H:i:s', timezone: fn () => Timezone::current())

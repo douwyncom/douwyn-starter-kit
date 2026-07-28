@@ -54,12 +54,14 @@ commercial support are separate from that licence.
 
 ### 👥 User & Session Management
 - **User Administration:** Create and update users, profiles, roles, account status, passwords, and email verification state.
+- **Personal Data Protection:** Profile identity, contact, address, biography, preference, and metadata fields use authenticated encryption at rest and are excluded from generic model serialization.
 - **Safety Guards:** Prevent self-deactivation and protect the final Super Admin account.
 - **Session Registry:** Track devices, IP addresses, activity, and revoke sessions independently of the configured Laravel session driver.
 - **Global Session Administration:** Search and filter browser/Nuxt sessions for every user, revoke one or many sessions, and protect the administrator's current Filament session.
 - **Security Dashboard:** Monitor active accounts, 2FA adoption, recent login sessions, failed authentication, refresh-token reuse, and revocations.
 - **Security Telemetry:** Structured login, 2FA, password/security-change, and session/device-revocation events with sensitive identifiers HMAC-hashed before storage.
 - **Automated Cleanup:** Scheduled pruning of expired login sessions and one-time codes.
+- See the [user profile encryption and key-rotation guide](docs/profile-data-encryption.md).
 - See the [security telemetry and dashboard guide](docs/security-telemetry.md).
 
 ### 🔌 Sanctum API Authentication
@@ -77,7 +79,7 @@ commercial support are separate from that licence.
 ### 📖 Protected OpenAPI Documentation
 - Scramble generates an interactive OpenAPI 3.1 reference at `/admin/api-docs`.
 - Both the UI and `/admin/api-docs/openapi.json` require an active `admin` or `super_admin` account with `panel.access`.
-- `packages/nuxt-api` can regenerate TypeScript contract types from the protected backend specification during development/CI.
+- `packages/nuxt-api` can regenerate TypeScript contract types from the protected backend specification during development or before a release.
 
 ### 🎨 Design & UI/UX
 - **Filament v5:** Leveraging the latest TALL stack admin panel features.
@@ -244,8 +246,8 @@ vendor/bin/pest --configuration phpunit.distributed.xml
 
 The suite verifies that concurrent retries with the same idempotency UUID
 return the same token pair, while concurrent reuse with different UUIDs revokes
-the complete mobile device family. GitHub Actions provisions isolated
-PostgreSQL and Redis services and runs both the standard and distributed suites.
+the complete mobile device family. Run both the standard and distributed suites
+locally before publishing a release.
 
 ---
 
@@ -255,13 +257,13 @@ PostgreSQL and Redis services and runs both the standard and distributed suites.
 - [x] **Core API Contract:** Generated OpenAPI/TypeScript types, pagination schemas, refresh idempotency, and documented auth error responses.
 - [x] **API Lifecycle:** Machine-readable error catalogue plus correlation, versioning, sunset, and deprecation headers.
 - [x] **Unified Security Telemetry:** Structured login, 2FA, refresh-reuse, password/security-change, and revocation audit events with permission-gated dashboard widgets.
-- [x] **Distributed Auth CI:** PostgreSQL + Redis tests with truly concurrent refresh requests covering idempotent replay and refresh-token reuse revocation.
+- [x] **Distributed Auth Test Suite:** PostgreSQL + Redis tests with truly concurrent refresh requests covering idempotent replay and refresh-token reuse revocation.
 - [x] **Private Module Platform:** Root identity lock, Composer capability, runtime compatibility registry, Filament plugin bridge, and reusable module scaffold.
 - [x] **Commerce Module:** Localized products, custom fields, inventory reservations, multi-seller orders, notifications, reporting, APIs, and optional Ledger/Telegram bridges.
 - [ ] **Security Alerts:** Queue-backed, deduplicated email/push/webhook alerts for a new device, refresh-token reuse, and repeated 2FA failures.
 - [ ] **Native Client Reference Kits:** Swift and Kotlin examples for atomic secure-storage rotation, app/universal links, and offline-safe retry behavior.
 - [ ] **Passkeys / WebAuthn:** Phishing-resistant sign-in and step-up authentication while retaining recovery controls.
-- [ ] **Contract Compatibility Gate:** Detect breaking OpenAPI changes in CI and require an explicit version/migration note.
+- [ ] **Contract Compatibility Gate:** Detect breaking OpenAPI changes before release and require an explicit version/migration note.
 - [ ] **Media Manager:** Advanced local and S3 compatible file management.
 - [ ] **Blog Module:** SEO-optimized content management system.
 - [ ] **Billing & Subscriptions:** Integrated financial tracking and SaaS billing.

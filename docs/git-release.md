@@ -58,22 +58,21 @@ committed.
 
 Create the GitHub repository without initializing a README, licence, or
 `.gitignore`; those files already belong to this checkout. Never commit or paste
-a personal access token into the remote URL. After the first push, wait for the
-quality workflow to pass and inspect a fresh clone before making the first
-release.
+a personal access token into the remote URL. After the first push, inspect a
+fresh clone and run the local quality suite before making the first release.
 
-Create the root remote repository as **public**. Protect `main`, require the
-quality workflow, prevent force pushes, and require review for changes to the
-platform namespace, Composer manifests, workflows, licence files, and release
-documentation. Commercial module repositories remain private.
+Create the root remote repository as **public**. Protect `main`, prevent force
+pushes, and require review for changes to the platform namespace, Composer
+manifests, licence files, and release documentation. Commercial module
+repositories remain private.
 
-After the first workflow run, create a branch ruleset for `main`: require pull
-requests and passing quality checks, require resolved conversations, restrict
-deletion, and block force pushes. A solo maintainer can start with zero required
-approvals and add a deliberate bypass; require at least one approval when a
-second maintainer is available. Create a separate tag ruleset for `v*` that
-restricts updates and deletion. Enable release immutability before publishing
-the first stable GitHub Release.
+After the initial push, create a branch ruleset for `main`: require pull
+requests, require resolved conversations, restrict deletion, and block force
+pushes. A solo maintainer can start with zero required approvals and add a
+deliberate bypass; require at least one approval when a second maintainer is
+available. Create a separate tag ruleset for `v*` that restricts updates and
+deletion. Enable release immutability before publishing the first stable GitHub
+Release.
 
 If an existing Git repository already tracks ignored module files, `.gitignore`
 does not untrack them. Remove them from the index while retaining the local
@@ -101,8 +100,8 @@ the repository public.
 The first application release can use `v1.0.0`. Application tags, the platform
 capability, HTTP API, Nuxt package, and private modules have independent version
 streams; do not force their numbers to match. Update `CHANGELOG.md`, run the
-same commands as CI, push the release commit, and wait for `main` CI to pass
-before creating an annotated or signed tag:
+following checks locally, and only push the release commit after every command
+passes. Then create an annotated or signed tag:
 
 ```bash
 composer validate --strict
@@ -125,8 +124,8 @@ Use `git tag -s` instead of `-a` when release signing is configured. A Git tag
 is the immutable release input; a GitHub Release adds notes and downloadable
 metadata but must not replace the tag.
 
-Wait for the tag workflow to pass, then create a draft GitHub Release from the
-existing tag. With GitHub CLI:
+After pushing the tag, verify that it points to the reviewed release commit,
+then create a draft GitHub Release from the existing tag. With GitHub CLI:
 
 ```bash
 gh release create v1.0.0 \
@@ -154,7 +153,7 @@ Before every release:
 7. test supported paid modules in a separate private consumer fixture;
 8. review migrations, public contracts, security changes, licences, notices,
    and third-party asset rights;
-9. tag only the public-core commit that passed CI;
+9. tag only the public-core commit that passed the local release checks;
 10. install and test a GitHub archive or fresh clone so release consumers do
     not depend on ignored local files.
 

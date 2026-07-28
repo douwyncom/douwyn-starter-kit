@@ -171,7 +171,7 @@ numbers do not need to match.
 - Never widen a module constraint only to make Composer install; add a real
   compatibility implementation and tests first.
 - Keep `Platform::VERSION` and the root Composer `provide` value synchronized.
-  The platform contract test and CI enforce this.
+  The platform contract test and local pre-release checks enforce this.
 - Never reuse a released Git tag. Publish a new SemVer tag.
 
 Inspect the active contract and registered modules with:

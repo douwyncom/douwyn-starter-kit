@@ -1,5 +1,8 @@
 <?php
 
+$defaultDisk = env('FILESYSTEM_DISK', 'local');
+$mediaDisk = env('MEDIA_DISK', $defaultDisk === 'local' ? 'public' : $defaultDisk);
+
 return [
 
     /*
@@ -13,7 +16,20 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => $defaultDisk,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Public Media Disk
+    |--------------------------------------------------------------------------
+    |
+    | Modules store publicly addressable media on this disk. The private
+    | "local" default maps to "public"; remote defaults such as "s3" are
+    | inherited unless MEDIA_DISK explicitly overrides them.
+    |
+    */
+
+    'media' => $mediaDisk,
 
     /*
     |--------------------------------------------------------------------------

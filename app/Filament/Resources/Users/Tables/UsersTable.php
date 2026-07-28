@@ -35,7 +35,6 @@ class UsersTable
                 TextColumn::make('profile.first_name')
                     ->label(__('resources/user.columns.name'))
                     ->formatStateUsing(fn (User $record): string => trim(($record->profile?->first_name ?? '').' '.($record->profile?->last_name ?? '')) ?: '—')
-                    ->searchable()
                     ->weight(FontWeight::SemiBold),
 
                 TextColumn::make('email')
