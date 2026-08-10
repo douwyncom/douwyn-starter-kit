@@ -19,7 +19,7 @@ final class ExampleModule implements ProvidesFilamentPlugin, StarterKitModule
         return new ModuleManifest(
             package: 'douwyncom/starter-kit-example',
             version: InstalledVersions::getPrettyVersion('douwyncom/starter-kit-example') ?? 'dev-main',
-            requiresPlatform: '^2.1',
+            requiresPlatform: '^2.2',
         );
     }
 

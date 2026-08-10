@@ -26,6 +26,8 @@ own commercial licences and are never included in this repository. The local
 `modules/` directory is reserved for private integration work and is excluded
 from Git, release archives, root dependencies, and generated public API
 artifacts. See the [commercial module boundary](docs/commercial-modules.md).
+The [Vietnamese commercial-module guide](docs/commercial-modules.vi.md) is maintained as a translation
+of that canonical English document.
 
 Apache-2.0 permits use, modification, and redistribution of the public core,
 including commercial use. Access to paid modules, the Douwyn trademarks, and

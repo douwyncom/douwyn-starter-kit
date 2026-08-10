@@ -6,12 +6,19 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class ActivityLogSanitizer
 {
+    /** Matches the configurable credential-prefix contract used by modules. */
+    private const string CREDENTIAL_PATTERN = '/(?<![A-Za-z0-9_-])[A-Z0-9]{3,12}\.[A-Za-z0-9_-]{12,32}\.[A-Za-z0-9_-]{32,64}(?![A-Za-z0-9_-])/';
+
     private const array SENSITIVE_KEYS = [
         'access_token',
+        'activation_token',
+        'api_key',
         'authorization',
+        'bearer_token',
         'challenge_token',
         'client_secret',
         'credential',
+        'credential_digest',
         'credentials',
         'current_password',
         'address_line1',
@@ -27,21 +34,29 @@ class ActivityLogSanitizer
         'email_code',
         'first_name',
         'gender',
+        'key',
         'last_name',
+        'license_key',
         'locale',
         'metadata',
         'otp',
+        'one_time_password',
         'new_password',
         'password',
         'password_confirmation',
+        'password_hash',
         'phone',
         'postal_code',
+        'private_key',
+        'raw_credential',
+        'raw_secret',
         'recovery_code',
         'recovery_codes',
         'refresh_token',
         'remember_token',
         'rotation_response',
         'secret',
+        'secret_key',
         'session_cookie',
         'session_id',
         'setup_token',
@@ -78,17 +93,54 @@ class ActivityLogSanitizer
     private static function sanitizeArray(array $values): array
     {
         foreach ($values as $key => $value) {
-            if (in_array(mb_strtolower((string) $key), self::SENSITIVE_KEYS, true)) {
+            if (self::isSensitiveKey((string) $key)) {
                 $values[$key] = '[REDACTED]';
 
                 continue;
             }
 
-            if (is_array($value)) {
-                $values[$key] = self::sanitizeArray($value);
-            }
+            $values[$key] = self::sanitizeValue($value);
         }
 
         return $values;
+    }
+
+    private static function sanitizeValue(mixed $value): mixed
+    {
+        if ($value instanceof Arrayable) {
+            $value = $value->toArray();
+        } elseif (is_object($value)) {
+            $value = (array) $value;
+        }
+
+        if (is_array($value)) {
+            return self::sanitizeArray($value);
+        }
+
+        if (is_string($value) && preg_match(self::CREDENTIAL_PATTERN, $value) === 1) {
+            return '[REDACTED]';
+        }
+
+        return $value;
+    }
+
+    private static function isSensitiveKey(string $key): bool
+    {
+        $normalized = (string) preg_replace('/(?<!^)[A-Z]/', '_$0', trim($key));
+        $normalized = (string) preg_replace(
+            '/[^a-z0-9]+/',
+            '_',
+            mb_strtolower($normalized),
+        );
+        $normalized = trim($normalized, '_');
+
+        if (in_array($normalized, self::SENSITIVE_KEYS, true)) {
+            return true;
+        }
+
+        return str_ends_with($normalized, '_password')
+            || str_ends_with($normalized, '_secret')
+            || str_ends_with($normalized, '_credential')
+            || str_ends_with($normalized, '_token');
     }
 }

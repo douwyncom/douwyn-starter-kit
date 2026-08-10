@@ -230,7 +230,7 @@ families. It also removes expired/consumed account-action tokens. A queue worker
 is required for encrypted lifecycle email notifications.
 
 Interactive Scramble documentation is available at `/admin/api-docs` only to
-active `admin` or `super_admin` users with `panel.access`.
+active users authorized for the admin panel through `panel.access`.
 
 Platform 2 issues new credentials from the singleton
 `TokenAbilityRegistry`. Its `legacy` profile defaults to `user:read` and

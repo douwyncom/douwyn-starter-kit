@@ -61,7 +61,7 @@ provider auto-discovery:
     "require": {
         "php": "^8.5",
         "composer-runtime-api": "^2.2",
-        "douwyncom/starter-kit-platform": "^2.1",
+        "douwyncom/starter-kit-platform": "^2.2",
         "filament/filament": "^5.0",
         "illuminate/support": "^13.0"
     },
@@ -162,6 +162,11 @@ request/session, General Settings, and application fallbacks. A module should
 only load namespaced translations; it must not install another locale
 middleware.
 
+Module-specific Filament roles may enter the admin panel by receiving the
+host-owned `panel.access` permission. Do not require a built-in `admin` role
+and do not treat panel entry as authorization for module resources or actions;
+continue to enforce the module's permission and policy matrix.
+
 Public media uses the host convention instead of a module-specific hard-coded
 disk:
 
@@ -193,6 +198,33 @@ the Scramble `ApiErrorCode` schema. Ability extensions affect newly issued
 tokens; existing tokens retain the abilities recorded when they were issued.
 If a module uses the localized-public-API or media-disk contracts, its Composer
 requirement and runtime `requiresPlatform` value must both be `^2.1`.
+
+Sensitive module files resolve `PrivateStorageResolver` rather than using the
+public media contract. It validates the configured/default local or S3 disk and
+rejects public disks and local public roots:
+
+```php
+use Douwyn\StarterKit\Contracts\PrivateStorageResolver;
+
+$disk = app(PrivateStorageResolver::class)->resolve(
+    config('starter-kit-blog.document_disk'),
+);
+```
+
+Secret reveal, private-key download, and similar interactive operations use
+`SensitiveActionAuthorizer` with `SensitiveActionContext` and
+`SensitiveActionCredentials`. The host adapter verifies the current password
+plus the enabled authenticator/email factor, accepts a one-time recovery code,
+rate limits failures, and records sanitized security telemetry. For email 2FA,
+call `sendEmailChallenge()` after the user supplies their current password,
+then call `authorize()` with the received OTP. Call `consume()` on the same
+singleton with the exact returned authorization immediately before the
+protected operation. The authorization is one-time, request/session-bound, and
+expires within 60 seconds; never construct, clone, persist, cache, or queue it
+or the credentials DTO.
+
+Modules relying on private storage or sensitive-action authorization must
+require `^2.2` in both Composer and their runtime manifest.
 
 ## Develop through a starter-kit host
 

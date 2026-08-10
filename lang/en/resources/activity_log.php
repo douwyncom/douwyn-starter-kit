@@ -36,6 +36,9 @@ return [
         'device_session_revoked' => 'Device session revoked',
         'password_changed' => 'Password changed',
         'security_changed' => 'Security settings changed',
+        'sensitive_action_challenge_issued' => 'Sensitive action challenge issued',
+        'sensitive_action_authorized' => 'Sensitive action authorized',
+        'sensitive_action_authorization_failed' => 'Sensitive action authorization failed',
     ],
     'sections' => [
         'general' => 'General Information',

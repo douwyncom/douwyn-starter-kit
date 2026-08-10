@@ -20,6 +20,9 @@ exception handler but does not replace the authentication result.
 | `device_session_revoked` | A mobile device family is logged out, replaced, expired, or revoked |
 | `password_changed` | The user or an administrator changes/resets a password |
 | `security_changed` | 2FA, account status, email, or another security control changes |
+| `sensitive_action_challenge_issued` | A context-bound email OTP is sent for an interactive sensitive action |
+| `sensitive_action_authorized` | Password/current-factor step-up succeeds |
+| `sensitive_action_authorization_failed` | Password/current-factor step-up is rejected or rate limited |
 
 Properties identify the client channel (`nuxt_session`, `mobile`,
 `api_token`, `filament`, or `system`) and only include context appropriate to
@@ -28,6 +31,12 @@ the event. API-originated events also carry the same `request_id` returned in
 logs without storing request bodies or credentials. Refresh-token reuse continues to dispatch the
 `App\Events\RefreshTokenReused` domain event, which is the recommended hook for
 adding an urgent application-specific alert listener.
+
+Sensitive-action events retain the stable non-sensitive action identifier and
+an HMAC fingerprint of the optional subject. They never store the subject,
+password, OTP, recovery code, or email challenge. Modules should use an action
+such as `infrastructure.secret.reveal`, not interpolate an IP address, email, or
+credential into the action name.
 
 ## Privacy and sensitive values
 

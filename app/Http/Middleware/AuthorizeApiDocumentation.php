@@ -3,12 +3,18 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Douwyn\StarterKit\Contracts\PanelAccessResolver;
+use Douwyn\StarterKit\Platform;
 use Filament\Facades\Filament;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizeApiDocumentation
 {
+    public function __construct(
+        private readonly PanelAccessResolver $panelAccess,
+    ) {}
+
     public function handle(Request $request, Closure $next): Response
     {
         $user = auth()->user();
@@ -18,9 +24,10 @@ class AuthorizeApiDocumentation
         }
 
         abort_unless(
-            ! $user->is_inactive
-            && $user->hasAnyRole(['admin', 'super_admin'])
-            && $user->hasPermissionTo('panel.access'),
+            $this->panelAccess->canAccess(
+                $user,
+                Filament::getPanel(Platform::ADMIN_PANEL_ID),
+            ),
             403,
         );
 

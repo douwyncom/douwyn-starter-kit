@@ -14,6 +14,9 @@ enum SecurityEvent: string
     case DEVICE_SESSION_REVOKED = 'device_session_revoked';
     case PASSWORD_CHANGED = 'password_changed';
     case SECURITY_CHANGED = 'security_changed';
+    case SENSITIVE_ACTION_CHALLENGE_ISSUED = 'sensitive_action_challenge_issued';
+    case SENSITIVE_ACTION_AUTHORIZED = 'sensitive_action_authorized';
+    case SENSITIVE_ACTION_AUTHORIZATION_FAILED = 'sensitive_action_authorization_failed';
 
     /** @return array<string, string> */
     public static function options(): array

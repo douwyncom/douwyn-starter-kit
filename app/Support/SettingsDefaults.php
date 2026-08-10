@@ -41,13 +41,13 @@ class SettingsDefaults
             'media' => [
                 'convert_to_avif' => [
                     'value' => false,
-                    'type' => 'boolean',
+                    'type' => 'bool',
                     'encrypted' => false,
                     'autoload' => true,
                 ],
                 'convert_to_webp' => [
                     'value' => false,
-                    'type' => 'boolean',
+                    'type' => 'bool',
                     'encrypted' => false,
                     'autoload' => true,
                 ],

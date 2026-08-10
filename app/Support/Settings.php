@@ -140,7 +140,7 @@ class Settings
 
         return match ($type) {
             'int' => (int) $raw,
-            'bool' => filter_var($raw, FILTER_VALIDATE_BOOL),
+            'bool', 'boolean' => filter_var($raw, FILTER_VALIDATE_BOOL),
             'json' => json_decode($raw, true) ?? null,
             'float' => (float) $raw,
             default => $raw,
@@ -155,6 +155,7 @@ class Settings
 
         return match ($type) {
             'json' => json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'bool', 'boolean' => filter_var($value, FILTER_VALIDATE_BOOL) ? '1' : '0',
             default => (string) $value,
         };
     }

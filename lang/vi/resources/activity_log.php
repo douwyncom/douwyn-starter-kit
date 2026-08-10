@@ -38,6 +38,9 @@ return [
         'device_session_revoked' => 'Đã thu hồi phiên thiết bị',
         'password_changed' => 'Đã đổi mật khẩu',
         'security_changed' => 'Đã thay đổi thiết lập bảo mật',
+        'sensitive_action_challenge_issued' => 'Đã tạo xác minh cho thao tác nhạy cảm',
+        'sensitive_action_authorized' => 'Đã xác thực thao tác nhạy cảm',
+        'sensitive_action_authorization_failed' => 'Xác thực thao tác nhạy cảm thất bại',
     ],
     'sections' => [
         'general' => 'Thông tin chung',

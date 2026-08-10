@@ -19,7 +19,7 @@ final class Platform
     /**
      * Version of the public starter-kit contract, not the HTTP API contract.
      */
-    public const VERSION = '2.1.0';
+    public const VERSION = '2.2.0';
 
     public const ADMIN_PANEL_ID = 'admin';
 
@@ -43,9 +43,16 @@ final class Platform
     public const MEDIA_DISK_CONFIG = 'filesystems.media';
 
     /**
+     * Configuration key used by modules for non-public application files.
+     */
+    public const PRIVATE_DISK_CONFIG = 'filesystems.private';
+
+    /**
      * The local public disk used when the configured media disk is invalid.
      */
     public const LOCAL_PUBLIC_MEDIA_DISK = 'public';
+
+    public const LOCAL_PRIVATE_DISK = 'local';
 
     private function __construct() {}
 
@@ -79,6 +86,15 @@ final class Platform
             : self::LOCAL_PUBLIC_MEDIA_DISK;
     }
 
+    public static function privateDisk(): string
+    {
+        $disk = config(self::PRIVATE_DISK_CONFIG, self::LOCAL_PRIVATE_DISK);
+
+        return is_string($disk) && trim($disk) !== ''
+            ? trim($disk)
+            : self::LOCAL_PRIVATE_DISK;
+    }
+
     /**
      * @return array{
      *     root_package: string,
@@ -98,12 +114,14 @@ final class Platform
                 'laravel' => '^13.0',
                 'filament' => '^5.0',
                 'admin_panel' => self::ADMIN_PANEL_ID,
+                'panel_access' => 'permission:panel.access',
                 'auth_guard' => self::AUTH_GUARD,
                 'user_key' => self::USER_KEY,
                 'api_prefix' => self::API_PREFIX,
                 'api_authenticated_middleware' => self::API_AUTHENTICATED_MIDDLEWARE,
                 'api_localized_middleware' => self::API_LOCALIZED_MIDDLEWARE,
                 'media_disk_config' => self::MEDIA_DISK_CONFIG,
+                'private_disk_config' => self::PRIVATE_DISK_CONFIG,
             ],
         ];
     }

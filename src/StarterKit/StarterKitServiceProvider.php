@@ -5,15 +5,21 @@ declare(strict_types=1);
 namespace Douwyn\StarterKit;
 
 use App\Enums\ApiErrorCode;
+use App\Services\Security\StarterKitSensitiveActionAuthorizer;
 use App\Support\StarterKitLocaleResolver;
 use Douwyn\StarterKit\Api\ApiErrorCodeRegistry;
 use Douwyn\StarterKit\Auth\ConfiguredUserModelResolver;
+use Douwyn\StarterKit\Auth\PermissionPanelAccessResolver;
 use Douwyn\StarterKit\Auth\TokenAbilityProfile;
 use Douwyn\StarterKit\Auth\TokenAbilityRegistry;
 use Douwyn\StarterKit\Console\PlatformStatusCommand;
 use Douwyn\StarterKit\Contracts\LocaleResolver;
+use Douwyn\StarterKit\Contracts\PanelAccessResolver;
+use Douwyn\StarterKit\Contracts\PrivateStorageResolver;
+use Douwyn\StarterKit\Contracts\SensitiveActionAuthorizer;
 use Douwyn\StarterKit\Contracts\UserModelResolver;
 use Douwyn\StarterKit\Modules\ModuleRegistry;
+use Douwyn\StarterKit\Storage\ConfiguredPrivateStorageResolver;
 use Illuminate\Support\ServiceProvider;
 
 final class StarterKitServiceProvider extends ServiceProvider
@@ -45,6 +51,9 @@ final class StarterKitServiceProvider extends ServiceProvider
         );
         $this->app->singleton(UserModelResolver::class, ConfiguredUserModelResolver::class);
         $this->app->singleton(LocaleResolver::class, StarterKitLocaleResolver::class);
+        $this->app->singleton(PanelAccessResolver::class, PermissionPanelAccessResolver::class);
+        $this->app->singleton(PrivateStorageResolver::class, ConfiguredPrivateStorageResolver::class);
+        $this->app->singleton(SensitiveActionAuthorizer::class, StarterKitSensitiveActionAuthorizer::class);
     }
 
     public function boot(ModuleRegistry $modules): void

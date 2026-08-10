@@ -2,6 +2,7 @@
 
 $defaultDisk = env('FILESYSTEM_DISK', 'local');
 $mediaDisk = env('MEDIA_DISK', $defaultDisk === 'local' ? 'public' : $defaultDisk);
+$privateDisk = env('PRIVATE_DISK', $defaultDisk);
 
 return [
 
@@ -30,6 +31,18 @@ return [
     */
 
     'media' => $mediaDisk,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Private Module Disk
+    |--------------------------------------------------------------------------
+    |
+    | Modules store non-public files on this disk. Unlike the public media
+    | contract, a local default remains on storage/app/private.
+    |
+    */
+
+    'private' => $privateDisk,
 
     /*
     |--------------------------------------------------------------------------

@@ -6,6 +6,7 @@ use App\Enums\TokenRevokeReason;
 use App\Enums\TwoFactorMethod;
 use App\Services\Auth\AccessRevocationService;
 use Database\Factories\UserFactory;
+use Douwyn\StarterKit\Contracts\PanelAccessResolver;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
@@ -108,9 +109,7 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference,
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return ! $this->is_inactive
-            && $this->hasAnyRole(['super_admin', 'admin'])
-            && $this->hasPermissionTo('panel.access');
+        return app(PanelAccessResolver::class)->canAccess($this, $panel);
     }
 
     /**

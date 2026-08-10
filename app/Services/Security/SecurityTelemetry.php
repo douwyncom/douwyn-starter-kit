@@ -179,6 +179,52 @@ class SecurityTelemetry
         ]);
     }
 
+    public function sensitiveActionChallengeIssued(
+        User $user,
+        ?Request $request,
+        string $action,
+        ?string $subject = null,
+    ): void {
+        $this->record(SecurityEvent::SENSITIVE_ACTION_CHALLENGE_ISSUED, $user, $request, [
+            'channel' => $this->requestChannel($request),
+            'action' => $action,
+            'subject_hash' => $this->hashNullable($subject),
+            'two_factor_method' => 'email',
+        ]);
+    }
+
+    public function sensitiveActionAuthorized(
+        User $user,
+        ?Request $request,
+        string $action,
+        ?string $subject = null,
+        ?string $factor = null,
+    ): void {
+        $this->record(SecurityEvent::SENSITIVE_ACTION_AUTHORIZED, $user, $request, [
+            'channel' => $this->requestChannel($request),
+            'action' => $action,
+            'subject_hash' => $this->hashNullable($subject),
+            'verified_factor' => $factor ?? 'password',
+        ]);
+    }
+
+    public function sensitiveActionAuthorizationFailed(
+        User $user,
+        ?Request $request,
+        string $action,
+        ?string $subject,
+        string $reason,
+        ?string $factor = null,
+    ): void {
+        $this->record(SecurityEvent::SENSITIVE_ACTION_AUTHORIZATION_FAILED, $user, $request, [
+            'channel' => $this->requestChannel($request),
+            'action' => $action,
+            'subject_hash' => $this->hashNullable($subject),
+            'reason' => $reason,
+            'attempted_factor' => $factor,
+        ]);
+    }
+
     /** @param array<string, bool|int|string|null> $properties */
     private function record(
         SecurityEvent $event,
