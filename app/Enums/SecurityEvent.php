@@ -24,7 +24,7 @@ enum SecurityEvent: string
         $options = [];
 
         foreach (self::cases() as $event) {
-            $options[$event->value] = __("resources/activity_log.events.{$event->value}");
+            $options[$event->value] = __("resources/activity_log.events.$event->value");
         }
 
         return $options;

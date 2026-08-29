@@ -20,7 +20,7 @@ final readonly class ConfiguredPrivateStorageResolver implements PrivateStorageR
     public function resolve(?string $preferredDisk = null): string
     {
         $disk = $this->candidate($preferredDisk);
-        $configuration = $this->config->get("filesystems.disks.{$disk}");
+        $configuration = $this->config->get("filesystems.disks.$disk");
 
         if (! is_array($configuration)
             || ! is_string($configuration['driver'] ?? null)

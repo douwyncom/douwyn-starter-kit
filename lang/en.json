@@ -80,5 +80,17 @@
     "Invalid or expired code.": "Invalid or expired code.",
     "Resend not available": "Resend not available",
     "Code sent": "Code sent",
-    "This channel is not implemented yet.": "This channel is not implemented yet."
+    "This channel is not implemented yet.": "This channel is not implemented yet.",
+    "Administration workspace": "Administration workspace",
+    "Secure access for authorized operators.": "Secure access for authorized operators.",
+    "Use a recovery code": "Use a recovery code",
+    "Use verification code": "Use verification code",
+    "The current authenticator remains active until this new secret is confirmed.": "The current authenticator remains active until this new secret is confirmed.",
+    "This setup expires at :time.": "This setup expires at :time.",
+    "Authenticator app is enabled. Regenerate the secret to replace it safely.": "Authenticator app is enabled. Regenerate the secret to replace it safely.",
+    "Start the authenticator setup to generate a QR code.": "Start the authenticator setup to generate a QR code.",
+    "These recovery codes are shown once. Store them safely before leaving this page.": "These recovery codes are shown once. Store them safely before leaving this page.",
+    ":count recovery codes remain. Stored codes cannot be displayed again; regenerate them if you lost your copy.": ":count recovery codes remain. Stored codes cannot be displayed again; regenerate them if you lost your copy.",
+    "Too many requests": "Too many requests",
+    "You are not authorized to access this panel.": "You are not authorized to access this panel."
 }

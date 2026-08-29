@@ -80,5 +80,17 @@
     "Invalid or expired code.": "Mã không hợp lệ hoặc đã hết hạn.",
     "Resend not available": "Gửi lại hiện không khả dụng",
     "Code sent": "Đã gửi mã",
-    "This channel is not implemented yet.": "Kênh này chưa được triển khai."
+    "This channel is not implemented yet.": "Kênh này chưa được triển khai.",
+    "Administration workspace": "Không gian quản trị",
+    "Secure access for authorized operators.": "Truy cập bảo mật dành cho người vận hành được ủy quyền.",
+    "Use a recovery code": "Dùng mã khôi phục",
+    "Use verification code": "Dùng mã xác minh",
+    "The current authenticator remains active until this new secret is confirmed.": "Ứng dụng xác thực hiện tại vẫn hoạt động cho đến khi mã bí mật mới này được xác nhận.",
+    "This setup expires at :time.": "Thiết lập này hết hạn lúc :time.",
+    "Authenticator app is enabled. Regenerate the secret to replace it safely.": "Ứng dụng xác thực đang được bật. Hãy tạo lại mã bí mật để thay thế an toàn.",
+    "Start the authenticator setup to generate a QR code.": "Bắt đầu thiết lập ứng dụng xác thực để tạo mã QR.",
+    "These recovery codes are shown once. Store them safely before leaving this page.": "Các mã khôi phục này chỉ hiển thị một lần. Hãy lưu chúng an toàn trước khi rời trang này.",
+    ":count recovery codes remain. Stored codes cannot be displayed again; regenerate them if you lost your copy.": "Còn :count mã khôi phục. Các mã đã lưu không thể hiển thị lại; hãy tạo lại nếu bạn làm mất bản sao.",
+    "Too many requests": "Quá nhiều yêu cầu",
+    "You are not authorized to access this panel.": "Bạn không được phép truy cập bảng quản trị này."
 }

@@ -253,7 +253,7 @@ class SecurityTelemetry
                 $logger->causedByAnonymous();
             }
 
-            $logger->log("security.{$event->value}");
+            $logger->log("security.$event->value");
         } catch (Throwable $exception) {
             report($exception);
         }

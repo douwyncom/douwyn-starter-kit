@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
 
             if ($credential !== null) {
                 $limits[] = Limit::perMinute(5)
-                    ->by("auth-attempt-credential-ip:{$credential}|{$request->ip()}");
+                    ->by("auth-attempt-credential-ip:$credential|{$request->ip()}");
                 $limits[] = Limit::perMinute(15)
                     ->by('auth-attempt-credential:'.$credential);
             }

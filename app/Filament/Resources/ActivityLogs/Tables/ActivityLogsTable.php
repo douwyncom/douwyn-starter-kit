@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ActivityLogs\Tables;
 
 use App\Enums\SecurityEvent;
 use App\Support\Timezone;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -17,6 +18,7 @@ class ActivityLogsTable
                 TextColumn::make('log_name')
                     ->label(__('resources/activity_log.fields.log_name'))
                     ->badge()
+                    ->fontFamily(FontFamily::Mono)
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('event')
@@ -41,6 +43,7 @@ class ActivityLogsTable
                 TextColumn::make('subject_type')
                     ->label(__('resources/activity_log.fields.subject_type'))
                     ->formatStateUsing(fn (?string $state): ?string => $state ? str_replace('App\\Models\\', '', $state) : null)
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
                 TextColumn::make('causer.profile.first_name')
                     ->label(__('resources/activity_log.fields.causer'))
@@ -48,6 +51,7 @@ class ActivityLogsTable
                 TextColumn::make('created_at')
                     ->label(__('resources/activity_log.fields.created_at'))
                     ->dateTime(format: 'Y-m-d H:i:s', timezone: fn () => Timezone::current())
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
             ])
             ->filters([

@@ -10,6 +10,7 @@ use App\Services\Security\SecurityTelemetry;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
@@ -63,17 +64,20 @@ class UsersTable
                     ->label(__('resources/user.columns.sessions'))
                     ->badge()
                     ->color('info')
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
 
                 TextColumn::make('api_tokens_count')
                     ->label(__('resources/user.columns.api_tokens'))
                     ->badge()
                     ->color('primary')
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
 
                 TextColumn::make('created_at')
                     ->label(__('table.created_at'))
                     ->dateTime()
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

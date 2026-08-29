@@ -316,8 +316,8 @@ mại. Các tài liệu OpenAPI được tạo, khai báo TypeScript, fixture, s
 
 `composer check:public-boundary` từ chối các file được Git theo dõi bên dưới `modules/` và các yêu cầu
 package thương mại trong Composer manifest ở root. Chạy lệnh này trước mỗi lần push hoặc phát hành công
-khai. Việc scan artifact được tạo phải được mở rộng cho mỗi module mới hoặc được tổng quát hóa để không
-phụ thuộc vào danh sách marker chỉ dành cho Ledger.
+khai. Việc scan artifact được tạo sẽ từ chối namespace module riêng tư và các API path nằm ngoài những
+prefix core đã được duyệt rõ ràng; mọi prefix core công khai mới phải được review và bổ sung có chủ đích.
 
 Trước khi phát hành phần lõi công khai:
 

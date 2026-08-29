@@ -10,6 +10,7 @@ use App\Models\LoginSession;
 use App\Services\Security\SecurityTelemetry;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -46,11 +47,13 @@ class RecentLoginSessions extends TableWidget
                     ->label(__('dashboard.recent_sessions.device'))
                     ->icon(Heroicon::OutlinedComputerDesktop),
                 TextColumn::make('ip_address')
-                    ->label(__('dashboard.recent_sessions.ip_address')),
+                    ->label(__('dashboard.recent_sessions.ip_address'))
+                    ->fontFamily(FontFamily::Mono),
                 TextColumn::make('last_active_at')
                     ->label(__('dashboard.recent_sessions.last_active'))
                     ->since()
-                    ->dateTimeTooltip(),
+                    ->dateTimeTooltip()
+                    ->fontFamily(FontFamily::Mono),
                 TextColumn::make('revoked_at')
                     ->label(__('dashboard.recent_sessions.status'))
                     ->formatStateUsing(fn (LoginSession $record): string => $record->revoked_at ? __('dashboard.recent_sessions.revoked') : ($record->last_active_at->gte(now()->subMinutes((int) config('session.lifetime'))) ? __('dashboard.recent_sessions.active') : __('dashboard.recent_sessions.expired')))

@@ -253,26 +253,6 @@ locally before publishing a release.
 
 ---
 
-## 🗺️ Roadmap
-
-- [x] **Account Lifecycle API:** Opaque email verification, enumeration-safe forgot/reset password, and verified email-change workflows for Nuxt and mobile.
-- [x] **Core API Contract:** Generated OpenAPI/TypeScript types, pagination schemas, refresh idempotency, and documented auth error responses.
-- [x] **API Lifecycle:** Machine-readable error catalogue plus correlation, versioning, sunset, and deprecation headers.
-- [x] **Unified Security Telemetry:** Structured login, 2FA, refresh-reuse, password/security-change, and revocation audit events with permission-gated dashboard widgets.
-- [x] **Distributed Auth Test Suite:** PostgreSQL + Redis tests with truly concurrent refresh requests covering idempotent replay and refresh-token reuse revocation.
-- [x] **Private Module Platform:** Root identity lock, Composer capability, runtime compatibility registry, Filament plugin bridge, and reusable module scaffold.
-- [x] **Commerce Module:** Localized products, custom fields, inventory reservations, multi-seller orders, notifications, reporting, APIs, and optional Ledger/Telegram bridges.
-- [ ] **Security Alerts:** Queue-backed, deduplicated email/push/webhook alerts for a new device, refresh-token reuse, and repeated 2FA failures.
-- [ ] **Native Client Reference Kits:** Swift and Kotlin examples for atomic secure-storage rotation, app/universal links, and offline-safe retry behavior.
-- [ ] **Passkeys / WebAuthn:** Phishing-resistant sign-in and step-up authentication while retaining recovery controls.
-- [ ] **Contract Compatibility Gate:** Detect breaking OpenAPI changes before release and require an explicit version/migration note.
-- [ ] **Media Manager:** Advanced local and S3 compatible file management.
-- [ ] **Blog Module:** SEO-optimized content management system.
-- [ ] **Billing & Subscriptions:** Integrated financial tracking and SaaS billing.
-- [ ] **Multi-tenancy:** Support for isolated team/organization environments.
-
----
-
 ## 📬 Contact and bug reports
 
 - Email: **[contact@douwyn.com](mailto:contact@douwyn.com)**

@@ -19,7 +19,7 @@ class LoginSessionIdentifier
     {
         return hash_hmac(
             'sha256',
-            "browser-login-session\0{$rawSessionId}",
+            "browser-login-session\0$rawSessionId",
             (string) config('app.key'),
         );
     }
@@ -49,10 +49,11 @@ class LoginSessionIdentifier
             return null;
         }
 
-        return $this->resolveDigest(
-            $user->loginSessions()->notRevoked()->getQuery(),
-            $digest,
-        );
+        /** @var Builder<LoginSession> $query */
+        $query = $user->loginSessions()->getQuery();
+        $query->notRevoked();
+
+        return $this->resolveDigest($query, $digest);
     }
 
     public function resolve(string $identifier): ?LoginSession
@@ -105,6 +106,9 @@ class LoginSessionIdentifier
             ->all();
     }
 
+    /**
+     * @param  Builder<LoginSession>  $query
+     */
     private function resolveDigest(Builder $query, string $digest): ?LoginSession
     {
         $session = (clone $query)
@@ -118,6 +122,7 @@ class LoginSessionIdentifier
         // Transitional fallback for an identifier issued before the public
         // hash backfill completed. The migration makes this path unnecessary
         // after deployment, but keeping it avoids breaking an in-flight UI.
+        /** @var LoginSession|null $legacy */
         $legacy = (clone $query)
             ->whereNull('public_id_hash')
             ->orderBy('id')

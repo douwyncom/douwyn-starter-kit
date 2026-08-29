@@ -439,7 +439,7 @@ class AccountLifecycleService
         ?string $otp,
         ?string $recoveryCode,
     ): void {
-        $rateKey = "account-email-change-step-up:{$user->uuid}";
+        $rateKey = "account-email-change-step-up:$user->uuid";
 
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             throw ValidationException::withMessages([

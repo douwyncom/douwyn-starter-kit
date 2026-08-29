@@ -32,7 +32,7 @@ final class ModuleRegistry
         }
 
         if (isset($this->modules[$manifest->package])) {
-            throw new LogicException("Module [{$manifest->package}] is already registered.");
+            throw new LogicException("Module [$manifest->package] is already registered.");
         }
 
         try {

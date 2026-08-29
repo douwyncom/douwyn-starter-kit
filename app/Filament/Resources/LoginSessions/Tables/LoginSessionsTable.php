@@ -11,6 +11,7 @@ use App\Support\Timezone;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -36,18 +37,20 @@ class LoginSessionsTable
                     ->label(__('resources/login_session.columns.device'))
                     ->icon(Heroicon::OutlinedComputerDesktop)
                     ->searchable(query: fn (Builder $query, string $search): Builder => $query
-                        ->whereLike('user_agent', "%{$search}%", caseSensitive: false)),
+                        ->whereLike('user_agent', "%$search%", caseSensitive: false)),
 
                 TextColumn::make('ip_address')
                     ->label(__('resources/login_session.columns.ip_address'))
                     ->searchable()
                     ->copyable()
+                    ->fontFamily(FontFamily::Mono)
                     ->placeholder('—'),
 
                 TextColumn::make('last_active_at')
                     ->label(__('resources/login_session.columns.last_active'))
                     ->since(fn (): string => Timezone::current())
                     ->dateTimeTooltip(timezone: fn (): string => Timezone::current())
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
 
                 IconColumn::make('current')
@@ -58,7 +61,7 @@ class LoginSessionsTable
                 TextColumn::make('status')
                     ->label(__('resources/login_session.columns.status'))
                     ->state(fn (LoginSession $record): string => self::status($record))
-                    ->formatStateUsing(fn (string $state): string => __("resources/login_session.statuses.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => __("resources/login_session.statuses.$state"))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'active' => 'success',
@@ -69,12 +72,14 @@ class LoginSessionsTable
                 TextColumn::make('created_at')
                     ->label(__('resources/login_session.columns.signed_in_at'))
                     ->dateTime(timezone: fn (): string => Timezone::current())
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('revoked_at')
                     ->label(__('resources/login_session.columns.revoked_at'))
                     ->dateTime(timezone: fn (): string => Timezone::current())
+                    ->fontFamily(FontFamily::Mono)
                     ->placeholder('—')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

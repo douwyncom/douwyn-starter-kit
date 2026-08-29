@@ -30,19 +30,23 @@ class RolesTable
                     ->label(__('resources/role.columns.guard'))
                     ->badge()
                     ->color('primary')
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
                 TextColumn::make('permissions_count')
                     ->label(__('resources/role.columns.permissions'))
                     ->badge()
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label(__('table.created_at'))
                     ->dateTime()
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label(__('table.updated_at'))
                     ->dateTime()
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])

@@ -68,6 +68,6 @@ class TwoFactorSetup extends Model
 
     public function emailPurpose(): string
     {
-        return "two_factor_setup.{$this->uuid}";
+        return "two_factor_setup.$this->uuid";
     }
 }

@@ -312,9 +312,9 @@ Generated OpenAPI documents, TypeScript declarations, fixtures, snapshots, and p
 generated from the core without a paid module installed.
 
 `composer check:public-boundary` rejects tracked files below `modules/` and commercial package
-requirements in the root Composer manifest. Run it before every public push or release. The generated
-artifact scan must be extended for each new module or generalized so it cannot depend on a Ledger-only
-marker list.
+requirements in the root Composer manifest. Run it before every public push or release. Its generated
+artifact scan rejects private module namespaces and API paths outside the explicitly reviewed core
+prefixes, so a newly introduced public-core prefix must be reviewed and added deliberately.
 
 Before publishing the public core:
 

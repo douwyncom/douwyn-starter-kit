@@ -23,7 +23,7 @@ return new class extends Migration
                         ->update([
                             'public_id_hash' => hash_hmac(
                                 'sha256',
-                                "browser-login-session\0{$session->id}",
+                                "browser-login-session\0$session->id",
                                 (string) config('app.key'),
                             ),
                         ]);

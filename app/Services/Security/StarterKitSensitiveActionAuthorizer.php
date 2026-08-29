@@ -28,7 +28,7 @@ use Illuminate\Validation\ValidationException;
 use LogicException;
 use WeakMap;
 
-final readonly class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthorizer
+final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthorizer
 {
     private const int MAX_ATTEMPTS = 5;
 
@@ -48,8 +48,8 @@ final readonly class StarterKitSensitiveActionAuthorizer implements SensitiveAct
     private WeakMap $issuedAuthorizations;
 
     public function __construct(
-        private AuthSignature $authSignature,
-        private SecurityTelemetry $telemetry,
+        private readonly AuthSignature $authSignature,
+        private readonly SecurityTelemetry $telemetry,
     ) {
         $this->issuedAuthorizations = new WeakMap;
     }
@@ -427,7 +427,7 @@ final readonly class StarterKitSensitiveActionAuthorizer implements SensitiveAct
             (string) config('app.key'),
         );
 
-        return "starter-kit:sensitive-action:{$operation}:{$userHash}";
+        return "starter-kit:sensitive-action:$operation:$userHash";
     }
 
     private function rateLimitException(string $rateKey, string $field): ValidationException

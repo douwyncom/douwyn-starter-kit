@@ -4,7 +4,6 @@ namespace App\Filament\Pages\Auth;
 
 use App\Enums\AuthCredentialType;
 use App\Enums\TwoFactorMethod;
-use App\Models\TwoFactorCode;
 use App\Models\User;
 use App\Rules\PasswordWithinHashLimit;
 use App\Services\Security\SecurityTelemetry;
@@ -18,7 +17,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -46,6 +44,9 @@ class Login extends SimplePage
 
     protected string $view = 'filament.pages.auth.login';
 
+    /** @var array<string, string> */
+    protected array $extraBodyAttributes = ['class' => 'dw-auth-page'];
+
     public string $step = 'credentials';
 
     /** @var array<string,mixed> */
@@ -54,7 +55,7 @@ class Login extends SimplePage
     #[Locked]
     public ?string $pendingUserUuid = null;
 
-    /** email|app|telegram... */
+    /** email|app */
     #[Locked]
     public ?string $otpChannel = null;
 
@@ -109,7 +110,7 @@ class Login extends SimplePage
                     ->required()
                     ->maxLength(72)
                     ->rule(new PasswordWithinHashLimit)
-                    ->autocomplete('password'),
+                    ->autocomplete('current-password'),
             ]);
     }
 
@@ -190,7 +191,7 @@ class Login extends SimplePage
             $user->forceFill(['password' => $password])->save();
         }
 
-        $channel = $this->resolveUserOtpChannel($user); // null|email|app|telegram...
+        $channel = $this->resolveUserOtpChannel($user);
 
         if (blank($channel)) {
             Filament::auth()->login($user, false);
@@ -216,8 +217,8 @@ class Login extends SimplePage
             'pending_started_at' => now()->timestamp,
         ]);
 
-        if (in_array($channel, ['email', 'telegram'], true)) {
-            $this->sendOtp($user, $channel);
+        if ($channel === TwoFactorMethod::EMAIL->value) {
+            $this->sendEmailOtp($user);
         }
 
         app(SecurityTelemetry::class)->twoFactorChallengeIssued(
@@ -319,7 +320,6 @@ class Login extends SimplePage
             'recovery' => $this->verifyRecoveryCode($user, $otp),
             default => match ($channel) {
                 'email' => EmailTwoFactor::verify($user->uuid, $otp, purpose: 'login'),
-                'telegram' => $this->verifyDbOtp($user->uuid, 'telegram', $otp, purpose: 'login'),
                 'app' => $this->verifyTotp($user, $otp),
                 default => false,
             },
@@ -395,13 +395,13 @@ class Login extends SimplePage
             return;
         }
 
-        if (! in_array($this->otpChannel, ['email', 'telegram'], true)) {
+        if ($this->otpChannel !== TwoFactorMethod::EMAIL->value) {
             Notification::make()->title(__('Resend not available'))->warning()->send();
 
             return;
         }
 
-        $this->sendOtp($user, $this->otpChannel);
+        $this->sendEmailOtp($user);
 
         $this->syncOtpUiMeta();
 
@@ -435,7 +435,7 @@ class Login extends SimplePage
         return null;
     }
 
-    private function sendOtp(User $user, string $channel): void
+    private function sendEmailOtp(User $user): void
     {
         try {
             $this->rateLimit(5);
@@ -449,43 +449,13 @@ class Login extends SimplePage
             return;
         }
 
-        if ($channel === 'email') {
-            try {
-                EmailTwoFactor::send($user->uuid, $user->email, purpose: 'login');
-            } catch (Throwable $e) {
-                throw ValidationException::withMessages([
-                    'data.otp.otp' => $e->getMessage(),
-                ]);
-            }
-
-            return;
+        try {
+            EmailTwoFactor::send($user->uuid, $user->email, purpose: 'login');
+        } catch (Throwable $e) {
+            throw ValidationException::withMessages([
+                'data.otp.otp' => $e->getMessage(),
+            ]);
         }
-
-        throw ValidationException::withMessages([
-            'data.otp.otp' => __('This channel is not implemented yet.'),
-        ]);
-    }
-
-    private function verifyDbOtp(string $userUuid, string $channel, string $otp, string $purpose): bool
-    {
-        return DB::transaction(function () use ($userUuid, $channel, $otp, $purpose): bool {
-            $record = TwoFactorCode::query()
-                ->where('user_uuid', $userUuid)
-                ->where('channel', $channel)
-                ->where('purpose', $purpose)
-                ->whereNull('consumed_at')
-                ->latest()
-                ->lockForUpdate()
-                ->first();
-
-            if (! $record || $record->expires_at->isPast() || ! Hash::check($otp, $record->code_hash)) {
-                return false;
-            }
-
-            $record->update(['consumed_at' => now()]);
-
-            return true;
-        });
     }
 
     /**
@@ -495,7 +465,7 @@ class Login extends SimplePage
      */
     private function verifyTotp(User $user, string $otp): bool
     {
-        $secret = (string) ($user->two_factor_secret ?? $user->app_authentication_secret ?? '');
+        $secret = (string) ($user->two_factor_secret ?? '');
 
         if ($secret === '') {
             return false;
@@ -531,7 +501,7 @@ class Login extends SimplePage
 
     private function syncOtpUiMeta(): void
     {
-        $this->canResend = in_array($this->otpChannel, ['email', 'telegram'], true);
+        $this->canResend = $this->otpChannel === TwoFactorMethod::EMAIL->value;
 
         $this->maskedDestination = null;
 

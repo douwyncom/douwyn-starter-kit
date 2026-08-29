@@ -1,110 +1,130 @@
-<div class="w-full max-w-md mx-auto">
+<div class="dw-auth-layout">
+    <section class="dw-auth-brand" aria-label="Douwyn">
+        <div class="dw-auth-brand-header">
+            @include('filament.components.brand')
 
-    <div class="fi-auth-card">
-        {{-- HEADER --}}
-        <div class="text-center mb-8 space-y-2">
-            <h1 class="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white">
-                {{ $step === 'otp' ? __('Verify your account') : __('Sign in') }}
-            </h1>
-
-            <p class="text-sm text-zinc-500 dark:text-zinc-400">
-                {{ $step === 'otp'
-                    ? __('Enter the verification code to continue.')
-                    : __('Welcome back. Please sign in to your account.') }}
-            </p>
-
-            @if ($step === 'otp' && filled($maskedDestination))
-                <p class="text-xs text-zinc-400">
-                    {{ __('We sent a code to :to', ['to' => $maskedDestination]) }}
-                </p>
-            @endif
+            <x-filament-panels::theme-switcher />
         </div>
 
-        {{-- STEP: CREDENTIALS --}}
-        @if ($step === 'credentials')
-            <form wire:submit.prevent="submitCredentials" class="space-y-6">
+        <div class="dw-auth-brand-copy">
+            <p class="dw-auth-meta">{{ __('Administration workspace') }}</p>
+            <p class="dw-auth-statement">{{ __('Secure access for authorized operators.') }}</p>
+        </div>
+    </section>
 
-                {{ $this->credentialsForm }}
+    <section class="dw-auth-panel">
+        <div class="dw-auth-card">
+            <header class="dw-auth-header">
+                <p class="dw-auth-meta">{{ __('Administration workspace') }}</p>
+                <h1 class="dw-auth-title">
+                    {{ $step === 'otp' ? __('Verify your account') : __('Sign in') }}
+                </h1>
 
-                <x-filament::button
-                    type="submit"
-                    class="w-full"
-                    wire:loading.attr="disabled"
+                <p class="dw-auth-description">
+                    {{ $step === 'otp'
+                        ? __('Enter the verification code to continue.')
+                        : __('Welcome back. Please sign in to your account.') }}
+                </p>
+
+                @if ($step === 'otp' && filled($maskedDestination))
+                    <p class="dw-auth-destination">
+                        {{ __('We sent a code to :to', ['to' => $maskedDestination]) }}
+                    </p>
+                @endif
+            </header>
+
+            @if ($step === 'credentials')
+                <form
+                    wire:submit.prevent="submitCredentials"
+                    wire:loading.attr="aria-busy"
                     wire:target="submitCredentials"
+                    class="dw-auth-form"
                 >
-                    <span wire:loading.remove wire:target="submitCredentials">
-                        {{ __('Sign in') }}
-                    </span>
+                    {{ $this->credentialsForm }}
 
-                    <span wire:loading wire:target="submitCredentials">
-                        {{ __('Signing in...') }}
-                    </span>
-                </x-filament::button>
+                    <x-filament::button
+                        type="submit"
+                        class="w-full"
+                        wire:loading.attr="disabled"
+                        wire:target="submitCredentials"
+                    >
+                        <span wire:loading.remove wire:target="submitCredentials">
+                            {{ __('Sign in') }}
+                        </span>
 
-            </form>
-        @endif
+                        <span wire:loading wire:target="submitCredentials">
+                            {{ __('Signing in...') }}
+                        </span>
+                    </x-filament::button>
+                </form>
+            @endif
 
-        {{-- STEP: OTP --}}
-        @if ($step === 'otp')
-            <form wire:submit.prevent="submitOtp" class="space-y-6">
-
-                {{ $this->otpForm }}
-
-                <x-filament::button
-                    type="submit"
-                    class="w-full"
-                    wire:loading.attr="disabled"
-                    wire:target="submitOtp"
+            @if ($step === 'otp')
+                <form
+                    wire:submit.prevent="submitOtp"
+                    wire:loading.attr="aria-busy"
+                    wire:target="submitOtp,resendOtp,backToCredentials"
+                    class="dw-auth-form"
                 >
-                    <span wire:loading.remove wire:target="submitOtp">
-                        {{ __('Verify') }}
-                    </span>
+                    {{ $this->otpForm }}
 
-                    <span wire:loading wire:target="submitOtp">
-                        {{ __('Verifying...') }}
-                    </span>
-                </x-filament::button>
+                    <x-filament::button
+                        type="submit"
+                        class="w-full"
+                        wire:loading.attr="disabled"
+                        wire:target="submitOtp,resendOtp,backToCredentials"
+                    >
+                        <span wire:loading.remove wire:target="submitOtp">
+                            {{ __('Verify') }}
+                        </span>
 
-                <button
-                    type="button"
-                    wire:click="$set('otpMode', '{{ $otpMode === 'otp' ? 'recovery' : 'otp' }}')"
-                    class="text-sm text-primary underline"
-                >
-                    {{ $otpMode === 'otp' ? __('Use a recovery code') : __('Use verification code') }}
-                </button>
-
-                <div class="flex items-center justify-between pt-3 text-sm">
+                        <span wire:loading wire:target="submitOtp">
+                            {{ __('Verifying...') }}
+                        </span>
+                    </x-filament::button>
 
                     <button
                         type="button"
-                        wire:click="backToCredentials"
-                        class="text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                        wire:click="$set('otpMode', '{{ $otpMode === 'otp' ? 'recovery' : 'otp' }}')"
+                        wire:loading.attr="disabled"
+                        wire:target="submitOtp,resendOtp,backToCredentials"
+                        class="dw-auth-text-action"
                     >
-                        ← {{ __('Back') }}
+                        {{ $otpMode === 'otp' ? __('Use a recovery code') : __('Use verification code') }}
                     </button>
 
-                    @if ($canResend)
+                    <div class="dw-auth-secondary-actions">
                         <button
                             type="button"
-                            wire:click="resendOtp"
+                            wire:click="backToCredentials"
                             wire:loading.attr="disabled"
-                            wire:target="resendOtp"
-                            class="text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                            wire:target="submitOtp,resendOtp,backToCredentials"
+                            class="dw-auth-secondary-action"
                         >
-                            <span wire:loading.remove wire:target="resendOtp">
-                                {{ __('Resend code') }}
-                            </span>
-
-                            <span wire:loading wire:target="resendOtp">
-                                {{ __('Sending...') }}
-                            </span>
+                            <span aria-hidden="true">←</span>
+                            {{ __('Back') }}
                         </button>
-                    @endif
 
-                </div>
-            </form>
-        @endif
+                        @if ($canResend)
+                            <button
+                                type="button"
+                                wire:click="resendOtp"
+                                wire:loading.attr="disabled"
+                                wire:target="submitOtp,resendOtp,backToCredentials"
+                                class="dw-auth-secondary-action"
+                            >
+                                <span wire:loading.remove wire:target="resendOtp">
+                                    {{ __('Resend code') }}
+                                </span>
 
-    </div>
-
+                                <span wire:loading wire:target="resendOtp">
+                                    {{ __('Sending...') }}
+                                </span>
+                            </button>
+                        @endif
+                    </div>
+                </form>
+            @endif
+        </div>
+    </section>
 </div>

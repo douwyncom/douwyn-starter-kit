@@ -109,7 +109,7 @@ final class ReencryptUserProfilesCommand extends Command
             );
 
         $this->components->info(
-            "Re-encrypted and verified {$processed} user profile(s) with the current APP_KEY.",
+            "Re-encrypted and verified $processed user profile(s) with the current APP_KEY.",
         );
 
         return self::SUCCESS;

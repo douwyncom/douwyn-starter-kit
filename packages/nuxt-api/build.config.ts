@@ -1,9 +1,9 @@
 import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
-  clean: true,
+  clean: false,
   declaration: false,
-  failOnWarn: false,
+  failOnWarn: true,
   entries: [
     'src/module',
     'src/types',

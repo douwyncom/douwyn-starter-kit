@@ -187,7 +187,7 @@ return new class extends Migration
 
                         if ($value === null || $encrypted === null) {
                             throw new RuntimeException(
-                                "Encrypted profile backfill is incomplete for [{$column}] on profile [{$profile->uuid}].",
+                                "Encrypted profile backfill is incomplete for [$column] on profile [$profile->uuid].",
                             );
                         }
 
@@ -232,7 +232,7 @@ return new class extends Migration
                         if ($encrypted === null) {
                             if (in_array($column, self::REQUIRED_COLUMNS, true)) {
                                 throw new RuntimeException(
-                                    "Required encrypted profile value [{$column}] is missing on profile [{$profile->uuid}].",
+                                    "Required encrypted profile value [$column] is missing on profile [$profile->uuid].",
                                 );
                             }
 
@@ -276,7 +276,7 @@ return new class extends Migration
 
             if (! Schema::hasColumn('user_profiles', $column)) {
                 throw new RuntimeException(
-                    "Encrypted profile column [{$column}] could not be restored after migration.",
+                    "Encrypted profile column [$column] could not be restored after migration.",
                 );
             }
         }
@@ -296,7 +296,7 @@ return new class extends Migration
                 && ! Schema::hasColumn('user_profiles', $this->shadowColumn($column))
             ) {
                 throw new RuntimeException(
-                    "Neither [{$column}] nor its encrypted shadow exists in user_profiles.",
+                    "Neither [$column] nor its encrypted shadow exists in user_profiles.",
                 );
             }
         }
@@ -344,7 +344,7 @@ return new class extends Migration
 
         if (! hash_equals($expected, $actual)) {
             throw new RuntimeException(
-                "Encrypted profile verification failed for [{$column}] on profile [{$profileUuid}].",
+                "Encrypted profile verification failed for [$column] on profile [$profileUuid].",
             );
         }
     }

@@ -15,6 +15,7 @@ use App\Filament\Widgets\UserSecurityStats;
 use App\Http\Middleware\SetLocaleMiddleware;
 use App\Http\Middleware\TrackLoginSession;
 use Filament\Actions\Action;
+use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -26,6 +27,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -42,6 +44,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->brandName('Douwyn')
+            ->brandLogo(fn (): View => view('filament.components.brand'))
+            ->brandLogoHeight('2rem')
             ->colors([
                 'primary' => [
                     50 => 'oklch(0.930 0.010 265)',
@@ -71,9 +76,11 @@ class AdminPanelProvider extends PanelProvider
                     950 => 'oklch(0.140 0.006 240)',
                 ],
             ])
-            ->font('Inter')
+            ->font('Manrope Variable', provider: LocalFontProvider::class)
+            ->monoFont('IBM Plex Mono', provider: LocalFontProvider::class)
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->maxContentWidth(Width::Full)
+            ->simplePageMaxContentWidth(Width::Full)
             ->sidebarCollapsibleOnDesktop()
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

@@ -461,7 +461,7 @@ class TwoFactorSetupService
         ?string $otp,
         ?string $recoveryCode,
     ): void {
-        $rateKey = "account-security-step-up:{$user->uuid}";
+        $rateKey = "account-security-step-up:$user->uuid";
 
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             throw ValidationException::withMessages([
@@ -514,7 +514,7 @@ class TwoFactorSetupService
 
     private function assertCurrentPassword(User $user, string $currentPassword): void
     {
-        $rateKey = "account-security-password:{$user->uuid}";
+        $rateKey = "account-security-password:$user->uuid";
 
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             throw ValidationException::withMessages([
@@ -557,7 +557,7 @@ class TwoFactorSetupService
 
     private function setupEmailRateKey(User $user): string
     {
-        return "account-security-email-setup:{$user->uuid}";
+        return "account-security-email-setup:$user->uuid";
     }
 
     private function expiredSetupException(): ValidationException

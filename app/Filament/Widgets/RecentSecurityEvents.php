@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Enums\SecurityEvent;
 use App\Services\Security\SecurityTelemetry;
 use App\Support\Timezone;
+use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -47,7 +48,7 @@ class RecentSecurityEvents extends TableWidget
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (?string $state): string => $state
-                        ? __("resources/activity_log.events.{$state}")
+                        ? __("resources/activity_log.events.$state")
                         : '—'),
                 TextColumn::make('subject.email')
                     ->label(__('dashboard.security_events.user'))
@@ -58,14 +59,17 @@ class RecentSecurityEvents extends TableWidget
                     ->state(fn (Activity $record): string => collect([
                         $record->getExtraProperty('channel'),
                         $record->getExtraProperty('reason') ?? $record->getExtraProperty('change'),
-                    ])->filter()->map(fn (string $value): string => str_replace('_', ' ', $value))->implode(' · ') ?: '—'),
+                    ])->filter()->map(fn (string $value): string => str_replace('_', ' ', $value))->implode(' · ') ?: '—')
+                    ->fontFamily(FontFamily::Mono),
                 TextColumn::make('ip_address')
                     ->label(__('dashboard.security_events.ip_address'))
                     ->state(fn (Activity $record): ?string => $record->getExtraProperty('ip_address'))
+                    ->fontFamily(FontFamily::Mono)
                     ->placeholder('—'),
                 TextColumn::make('created_at')
                     ->label(__('dashboard.security_events.recorded_at'))
                     ->dateTime(format: 'Y-m-d H:i:s', timezone: fn () => Timezone::current())
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
             ])
             ->filters([

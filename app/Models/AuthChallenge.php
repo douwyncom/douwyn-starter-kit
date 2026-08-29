@@ -71,7 +71,7 @@ class AuthChallenge extends Model
 
     public function emailPurpose(): string
     {
-        return "auth_challenge.{$this->uuid}";
+        return "auth_challenge.$this->uuid";
     }
 
     public static function tokenHash(string $plainTextToken): string

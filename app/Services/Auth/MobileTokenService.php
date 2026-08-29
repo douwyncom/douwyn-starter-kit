@@ -134,7 +134,7 @@ class MobileTokenService
         $rotationStarted = false;
 
         try {
-            return Cache::lock("{$cacheKey}:lock", $this->settings->lockSeconds())->block(5, function () use (
+            return Cache::lock("$cacheKey:lock", $this->settings->lockSeconds())->block(5, function () use (
                 $cacheKey,
                 $plainTextRefreshToken,
                 $deviceIdHash,

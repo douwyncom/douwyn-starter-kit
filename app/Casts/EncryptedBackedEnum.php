@@ -15,16 +15,16 @@ use InvalidArgumentException;
 /**
  * @implements CastsAttributes<BackedEnum, BackedEnum|int|string>
  */
-final class EncryptedBackedEnum implements CastsAttributes, ComparesCastableAttributes
+final readonly class EncryptedBackedEnum implements CastsAttributes, ComparesCastableAttributes
 {
     /** @var class-string<BackedEnum> */
-    private readonly string $enumClass;
+    private string $enumClass;
 
     public function __construct(string $enumClass)
     {
         if (! enum_exists($enumClass) || ! is_subclass_of($enumClass, BackedEnum::class)) {
             throw new InvalidArgumentException(
-                "The encrypted enum cast requires a backed enum; [{$enumClass}] given.",
+                "The encrypted enum cast requires a backed enum; [$enumClass] given.",
             );
         }
 
@@ -64,7 +64,7 @@ final class EncryptedBackedEnum implements CastsAttributes, ComparesCastableAttr
 
         if (! $enum instanceof $enumClass) {
             throw new InvalidArgumentException(
-                "The [{$key}] attribute must be an instance of [{$enumClass}].",
+                "The [$key] attribute must be an instance of [$enumClass].",
             );
         }
 

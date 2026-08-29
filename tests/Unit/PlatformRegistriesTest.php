@@ -8,18 +8,18 @@ use Douwyn\StarterKit\Auth\TokenAbilityRegistry;
 
 it('extends error codes idempotently and rejects conflicting definitions', function () {
     $registry = (new ApiErrorCodeRegistry)
-        ->register('ledger_unavailable', 503, 'The ledger is temporarily unavailable.', true)
-        ->register('ledger_unavailable', 503, 'The ledger is temporarily unavailable.', true);
+        ->register('module_unavailable', 503, 'The module is temporarily unavailable.', true)
+        ->register('module_unavailable', 503, 'The module is temporarily unavailable.', true);
 
-    expect($registry->codes())->toBe(['ledger_unavailable'])
+    expect($registry->codes())->toBe(['module_unavailable'])
         ->and($registry->catalogue()[0])->toBe([
-            'code' => 'ledger_unavailable',
+            'code' => 'module_unavailable',
             'http_status' => 503,
-            'description' => 'The ledger is temporarily unavailable.',
+            'description' => 'The module is temporarily unavailable.',
             'retryable' => true,
         ])
         ->and(fn () => $registry->register(
-            'ledger_unavailable',
+            'module_unavailable',
             409,
             'A conflicting definition.',
         ))->toThrow(LogicException::class, 'already registered differently');
@@ -31,7 +31,7 @@ it('extends token abilities by profile without duplicates', function () {
         TokenAbilityProfile::MOBILE->value => ['user:read', 'devices:read'],
     ]);
 
-    $registry->extend(TokenAbilityProfile::MOBILE, ['ledger:read', 'user:read']);
+    $registry->extend(TokenAbilityProfile::MOBILE, ['module:read', 'user:read']);
 
     expect($registry->abilitiesFor(TokenAbilityProfile::LEGACY))->toBe([
         'user:read',
@@ -39,6 +39,6 @@ it('extends token abilities by profile without duplicates', function () {
     ])->and($registry->abilitiesFor(TokenAbilityProfile::MOBILE))->toBe([
         'user:read',
         'devices:read',
-        'ledger:read',
+        'module:read',
     ]);
 });

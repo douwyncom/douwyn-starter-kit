@@ -852,18 +852,21 @@ export interface components {
         UserResource: {
             uuid: string;
             email: string;
-            email_verified_at: string;
+            /** Format: date-time */
+            email_verified_at: string | null;
             two_factor_enabled: boolean;
             profile: {
                 first_name: string;
                 last_name: string;
-                phone: string;
-                locale: string;
-                timezone: string;
-                avatar_url: string;
+                phone: string | null;
+                locale: string | null;
+                timezone: string | null;
+                avatar_url: string | null;
             };
-            created_at: string;
-            updated_at: string;
+            /** Format: date-time */
+            created_at: string | null;
+            /** Format: date-time */
+            updated_at: string | null;
         };
     };
     responses: {
@@ -3555,6 +3558,7 @@ export interface operations {
                             challenge_token: string;
                             method: string;
                             recovery_available: boolean;
+                            /** Format: date-time */
                             expires_at: string;
                         };
                     };

@@ -9,6 +9,7 @@ use App\Services\Auth\MobileTokenService;
 use App\Services\Security\SecurityTelemetry;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -56,17 +57,21 @@ class MobileDeviceSessions extends TableWidget
                         }
                         : (string) $state)
                     ->badge()
-                    ->color('info'),
+                    ->color('info')
+                    ->fontFamily(FontFamily::Mono),
                 TextColumn::make('app_version')
                     ->label(__('dashboard.mobile_devices.app_version'))
+                    ->fontFamily(FontFamily::Mono)
                     ->placeholder('—'),
                 TextColumn::make('ip_address')
                     ->label(__('dashboard.mobile_devices.ip_address'))
+                    ->fontFamily(FontFamily::Mono)
                     ->placeholder('—'),
                 TextColumn::make('last_seen_at')
                     ->label(__('dashboard.mobile_devices.last_seen'))
                     ->since()
-                    ->dateTimeTooltip(),
+                    ->dateTimeTooltip()
+                    ->fontFamily(FontFamily::Mono),
                 TextColumn::make('status')
                     ->label(__('dashboard.mobile_devices.status'))
                     ->state(fn (ApiDeviceSession $record): string => $this->status($record))

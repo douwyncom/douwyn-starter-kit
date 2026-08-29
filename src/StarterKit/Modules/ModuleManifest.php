@@ -21,15 +21,15 @@ final readonly class ModuleManifest
         $requiresPlatform = trim($requiresPlatform);
 
         if (! preg_match('/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._-]*$/D', $package)) {
-            throw new InvalidArgumentException("Invalid Composer package name [{$package}].");
+            throw new InvalidArgumentException("Invalid Composer package name [$package].");
         }
 
         if ($version === '') {
-            throw new InvalidArgumentException("Module [{$package}] must declare its version.");
+            throw new InvalidArgumentException("Module [$package] must declare its version.");
         }
 
         if ($requiresPlatform === '') {
-            throw new InvalidArgumentException("Module [{$package}] must declare a platform constraint.");
+            throw new InvalidArgumentException("Module [$package] must declare a platform constraint.");
         }
 
         $this->package = $package;

@@ -13,6 +13,7 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\FontFamily;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -67,11 +68,13 @@ class Sessions extends Page implements HasTable
                     ->description(fn (LoginSession $record): string => mb_strimwidth((string) $record->user_agent, 0, 90, '…')),
                 TextColumn::make('ip_address')
                     ->label(__('pages/account.sessions.ip_address'))
+                    ->fontFamily(FontFamily::Mono)
                     ->copyable(),
                 TextColumn::make('last_active_at')
                     ->label(__('pages/account.sessions.last_active'))
                     ->since()
                     ->dateTimeTooltip()
+                    ->fontFamily(FontFamily::Mono)
                     ->sortable(),
                 IconColumn::make('current')
                     ->label(__('pages/account.sessions.current'))

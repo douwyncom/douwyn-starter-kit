@@ -99,6 +99,37 @@ if (! preg_match('/^\/modules\/$/m', $gitignore)) {
     $errors[] = '.gitignore must exclude the root /modules/ workspace.';
 }
 
+if (file_exists($root.'/.git')) {
+    if (! function_exists('exec')) {
+        $errors[] = 'The exec function is required to inspect tracked module files in a Git checkout.';
+    } else {
+        $trackedModuleFiles = [];
+        $gitExitCode = 0;
+        exec(
+            sprintf(
+                'git -C %s ls-files -- modules 2>&1',
+                escapeshellarg($root),
+            ),
+            $trackedModuleFiles,
+            $gitExitCode,
+        );
+
+        if ($gitExitCode !== 0) {
+            $errors[] = sprintf(
+                'Unable to inspect tracked module files: %s',
+                implode("\n", $trackedModuleFiles),
+            );
+        } else {
+            foreach (array_filter($trackedModuleFiles) as $trackedModuleFile) {
+                $errors[] = sprintf(
+                    'Commercial module file is tracked by Git: %s',
+                    $trackedModuleFile,
+                );
+            }
+        }
+    }
+}
+
 foreach ([
     'LICENSE',
     'NOTICE',
@@ -123,14 +154,28 @@ $generatedFiles = [
     'packages/nuxt-api/dist/openapi.d.ts',
 ];
 $privateNeedles = [
+    'Douwyn\\StarterKit\\Modules\\',
+    'Douwyn\\\\StarterKit\\\\Modules\\\\',
     'douwyncom/starter-kit-ledger',
     'starter-kit-ledger',
-    'Douwyn\\StarterKit\\Modules\\Ledger',
-    'Douwyn\\\\StarterKit\\\\Modules\\\\Ledger',
     '"/ledger/',
     'ledgerList',
     'ledgerGet',
 ];
+$publicApiPathPrefixes = [
+    '/account',
+    '/auth',
+    '/meta',
+];
+$isPublicApiPath = static function (string $path) use ($publicApiPathPrefixes): bool {
+    foreach ($publicApiPathPrefixes as $prefix) {
+        if ($path === $prefix || str_starts_with($path, $prefix.'/')) {
+            return true;
+        }
+    }
+
+    return false;
+};
 
 foreach ($generatedFiles as $generatedFile) {
     $path = $root.'/'.$generatedFile;
@@ -149,6 +194,22 @@ foreach ($generatedFiles as $generatedFile) {
                 'Generated public contract %s contains private marker: %s',
                 $generatedFile,
                 $needle,
+            );
+        }
+    }
+
+    preg_match_all(
+        '/^\\s+"(\\/[^"\\r\\n]+)"\\s*:\\s*\\{/m',
+        $contents,
+        $contractPaths,
+    );
+
+    foreach (array_unique($contractPaths[1] ?? []) as $contractPath) {
+        if (! $isPublicApiPath($contractPath)) {
+            $errors[] = sprintf(
+                'Generated public contract %s contains non-core API path: %s',
+                $generatedFile,
+                $contractPath,
             );
         }
     }

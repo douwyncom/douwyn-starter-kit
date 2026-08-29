@@ -650,7 +650,7 @@ class Security extends Page implements HasForms
             $messages = [];
 
             foreach ($exception->errors() as $field => $errors) {
-                $messages[$fieldMap[$field] ?? $defaultMap[$field] ?? "data.{$field}"] = $errors;
+                $messages[$fieldMap[$field] ?? $defaultMap[$field] ?? "data.$field"] = $errors;
             }
 
             throw ValidationException::withMessages($messages);
