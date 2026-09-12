@@ -49,8 +49,7 @@ git remote -v
 git push -u origin main
 ```
 
-`git check-ignore` must report the `/modules/` rule. Both `git ls-files`
-commands above must print nothing: commercial module sources and the private
+`git check-ignore` must report the `/modules/` rule. The module/private-test `git ls-files` commands above must print nothing: commercial module sources and the private
 Ledger integration suite must not be tracked. Review `git status` before the
 first commit. `.env`, `auth.json`, `vendor`, `node_modules`, IDE state, runtime
 storage, Vite output, and Composer-published Filament assets must not be
@@ -97,65 +96,89 @@ the repository public.
 
 ## Create a release
 
-The first application release can use `v1.0.0`. Application tags, the platform
-capability, HTTP API, Nuxt package, and private modules have independent version
-streams; do not force their numbers to match. Update `CHANGELOG.md`, run the
-following checks locally, and only push the release commit after every command
-passes. Then create an annotated or signed tag:
+Application tags, the platform capability, HTTP API, Nuxt package, and private
+modules have independent version streams. Choose the next application SemVer
+from existing remote tags; never reuse or move a published tag. The current
+application release is `v1.2.0` with Platform `2.2.0`.
+
+Prepare changes on a focused branch and update `CHANGELOG.md` with the actual
+release date, behavior changes, security fixes, and upgrade notes. Do not claim
+that an unreleased version was already published. Merge the reviewed pull
+request only after its `Quality` workflow passes. Maintainers working directly
+on `main` must complete the same local and remote checks before tagging.
 
 ```bash
+composer install --no-interaction --prefer-dist
 composer validate --strict
+composer check:runtime
 composer check:public-boundary
+composer audit --locked
 vendor/bin/pint --test
 php artisan test --compact
 bun install --frozen-lockfile
+bun audit
 bun run build
 bun run nuxt-api:typecheck
 bun run nuxt-api:test
 bun run nuxt-api:build
-
-git switch main
-git pull --ff-only
-git tag -a v1.0.0 -m "Douwyn Starter Kit v1.0.0"
-git push origin v1.0.0
+bun run api:generate
+git diff --exit-code -- packages/nuxt-api/openapi.json packages/nuxt-api/src/openapi.ts
 ```
 
-Use `git tag -s` instead of `-a` when release signing is configured. A Git tag
-is the immutable release input; a GitHub Release adds notes and downloadable
-metadata but must not replace the tag.
+Regenerate API artifacts in a checkout without private modules. If the API
+intentionally changes, review and commit the generated diff before running the
+last check again. Do not commit local absolute server URLs.
 
-After pushing the tag, verify that it points to the reviewed release commit,
-then create a draft GitHub Release from the existing tag. With GitHub CLI:
+The public PHP suite uses SQLite. PostgreSQL/MySQL concurrency, Redis locks,
+paid-module integration, and real Swoole worker behavior require separate
+consumer/deployment fixtures; do not report them as tested by the public suite.
+Run `composer check:octane` on the deployment runtime if using Octane, then
+follow its [load and isolation checks](octane-swoole.md).
+
+Before publishing, test a clean clone or source archive with new dependency
+installs, `.env.example`, a disposable database, and a newly generated test key.
+Verify migrations, the starter-kit installer, public tests, frontend build,
+Nuxt package build, and API generation. Keep the clone outside the working
+application so no development database or key can be changed.
+
+After committing and pushing the reviewed changes, wait for the commit's
+GitHub Actions quality job to pass. Then tag that exact commit. For example:
 
 ```bash
-gh release create v1.0.0 \
-  --verify-tag \
-  --generate-notes \
-  --title "v1.0.0 — Initial public release" \
-  --draft
-
-gh release edit v1.0.0 --draft=false
+git switch main
+git pull --ff-only
+git status --short
+git tag -a v1.2.0 -m "Douwyn Starter Kit v1.2.0"
+git push origin v1.2.0
 ```
 
-Review generated notes before publishing. Push the intended tag explicitly;
-avoid `git push --tags`, which may publish unrelated local tags.
+Replace `v1.2.0` with the new, unused version when making the next release.
+Use `git tag -s` when signing is configured. Push only the intended tag;
+avoid `git push --tags` and never force-push release tags.
+
+The `Quality` workflow reruns checks for `v*` tags. Only after those checks
+succeed does its release job publish a GitHub Release from the matching
+`CHANGELOG.md` section. Its write permission is limited to that release job;
+pull requests run with read-only repository permissions. A failed check or a
+missing changelog section prevents publication. Existing releases are left
+unchanged on reruns.
+
+Verify the published release URL, tag commit, and workflow result. If the
+release job fails after quality checks pass, fix the external cause and rerun
+the job. If code changes are needed, publish a new version; do not move a tag.
+GitHub creates source archives automatically. CI publication does not publish
+`@douwyn/nuxt-api` to npm or any commercial module package.
 
 Before every release:
 
-1. update `CHANGELOG.md` and upgrade notes;
-2. verify `Platform::VERSION` equals the Composer capability version;
-3. verify no `modules/**` or private integration files are tracked;
-4. verify root Composer manifests and generated OpenAPI/Nuxt artifacts contain
-   no commercial package, route, schema, or namespace;
-5. regenerate the public API contract without paid modules installed and fail
-   on an unexpected artifact diff;
-6. run standard, Nuxt, and distributed PostgreSQL/Redis tests;
-7. test supported paid modules in a separate private consumer fixture;
-8. review migrations, public contracts, security changes, licences, notices,
-   and third-party asset rights;
-9. tag only the public-core commit that passed the local release checks;
-10. install and test a GitHub archive or fresh clone so release consumers do
-    not depend on ignored local files.
+1. verify `Platform::VERSION` equals the Composer capability version;
+2. verify the public-boundary command rejects tracked private source and
+   private dependencies or routes in the public artifacts;
+3. check that `.env`, credentials, runtime storage, and generated frontend
+   assets are excluded from Git;
+4. review migrations, contracts, licences, notices, and third-party asset rights;
+5. record which runtime, database, and concurrency checks were actually run;
+6. tag only the commit that passed local and remote quality checks.
 
 ## Customer application repositories
 

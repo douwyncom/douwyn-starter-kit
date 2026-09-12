@@ -36,7 +36,7 @@
     "Showing": "Đang hiển thị",
     "The given data was invalid.": "Dữ liệu đã cho không hợp lệ.",
     "The response is not a streamed response.": "Phản hồi không phải là một phản hồi phát trực tuyến.",
-    "The response is not a view.": "Phản hồi không phải là một view.",
+    "The response is not a view.": "Phản hồi không phải là một giao diện.",
     "This action is unauthorized.": "Hành động này không được phép.",
     "This password reset link will expire in :count minutes.": "Liên kết đặt lại mật khẩu này sẽ hết hạn sau :count phút.",
     "to": "đến",

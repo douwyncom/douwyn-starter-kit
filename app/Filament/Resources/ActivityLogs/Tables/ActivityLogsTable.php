@@ -17,6 +17,7 @@ class ActivityLogsTable
             ->columns([
                 TextColumn::make('log_name')
                     ->label(__('resources/activity_log.fields.log_name'))
+                    ->formatStateUsing(self::localizeLogName(...))
                     ->badge()
                     ->fontFamily(FontFamily::Mono)
                     ->searchable()
@@ -39,6 +40,7 @@ class ActivityLogsTable
                     ->formatStateUsing(fn (?string $state): ?string => $state ? __("resources/activity_log.events.$state") : null),
                 TextColumn::make('description')
                     ->label(__('resources/activity_log.fields.description'))
+                    ->formatStateUsing(self::localizeDescription(...))
                     ->searchable(),
                 TextColumn::make('subject_type')
                     ->label(__('resources/activity_log.fields.subject_type'))
@@ -47,7 +49,7 @@ class ActivityLogsTable
                     ->sortable(),
                 TextColumn::make('causer.profile.first_name')
                     ->label(__('resources/activity_log.fields.causer'))
-                    ->placeholder('System'),
+                    ->placeholder(__('resources/activity_log.system')),
                 TextColumn::make('created_at')
                     ->label(__('resources/activity_log.fields.created_at'))
                     ->dateTime(format: 'Y-m-d H:i:s', timezone: fn () => Timezone::current())
@@ -66,5 +68,32 @@ class ActivityLogsTable
                     ]),
             ])
             ->defaultSort('created_at', 'desc');
+    }
+
+    private static function localizeLogName(?string $value): ?string
+    {
+        if (blank($value)) {
+            return $value;
+        }
+
+        $key = "resources/activity_log.log_names.$value";
+        $translated = __($key);
+
+        return $translated === $key ? $value : $translated;
+    }
+
+    private static function localizeDescription(?string $value): ?string
+    {
+        if (blank($value)) {
+            return $value;
+        }
+
+        $event = str_starts_with($value, 'security.')
+            ? substr($value, strlen('security.'))
+            : $value;
+        $key = "resources/activity_log.events.$event";
+        $translated = __($key);
+
+        return $translated === $key ? $value : $translated;
     }
 }

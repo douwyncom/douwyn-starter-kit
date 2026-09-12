@@ -34,12 +34,14 @@ class ActivityLogForm
                                 Grid::make(2)
                                     ->schema([
                                         TextInput::make('log_name')
-                                            ->label(__('resources/activity_log.fields.log_name')),
+                                            ->label(__('resources/activity_log.fields.log_name'))
+                                            ->formatStateUsing(self::localizeLogName(...)),
                                         TextInput::make('event')
                                             ->label(__('resources/activity_log.fields.event'))
                                             ->formatStateUsing(fn (?string $state): ?string => $state ? __("resources/activity_log.events.$state") : null),
                                         TextInput::make('description')
                                             ->label(__('resources/activity_log.fields.description'))
+                                            ->formatStateUsing(self::localizeDescription(...))
                                             ->columnSpanFull(),
                                         DateTimePicker::make('created_at')
                                             ->label(__('resources/activity_log.fields.created_at'))
@@ -84,5 +86,32 @@ class ActivityLogForm
                     ]),
                 ]),
         ]);
+    }
+
+    private static function localizeLogName(?string $value): ?string
+    {
+        if (blank($value)) {
+            return $value;
+        }
+
+        $key = "resources/activity_log.log_names.$value";
+        $translated = __($key);
+
+        return $translated === $key ? $value : $translated;
+    }
+
+    private static function localizeDescription(?string $value): ?string
+    {
+        if (blank($value)) {
+            return $value;
+        }
+
+        $event = str_starts_with($value, 'security.')
+            ? substr($value, strlen('security.'))
+            : $value;
+        $key = "resources/activity_log.events.$event";
+        $translated = __($key);
+
+        return $translated === $key ? $value : $translated;
     }
 }

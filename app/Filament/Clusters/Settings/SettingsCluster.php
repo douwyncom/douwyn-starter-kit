@@ -18,6 +18,11 @@ class SettingsCluster extends Cluster
         return __('pages/settings.cluster');
     }
 
+    public static function getClusterBreadcrumb(): ?string
+    {
+        return __('pages/settings.cluster');
+    }
+
     public static function getNavigationGroup(): ?string
     {
         return __('pages/settings.cluster');

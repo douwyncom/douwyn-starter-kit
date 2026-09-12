@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Enums\TwoFactorMethod;
 use App\Filament\Pages\Auth\Login;
 use App\Models\User;
+use App\Services\Auth\AuthSignature;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -55,10 +56,12 @@ it('renders OTP and recovery controls without changing the authentication flow',
         'two_factor_confirmed_at' => now(),
         'two_factor_enabled_at' => now(),
     ]);
+    $user->profile->update(['locale' => 'en']);
 
     $this->withSession([
         'pending_user_uuid' => $user->uuid,
         'pending_otp_channel' => TwoFactorMethod::EMAIL->value,
+        'pending_auth_signature' => app(AuthSignature::class)->for($user),
         'pending_started_at' => now()->timestamp,
     ]);
 

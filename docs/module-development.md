@@ -218,7 +218,7 @@ plus the enabled authenticator/email factor, accepts a one-time recovery code,
 rate limits failures, and records sanitized security telemetry. For email 2FA,
 call `sendEmailChallenge()` after the user supplies their current password,
 then call `authorize()` with the received OTP. Call `consume()` on the same
-singleton with the exact returned authorization immediately before the
+scoped instance with the exact returned authorization immediately before the
 protected operation. The authorization is one-time, request/session-bound, and
 expires within 60 seconds; never construct, clone, persist, cache, or queue it
 or the credentials DTO.

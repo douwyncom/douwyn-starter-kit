@@ -14,7 +14,7 @@ class EnsureStatefulFrontend
     {
         if (! EnsureFrontendRequestsAreStateful::fromFrontend($request)) {
             return new JsonResponse([
-                'message' => __('This endpoint is only available to a configured first-party frontend.'),
+                'message' => __('api.errors.stateful_frontend_required'),
                 'code' => 'stateful_frontend_required',
             ], 403);
         }

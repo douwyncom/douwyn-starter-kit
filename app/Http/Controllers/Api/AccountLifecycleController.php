@@ -53,7 +53,7 @@ class AccountLifecycleController extends Controller
         $lifecycle->sendEmailVerification($request->user());
 
         return response()->json([
-            'message' => __('If the email still needs verification, a new link has been sent.'),
+            'message' => __('api.account.email_verification_sent'),
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
 
@@ -68,7 +68,7 @@ class AccountLifecycleController extends Controller
         $lifecycle->verifyEmail($request->validated('token'));
 
         return response()->json([
-            'message' => __('Email address verified.'),
+            'message' => __('api.account.email_verified'),
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
 
@@ -83,7 +83,7 @@ class AccountLifecycleController extends Controller
         $lifecycle->sendPasswordReset($request->validated('email'));
 
         return response()->json([
-            'message' => __('If an active account matches that email, a password reset link has been sent.'),
+            'message' => __('api.account.password_reset_sent'),
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
 
@@ -102,7 +102,7 @@ class AccountLifecycleController extends Controller
         );
 
         return response()->json([
-            'message' => __('Password reset successfully. Please sign in again.'),
+            'message' => __('api.account.password_reset_completed'),
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
 
@@ -125,7 +125,7 @@ class AccountLifecycleController extends Controller
         );
 
         return response()->json([
-            'message' => __('A confirmation link has been sent to the new email address.'),
+            'message' => __('api.account.email_change_confirmation_sent'),
         ], 202, self::SENSITIVE_RESPONSE_HEADERS);
     }
 
@@ -146,7 +146,7 @@ class AccountLifecycleController extends Controller
         );
 
         return response()->json([
-            'message' => __('Email address changed successfully.'),
+            'message' => __('api.account.email_changed'),
             'data' => UserResource::make($user->load('profile')),
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }

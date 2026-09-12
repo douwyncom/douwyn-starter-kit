@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/douwyncom/douwyn-starter-kit/blob/main/SECURITY.md
+    about: Use the private reporting channel in the security policy.
+  - name: Usage questions and commercial support
+    url: https://github.com/douwyncom/douwyn-starter-kit/blob/main/SUPPORT.md
+    about: Find the appropriate support channel for your question.

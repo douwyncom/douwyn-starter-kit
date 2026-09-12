@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible problem in the open-source core or Nuxt client.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Report vulnerabilities privately using [SECURITY.md](https://github.com/douwyncom/douwyn-starter-kit/blob/main/SECURITY.md).
+        Remove credentials and personal data from examples. Commercial module support follows
+        [SUPPORT.md](https://github.com/douwyncom/douwyn-starter-kit/blob/main/SUPPORT.md).
+  - type: input
+    id: version
+    attributes:
+      label: Affected version or commit
+      placeholder: Application tag or commit; Nuxt client version if applicable
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include PHP, database, operating system, and relevant Bun/Nuxt or Octane/Swoole versions.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal reproduction with sample data that is safe to share.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include relevant error messages, sanitized logs, or screenshots.
+    validations:
+      required: true

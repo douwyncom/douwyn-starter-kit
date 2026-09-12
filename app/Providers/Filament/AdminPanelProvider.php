@@ -133,6 +133,9 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 SetLocaleMiddleware::class,
             ])
+            ->persistentMiddleware([
+                SetLocaleMiddleware::class,
+            ])
             ->authMiddleware([
                 Authenticate::class,
                 TrackLoginSession::class,

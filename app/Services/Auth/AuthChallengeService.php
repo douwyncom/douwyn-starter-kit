@@ -59,7 +59,7 @@ class AuthChallengeService
             if ($lockedUser->is_inactive
                 || ! hash_equals($expectedAuthSignature, $this->authSignature->for($lockedUser))) {
                 throw new HttpResponseException(response()->json([
-                    'message' => __('Your authentication state changed. Please sign in again.'),
+                    'message' => __('auth.errors.authentication_state_changed'),
                     'code' => 'authentication_state_changed',
                 ], 401));
             }
@@ -201,7 +201,7 @@ class AuthChallengeService
             $this->recordVerificationFailure($candidate, $request, $expectedType, 'account_inactive');
 
             throw new HttpResponseException(response()->json([
-                'message' => __('Account is inactive.'),
+                'message' => __('auth.errors.account_inactive'),
                 'code' => 'account_inactive',
             ], 403));
         }
@@ -216,7 +216,7 @@ class AuthChallengeService
             $this->recordVerificationFailure($candidate, $request, $expectedType, 'invalid_code');
 
             throw ValidationException::withMessages([
-                (filled($recoveryCode) ? 'recovery_code' : 'otp') => [__('Invalid or expired code.')],
+                (filled($recoveryCode) ? 'recovery_code' : 'otp') => [__('auth.errors.invalid_or_expired_code')],
             ]);
         }
 
@@ -308,7 +308,7 @@ class AuthChallengeService
     private function expiredChallengeException(): ValidationException
     {
         return ValidationException::withMessages([
-            'challenge_token' => [__('The authentication challenge is invalid or expired.')],
+            'challenge_token' => [__('auth.errors.authentication_challenge_invalid')],
         ]);
     }
 }

@@ -7,9 +7,11 @@ use App\Filament\Pages\Auth\Login;
 use App\Models\Permission;
 use App\Models\TwoFactorCode;
 use App\Models\User;
+use App\Services\Auth\AuthSignature;
 use App\Support\TwoFactor;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Livewire;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -106,12 +108,13 @@ it('does not resend an unsupported pending OTP channel', function (): void {
     $this->withSession([
         'pending_user_uuid' => $user->uuid,
         'pending_otp_channel' => 'unsupported',
+        'pending_auth_signature' => app(AuthSignature::class)->for($user),
         'pending_started_at' => now()->timestamp,
     ]);
 
     Livewire::test(Login::class)
-        ->assertSet('step', 'otp')
-        ->assertSet('otpChannel', 'unsupported')
+        ->assertSet('step', 'credentials')
+        ->assertSet('otpChannel', null)
         ->assertSet('canResend', false)
         ->assertSet('maskedDestination', null)
         ->call('resendOtp')
@@ -119,3 +122,58 @@ it('does not resend an unsupported pending OTP channel', function (): void {
 
     expect(TwoFactorCode::query()->count())->toBe(0);
 });
+
+it('shows a localized and non-technical error when an email OTP cannot be sent', function (): void {
+    $user = createFilamentLoginUser(TwoFactorMethod::EMAIL);
+    $user->profile->update(['locale' => 'vi']);
+
+    $rateLimitKey = "2fa:send:email:login:$user->uuid";
+
+    foreach (range(1, 3) as $_) {
+        RateLimiter::hit($rateLimitKey, 300);
+    }
+
+    Livewire::test(Login::class)
+        ->fillForm([
+            'email' => $user->email,
+            'password' => 'password',
+        ], 'credentialsForm')
+        ->call('submitCredentials')
+        ->assertHasErrors([
+            'data.credentials.email' => fn (array $rules, array $messages): bool => str_starts_with(
+                $messages[0] ?? '',
+                'Có quá nhiều yêu cầu. Vui lòng thử lại sau',
+            ),
+        ]);
+});
+
+it('requires fresh credentials when authentication changes during a pending Filament login', function (string $change): void {
+    $secret = TwoFactor::google2fa()->generateSecretKey();
+    $user = createFilamentLoginUser(TwoFactorMethod::APP, $secret);
+
+    $component = Livewire::test(Login::class)
+        ->fillForm([
+            'email' => $user->email,
+            'password' => 'password',
+        ], 'credentialsForm')
+        ->call('submitCredentials')
+        ->assertHasNoErrors()
+        ->assertSet('step', 'otp');
+
+    $user->forceFill(match ($change) {
+        'password' => ['password' => 'ChangedPassword123!'],
+        'two_factor_disabled' => ['two_factor_method' => TwoFactorMethod::NONE],
+        'two_factor_secret' => ['two_factor_secret' => $secret = TwoFactor::google2fa()->generateSecretKey()],
+    })->save();
+
+    $component
+        ->fillForm(['otp' => TwoFactor::google2fa()->getCurrentOtp($secret)], 'otpForm')
+        ->call('submitOtp')
+        ->assertHasErrors(['data.otp.otp'])
+        ->assertSet('step', 'credentials');
+
+    $this->assertGuest();
+
+    expect(session('pending_user_uuid'))->toBeNull()
+        ->and($user->refresh()->two_factor_last_used_timestamp)->toBeNull();
+})->with(['password', 'two_factor_disabled', 'two_factor_secret']);

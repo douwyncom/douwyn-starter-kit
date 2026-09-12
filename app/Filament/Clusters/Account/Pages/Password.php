@@ -35,14 +35,15 @@ class Password extends Page implements HasForms
 
     protected static ?string $cluster = AccountCluster::class;
 
-    protected static ?string $title = 'Password';
-
     public static function getNavigationLabel(): string
     {
         return __('pages/account.password.title');
     }
 
-    protected ?string $subheading = 'Change your account password.';
+    public function getTitle(): string|Htmlable
+    {
+        return __('pages/account.password.title');
+    }
 
     public function getSubheading(): string|Htmlable|null
     {

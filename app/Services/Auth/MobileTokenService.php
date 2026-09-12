@@ -118,9 +118,9 @@ class MobileTokenService
 
         if (! Str::isUuid($requestId)) {
             throw new HttpResponseException(response()->json([
-                'message' => __('The given data was invalid.'),
+                'message' => __('api.errors.validation_failed'),
                 'errors' => [
-                    'request_id' => [__('The request id field must be a valid UUID.')],
+                    'request_id' => [__('auth.errors.request_id_invalid_uuid')],
                 ],
             ], 422));
         }
@@ -187,7 +187,7 @@ class MobileTokenService
             });
         } catch (LockTimeoutException) {
             throw new HttpResponseException(response()->json([
-                'message' => __('A refresh request is already in progress. Please retry shortly.'),
+                'message' => __('auth.errors.refresh_in_progress'),
                 'code' => 'refresh_in_progress',
             ], 409));
         } catch (HttpResponseException $exception) {
@@ -648,7 +648,7 @@ class MobileTokenService
     private function rejectRefreshToken(): never
     {
         throw new HttpResponseException(response()->json([
-            'message' => __('Please sign in again.'),
+            'message' => __('auth.errors.sign_in_again'),
             'code' => 'reauthentication_required',
         ], 401));
     }
@@ -656,7 +656,7 @@ class MobileTokenService
     private function rejectInactiveAccount(): never
     {
         throw new HttpResponseException(response()->json([
-            'message' => __('Account is inactive.'),
+            'message' => __('auth.errors.account_inactive'),
             'code' => 'account_inactive',
         ], 403));
     }
@@ -664,7 +664,7 @@ class MobileTokenService
     private function rejectAuthenticationStateChanged(): never
     {
         throw new HttpResponseException(response()->json([
-            'message' => __('Your authentication state changed. Please sign in again.'),
+            'message' => __('auth.errors.authentication_state_changed'),
             'code' => 'authentication_state_changed',
         ], 401));
     }

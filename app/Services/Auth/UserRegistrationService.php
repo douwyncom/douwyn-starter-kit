@@ -29,7 +29,7 @@ class UserRegistrationService
             $user->profile()->create([
                 'first_name' => $data['first_name'],
                 'last_name' => $data['last_name'],
-                'locale' => $data['locale'] ?? config('app.locale'),
+                'locale' => $data['locale'] ?? app()->getLocale(),
                 'timezone' => $data['timezone'] ?? config('app.timezone'),
             ]);
 

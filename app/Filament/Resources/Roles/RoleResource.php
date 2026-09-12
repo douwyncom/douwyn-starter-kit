@@ -21,9 +21,21 @@ class RoleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function getNavigationLabel(): string
     {
         return __('resources/role.navigation_label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('resources/role.resource_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('resources/role.plural_resource_label');
     }
 
     protected static ?string $recordTitleAttribute = 'name';

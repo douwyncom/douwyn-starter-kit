@@ -79,7 +79,7 @@ class TwoFactorSetupService
 
         if (RateLimiter::tooManyAttempts($rateKey, 3)) {
             throw ValidationException::withMessages([
-                'email' => [__('Too many verification emails. Please try again later.')],
+                'email' => [__('auth.errors.verification_emails_throttled')],
             ]);
         }
 
@@ -117,7 +117,7 @@ class TwoFactorSetupService
 
             if (! $lockedUser->hasEnabledTwoFactor(TwoFactorMethod::EMAIL)) {
                 throw ValidationException::withMessages([
-                    'two_factor' => [__('Email two-factor authentication is not enabled.')],
+                    'two_factor' => [__('auth.errors.email_two_factor_not_enabled')],
                 ]);
             }
 
@@ -208,7 +208,7 @@ class TwoFactorSetupService
 
             if (! $lockedUser->hasEnabledTwoFactor()) {
                 throw ValidationException::withMessages([
-                    'two_factor' => [__('Enable two-factor authentication before generating recovery codes.')],
+                    'two_factor' => [__('auth.errors.two_factor_required_for_recovery_codes')],
                 ]);
             }
 
@@ -396,7 +396,7 @@ class TwoFactorSetupService
             );
 
             throw ValidationException::withMessages([
-                'otp' => [__('Invalid or expired code.')],
+                'otp' => [__('auth.errors.invalid_or_expired_code')],
             ]);
         }
 
@@ -465,7 +465,7 @@ class TwoFactorSetupService
 
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             throw ValidationException::withMessages([
-                'otp' => [__('Too many verification attempts. Please try again later.')],
+                'otp' => [__('auth.errors.verification_attempts_throttled')],
             ]);
         }
 
@@ -473,7 +473,7 @@ class TwoFactorSetupService
             RateLimiter::hit($rateKey, 300);
 
             throw ValidationException::withMessages([
-                'current_password' => [__('pages/account.password.current_password_helper')],
+                'current_password' => [__('auth.errors.current_password_incorrect')],
             ]);
         }
 
@@ -485,7 +485,7 @@ class TwoFactorSetupService
 
         if (blank($otp) && blank($recoveryCode)) {
             throw ValidationException::withMessages([
-                'otp' => [__('The current two-factor code or a recovery code is required.')],
+                'otp' => [__('auth.errors.current_factor_required')],
             ]);
         }
 
@@ -505,7 +505,7 @@ class TwoFactorSetupService
             RateLimiter::hit($rateKey, 300);
 
             throw ValidationException::withMessages([
-                filled($recoveryCode) ? 'recovery_code' : 'otp' => [__('Invalid or expired code.')],
+                filled($recoveryCode) ? 'recovery_code' : 'otp' => [__('auth.errors.invalid_or_expired_code')],
             ]);
         }
 
@@ -518,7 +518,7 @@ class TwoFactorSetupService
 
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             throw ValidationException::withMessages([
-                'current_password' => [__('Too many verification attempts. Please try again later.')],
+                'current_password' => [__('auth.errors.verification_attempts_throttled')],
             ]);
         }
 
@@ -526,7 +526,7 @@ class TwoFactorSetupService
             RateLimiter::hit($rateKey, 300);
 
             throw ValidationException::withMessages([
-                'current_password' => [__('pages/account.password.current_password_helper')],
+                'current_password' => [__('auth.errors.current_password_incorrect')],
             ]);
         }
 
@@ -540,7 +540,7 @@ class TwoFactorSetupService
 
         if (RateLimiter::tooManyAttempts($rateKey, 3)) {
             throw ValidationException::withMessages([
-                'email' => [__('Too many verification emails. Please try again later.')],
+                'email' => [__('auth.errors.verification_emails_throttled')],
             ]);
         }
 
@@ -563,7 +563,7 @@ class TwoFactorSetupService
     private function expiredSetupException(): ValidationException
     {
         return ValidationException::withMessages([
-            'setup_token' => [__('The two-factor setup is invalid or expired.')],
+            'setup_token' => [__('auth.errors.two_factor_setup_invalid')],
         ]);
     }
 }

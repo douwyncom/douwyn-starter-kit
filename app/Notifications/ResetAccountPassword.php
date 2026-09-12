@@ -23,15 +23,15 @@ class ResetAccountPassword extends Notification implements ShouldBeEncrypted, Sh
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Reset your password'))
-            ->line(__('We received a request to reset your account password.'))
+            ->subject(__('notifications.reset_password.subject'))
+            ->line(__('notifications.reset_password.intro'))
             ->action(
-                __('Reset password'),
+                __('notifications.reset_password.action'),
                 AccountActionUrl::make(
                     (string) config('auth_lifecycle.frontend_urls.password_reset'),
                     $this->token,
                 ),
             )
-            ->line(__('If you did not request a password reset, you can ignore this email.'));
+            ->line(__('notifications.reset_password.outro'));
     }
 }

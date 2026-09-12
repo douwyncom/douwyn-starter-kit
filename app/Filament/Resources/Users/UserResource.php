@@ -23,9 +23,21 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'email';
 
+    protected static bool $hasTitleCaseModelLabel = false;
+
     public static function getNavigationLabel(): string
     {
         return __('resources/user.navigation_label');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('resources/user.resource_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('resources/user.plural_resource_label');
     }
 
     public static function getNavigationGroup(): string|UnitEnum|null

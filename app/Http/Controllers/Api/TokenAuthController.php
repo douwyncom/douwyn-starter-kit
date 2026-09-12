@@ -46,7 +46,7 @@ class TokenAuthController extends Controller
         );
 
         return MobileTokenPairResource::make($pair)
-            ->additional(['message' => __('Account created successfully.')])
+            ->additional(['message' => __('auth.messages.account_created')])
             ->response()
             ->setStatusCode(201);
     }
@@ -81,7 +81,7 @@ class TokenAuthController extends Controller
         $telemetry->loginSucceeded($user, $request, 'mobile', AuthCredentialType::TOKEN);
 
         return MobileTokenPairResource::make($pair)
-            ->additional(['message' => __('Logged in successfully.')])
+            ->additional(['message' => __('auth.messages.logged_in')])
             ->response();
     }
 
@@ -94,7 +94,7 @@ class TokenAuthController extends Controller
         $user = $registration->register($data);
 
         return response()->json([
-            'message' => __('Account created successfully.'),
+            'message' => __('auth.messages.account_created'),
             'data' => $this->serializeTokenData($tokens->issue($user, $data['device_name'], $request)),
         ], 201, self::SENSITIVE_RESPONSE_HEADERS);
     }
@@ -126,7 +126,7 @@ class TokenAuthController extends Controller
         $telemetry->loginSucceeded($user, $request, 'legacy_token', AuthCredentialType::TOKEN);
 
         return response()->json([
-            'message' => __('Logged in successfully.'),
+            'message' => __('auth.messages.logged_in'),
             'data' => $this->serializeTokenData($tokenData),
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
@@ -137,7 +137,7 @@ class TokenAuthController extends Controller
 
         if (! $accessToken instanceof PersonalAccessToken) {
             return response()->json([
-                'message' => __('A Bearer token is required for this endpoint.'),
+                'message' => __('auth.errors.bearer_token_required'),
                 'code' => 'token_credential_required',
             ], 409);
         }
@@ -148,7 +148,7 @@ class TokenAuthController extends Controller
             $accessToken->delete();
         }
 
-        return response()->json(['message' => __('Logged out successfully.')]);
+        return response()->json(['message' => __('auth.messages.logged_out')]);
     }
 
     public function logoutAll(Request $request, MobileTokenService $mobileTokens): JsonResponse
@@ -166,7 +166,7 @@ class TokenAuthController extends Controller
         $mobileTokens->revokeAll($request->user(), TokenRevokeReason::LOGOUT_ALL);
         $request->user()->tokens()->delete();
 
-        return response()->json(['message' => __('All API tokens have been revoked.')]);
+        return response()->json(['message' => __('auth.messages.api_tokens_revoked')]);
     }
 
     private function serializeTokenData(array $data): array
@@ -180,7 +180,7 @@ class TokenAuthController extends Controller
     private function challengeResponse($user, $issuedChallenge): JsonResponse
     {
         return response()->json([
-            'message' => __('Two-factor authentication is required.'),
+            'message' => __('auth.messages.two_factor_required'),
             'code' => 'two_factor_required',
             'data' => [
                 'challenge_token' => $issuedChallenge->plainTextToken,

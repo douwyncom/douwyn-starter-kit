@@ -11,7 +11,13 @@ class PasswordWithinHashLimit implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (strlen((string) $value) > $this->maxBytes) {
+        if (! is_string($value)) {
+            $fail('validation.string')->translate();
+
+            return;
+        }
+
+        if (strlen($value) > $this->maxBytes) {
             $fail('validation.max_bytes')->translate([
                 'attribute' => $attribute,
                 'max' => $this->maxBytes,

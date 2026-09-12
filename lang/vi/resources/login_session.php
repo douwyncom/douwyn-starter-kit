@@ -25,6 +25,10 @@ return [
         'expired' => 'Hết hạn',
         'revoked' => 'Đã thu hồi',
     ],
+    'devices' => [
+        'unknown_browser' => 'Trình duyệt không xác định',
+        'unknown_device' => 'Thiết bị không xác định',
+    ],
     'actions' => [
         'view_user' => 'Quản lý người dùng',
         'revoke' => 'Thu hồi phiên',

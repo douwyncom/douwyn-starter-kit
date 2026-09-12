@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Dedoc\Scramble\Attributes\Response;
 use Douwyn\StarterKit\Api\ApiErrorCodeRegistry;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Lang;
 
 class ApiMetadataController extends Controller
 {
@@ -25,8 +26,21 @@ class ApiMetadataController extends Controller
     )]
     public function errorCodes(ApiErrorCodeRegistry $errorCodes): JsonResponse
     {
+        $definitions = array_map(static function (array $definition): array {
+            $translationKey = 'api.error_codes.'.$definition['code'];
+
+            if (! Lang::has($translationKey, app()->getLocale(), false)) {
+                return $definition;
+            }
+
+            return [
+                ...$definition,
+                'description' => __($translationKey),
+            ];
+        }, $errorCodes->catalogue());
+
         return response()->json([
-            'data' => $errorCodes->catalogue(),
+            'data' => $definitions,
             'meta' => [
                 'api_version' => (string) config('api.version'),
             ],

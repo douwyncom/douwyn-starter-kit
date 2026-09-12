@@ -4,17 +4,18 @@ use App\Http\Controllers\Api\AuthChallengeController;
 use App\Http\Controllers\Api\SessionAuthController;
 use App\Http\Middleware\EnsureStatefulFrontend;
 use App\Http\Middleware\SetApiLocale;
+use App\Http\Middleware\SetLocaleMiddleware;
 use App\Http\Middleware\TrackLoginSession;
 use Dedoc\Scramble\Scramble;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->middleware(SetLocaleMiddleware::class);
 
 Route::prefix('api/v1/auth/session')
     ->name('api.session-auth.')
-    ->middleware([EnsureStatefulFrontend::class, SetApiLocale::class])
+    ->middleware([SetApiLocale::class, EnsureStatefulFrontend::class])
     ->group(function (): void {
         Route::post('register', [SessionAuthController::class, 'register'])
             ->middleware('throttle:api-register')

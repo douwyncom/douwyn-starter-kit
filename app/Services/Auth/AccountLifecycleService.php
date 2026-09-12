@@ -240,7 +240,7 @@ class AccountLifecycleService
 
             if ($lockedUser->email_verified_at === null) {
                 throw ValidationException::withMessages([
-                    'email' => [__('Verify your current email address before changing it.')],
+                    'email' => [__('auth.errors.email_verification_required')],
                 ]);
             }
 
@@ -329,7 +329,7 @@ class AccountLifecycleService
             });
         } catch (UniqueConstraintViolationException) {
             throw ValidationException::withMessages([
-                'email' => [__('The email has already been taken.')],
+                'email' => [__('auth.errors.email_taken')],
             ]);
         }
 
@@ -443,7 +443,7 @@ class AccountLifecycleService
 
         if (RateLimiter::tooManyAttempts($rateKey, 5)) {
             throw ValidationException::withMessages([
-                'otp' => [__('Too many verification attempts. Please try again later.')],
+                'otp' => [__('auth.errors.verification_attempts_throttled')],
             ]);
         }
 
@@ -451,7 +451,7 @@ class AccountLifecycleService
             RateLimiter::hit($rateKey, 300);
 
             throw ValidationException::withMessages([
-                'current_password' => [__('pages/account.password.current_password_helper')],
+                'current_password' => [__('auth.errors.current_password_incorrect')],
             ]);
         }
 
@@ -463,7 +463,7 @@ class AccountLifecycleService
 
         if (blank($otp) && blank($recoveryCode)) {
             throw ValidationException::withMessages([
-                'otp' => [__('The current two-factor code or a recovery code is required.')],
+                'otp' => [__('auth.errors.current_factor_required')],
             ]);
         }
 
@@ -483,7 +483,7 @@ class AccountLifecycleService
             RateLimiter::hit($rateKey, 300);
 
             throw ValidationException::withMessages([
-                filled($recoveryCode) ? 'recovery_code' : 'otp' => [__('Invalid or expired code.')],
+                filled($recoveryCode) ? 'recovery_code' : 'otp' => [__('auth.errors.invalid_or_expired_code')],
             ]);
         }
 
@@ -498,7 +498,7 @@ class AccountLifecycleService
                 ->whereRaw('LOWER(email) = ?', [$email])
                 ->exists()) {
             throw ValidationException::withMessages([
-                'email' => [__('The email has already been taken.')],
+                'email' => [__('auth.errors.email_taken')],
             ]);
         }
     }
@@ -511,7 +511,7 @@ class AccountLifecycleService
     private function invalidTokenException(): ValidationException
     {
         return ValidationException::withMessages([
-            'token' => [__('The account action token is invalid or expired.')],
+            'token' => [__('auth.errors.account_action_token_invalid')],
         ]);
     }
 }

@@ -2,9 +2,10 @@
 
 ## Open-source core
 
-Report reproducible bugs and focused feature proposals by emailing
-**[contact@douwyn.com](mailto:contact@douwyn.com)** or through
-**[https://douwyn.com](https://douwyn.com)**. Include the starter-kit version,
+Report reproducible bugs and focused feature proposals through
+[GitHub Issues](https://github.com/douwyncom/douwyn-starter-kit/issues/new/choose).
+For other questions, email **[contact@douwyn.com](mailto:contact@douwyn.com)**
+or visit **[https://douwyn.com](https://douwyn.com)**. Include the starter-kit version,
 PHP/database versions, expected behavior, actual behavior, and a minimal
 reproduction. Community support is best effort and has no guaranteed response
 or resolution time.

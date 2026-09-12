@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\TokenRevokeReason;
 use App\Enums\TwoFactorMethod;
 use App\Services\Auth\AccessRevocationService;
+use App\Support\Settings;
 use Database\Factories\UserFactory;
 use Douwyn\StarterKit\Contracts\PanelAccessResolver;
 use Filament\Models\Contracts\FilamentUser;
@@ -23,6 +24,7 @@ use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use Ramsey\Uuid\Uuid;
 use Spatie\Permission\Traits\HasRoles;
+use Throwable;
 
 class User extends Authenticatable implements FilamentUser, HasLocalePreference, HasName
 {
@@ -124,9 +126,23 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference,
     {
         $locale = $this->profile?->locale;
 
-        return in_array($locale, ['en', 'vi'], true)
-            ? $locale
-            : (string) config('app.locale');
+        if (in_array($locale, ['en', 'vi'], true)) {
+            return $locale;
+        }
+
+        try {
+            $locale = Settings::get('general', 'locale');
+        } catch (Throwable) {
+            $locale = null;
+        }
+
+        if (in_array($locale, ['en', 'vi'], true)) {
+            return $locale;
+        }
+
+        $locale = config('app.locale');
+
+        return in_array($locale, ['en', 'vi'], true) ? $locale : 'en';
     }
 
     public function hasEnabledTwoFactor(?TwoFactorMethod $method = null): bool

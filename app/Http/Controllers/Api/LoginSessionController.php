@@ -72,8 +72,8 @@ class LoginSessionController extends Controller
 
         return response()->json([
             'message' => $isCurrent
-                ? __('The current browser session has been revoked.')
-                : __('Browser session revoked.'),
+                ? __('api.sessions.current_revoked')
+                : __('api.sessions.revoked'),
             'data' => [
                 'id' => $session,
                 'current_session_revoked' => $isCurrent,
@@ -108,8 +108,8 @@ class LoginSessionController extends Controller
 
         return response()->json([
             'message' => $currentSessionId === null
-                ? __('All browser sessions have been revoked. Bearer access remains active.')
-                : __('Other browser sessions have been revoked.'),
+                ? __('api.sessions.all_revoked_bearer_active')
+                : __('api.sessions.others_revoked'),
             'data' => [
                 'revoked_count' => $revokedCount,
                 'current_session_revoked' => false,
@@ -147,8 +147,8 @@ class LoginSessionController extends Controller
 
         return response()->json([
             'message' => $currentSessionId === null
-                ? __('All browser sessions have been revoked. Bearer access remains active.')
-                : __('All browser sessions, including the current session, have been revoked.'),
+                ? __('api.sessions.all_revoked_bearer_active')
+                : __('api.sessions.all_including_current_revoked'),
             'data' => [
                 'revoked_count' => $revokedCount,
                 'current_session_revoked' => $currentSessionId !== null,

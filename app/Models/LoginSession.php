@@ -103,7 +103,7 @@ class LoginSession extends Model
             str_contains($agent, 'chrome/') => 'Chrome',
             str_contains($agent, 'firefox/') => 'Firefox',
             str_contains($agent, 'safari/') => 'Safari',
-            default => 'Unknown browser',
+            default => __('resources/login_session.devices.unknown_browser'),
         };
 
         $platform = match (true) {
@@ -112,7 +112,7 @@ class LoginSession extends Model
             str_contains($agent, 'windows') => 'Windows',
             str_contains($agent, 'macintosh'), str_contains($agent, 'mac os') => 'macOS',
             str_contains($agent, 'linux') => 'Linux',
-            default => 'Unknown device',
+            default => __('resources/login_session.devices.unknown_device'),
         };
 
         return "$browser · $platform";

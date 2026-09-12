@@ -10,7 +10,7 @@ final readonly class SensitiveActionAuthorization
 {
     /**
      * @internal Instances are valid only when issued and consumed by the same
-     * SensitiveActionAuthorizer singleton. Constructing or cloning this DTO
+     * SensitiveActionAuthorizer request scope. Constructing or cloning this DTO
      * does not create authorization.
      */
     public function __construct(

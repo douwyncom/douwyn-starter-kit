@@ -35,6 +35,7 @@
         "dedoc/scramble": "^0.13.33",
         "filament/filament": "^5.0",
         "laravel/framework": "^13.0",
+        "laravel/octane": "^2.19",
         "laravel/prompts": "^0.3.11",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
@@ -72,6 +73,7 @@
         }
     },
     "scripts": {
+        "check:octane": "@php -d opcache.enable_cli=1 scripts/check-runtime.php --octane",
         "check:public-boundary": "@php scripts/check-public-boundary.php",
         "check:runtime": "@php scripts/check-runtime.php",
         "setup": [

@@ -69,14 +69,14 @@ class RoleForm
                                     ->label(__('resources/role.fields.new_permission'))
                                     ->icon(Heroicon::OutlinedPlus)
                                     ->modalHeading(__('resources/role.fields.create_permission'))
-                                    ->modalSubmitActionLabel('Create')
+                                    ->modalSubmitActionLabel(__('resources/role.fields.create_action'))
                                     ->modalWidth(Width::Medium)
                                     ->authorize(fn (): bool => auth()->user()?->can('permissions.create') ?? false)
                                     ->visible(fn (): bool => auth()->user()?->can('permissions.create') ?? false)
                                     ->schema([
                                         TextInput::make('name')
                                             ->label(__('resources/role.fields.permission_name'))
-                                            ->placeholder(__('resources/role.fields.section_permissions_helper'))
+                                            ->placeholder(__('resources/role.fields.permission_placeholder'))
                                             ->required()
                                             ->maxLength(190),
 
@@ -94,7 +94,7 @@ class RoleForm
 
                                         if ($name === '') {
                                             throw ValidationException::withMessages([
-                                                'name' => __('The permission name is invalid.'),
+                                                'name' => __('resources/role.messages.invalid_permission_name'),
                                             ]);
                                         }
 
@@ -120,11 +120,7 @@ class RoleForm
                                         modifyQueryUsing: fn ($query) => $query->where('guard_name', 'web')->orderBy('name'),
                                     )
                                     // ✅ Make labels readable (prevents ugly wrapping)
-                                    ->getOptionLabelFromRecordUsing(fn ($record) => str($record->name)
-                                        ->replace(['.', '_', '-'], ' ')
-                                        ->headline()
-                                        ->toString()
-                                    )
+                                    ->getOptionLabelFromRecordUsing(fn ($record): string => (string) $record->name)
                                     ->searchable()
                                     ->bulkToggleable()
                                     // ✅ Only increase columns when the container is wide enough

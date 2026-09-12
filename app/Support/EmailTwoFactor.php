@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\TwoFactorCode;
 use App\Models\User;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -13,6 +14,8 @@ use Throwable;
 
 class EmailTwoFactor
 {
+    private const int CODE_EXPIRATION_MINUTES = 5;
+
     public static function send(
         string $userUuid,
         string $email,
@@ -25,7 +28,7 @@ class EmailTwoFactor
             $seconds = RateLimiter::availableIn($key);
 
             throw ValidationException::withMessages([
-                'message' => __('Too many requests. Try again in :s seconds.', ['s' => $seconds]),
+                'message' => __('auth.errors.email_code_throttled_seconds', ['seconds' => $seconds]),
             ]);
         }
 
@@ -34,8 +37,13 @@ class EmailTwoFactor
         $record = null;
 
         try {
-            $record = DB::transaction(function () use ($userUuid, $email, $purpose, $code): TwoFactorCode {
-                User::query()->whereKey($userUuid)->lockForUpdate()->firstOrFail();
+            /** @var array{locale: string, record: TwoFactorCode} $delivery */
+            $delivery = DB::transaction(function () use ($userUuid, $email, $purpose, $code): array {
+                $user = User::query()
+                    ->with('profile')
+                    ->whereKey($userUuid)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
                 $active = TwoFactorCode::query()
                     ->where('user_uuid', $userUuid)
@@ -48,7 +56,7 @@ class EmailTwoFactor
 
                 if ($active && $active->created_at->gt(now()->subSeconds(20))) {
                     throw ValidationException::withMessages([
-                        'message' => __('Please wait a moment before requesting another code.'),
+                        'message' => __('auth.errors.email_code_wait'),
                     ]);
                 }
 
@@ -59,20 +67,35 @@ class EmailTwoFactor
                     ->whereNull('consumed_at')
                     ->update(['consumed_at' => now()]);
 
-                return TwoFactorCode::query()->create([
+                $record = TwoFactorCode::query()->create([
                     'user_uuid' => $userUuid,
                     'channel' => 'email',
                     'sent_to' => $email,
                     'purpose' => $purpose,
                     'code_hash' => Hash::make($code),
-                    'expires_at' => now()->addMinutes(5),
+                    'expires_at' => now()->addMinutes(self::CODE_EXPIRATION_MINUTES),
                 ]);
 
+                return [
+                    'locale' => $user->preferredLocale(),
+                    'record' => $record,
+                ];
             });
 
-            Mail::raw("Your verification code is: $code", function ($message) use ($email): void {
-                $message->to($email)->subject('Your verification code');
-            });
+            $record = $delivery['record'];
+            $previousLocale = App::currentLocale();
+
+            try {
+                App::setLocale($delivery['locale']);
+                Mail::raw(__('notifications.two_factor.body', [
+                    'code' => $code,
+                    'minutes' => self::CODE_EXPIRATION_MINUTES,
+                ]), function ($message) use ($email): void {
+                    $message->to($email)->subject(__('notifications.two_factor.subject'));
+                });
+            } finally {
+                App::setLocale($previousLocale);
+            }
         } catch (Throwable $exception) {
             RateLimiter::decrement($key);
 
@@ -87,7 +110,7 @@ class EmailTwoFactor
             report($exception);
 
             throw ValidationException::withMessages([
-                'message' => __('Unable to send the verification code. Please try again.'),
+                'message' => __('auth.errors.email_code_send_failed'),
             ]);
         }
     }

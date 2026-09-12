@@ -6,13 +6,17 @@ A Laravel + Filament v5 backend starter kit for Nuxt applications. Laravel owns
 the API and backend services; Filament is the private administration and
 monitoring surface.
 
-Built with **PHP 8.5**, **Laravel 13**, **Filament v5**, **Livewire v4**, and **Tailwind CSS v4**.
+Built with **PHP 8.5**, **Laravel 13**, **Laravel Octane + Swoole**,
+**Filament v5**, **Livewire v4**, and **Tailwind CSS v4**.
 
 ---
 
 ## 🚀 Overview
 
-Douwyn Starter Kit provides a robust foundation for developers who want to bypass repetitive setup and focus on building unique features. It features a clean, extensible architecture inspired by Apple's minimal design aesthetic, combined with powerful enterprise-grade functionality.
+The starter kit supplies account authentication, administration, permissions,
+and a typed Nuxt API client. Use it as the root Laravel application, then add
+project features or compatible modules. The included admin interface uses a
+minimal visual design and supports English and Vietnamese.
 
 ### Open-source core and commercial modules
 
@@ -71,7 +75,7 @@ commercial support are separate from that licence.
 - **Mobile Token Rotation:** 15-minute access tokens, rotating refresh tokens, absolute lifetime, device binding, and refresh-token reuse detection.
 - **Retry-safe Mobile Refresh:** UUID idempotency keys, database-atomic encrypted replay envelopes, preserved token scopes, and per-minute secret cleanup.
 - **Account Security API:** Pending TOTP/email setup, current-factor step-up, disable flow, and one-time recovery-code regeneration.
-- **Admin Separation:** API users receive no admin role; Filament is restricted to Admin and Super Admin roles.
+- **Admin Separation:** API registration grants no panel access. Filament requires an active account with `panel.access`; the default Admin and Super Admin roles receive that permission.
 - **Device Management:** Users and administrators can inspect/revoke mobile device families without exposing token or device hashes.
 - **Nuxt SSR Safety:** The Nuxt module forwards only the configured Laravel session/XSRF cookies and never persists credentials in browser storage.
 - See [API authentication documentation](docs/api-auth.md).
@@ -80,7 +84,7 @@ commercial support are separate from that licence.
 
 ### 📖 Protected OpenAPI Documentation
 - Scramble generates an interactive OpenAPI 3.1 reference at `/admin/api-docs`.
-- Both the UI and `/admin/api-docs/openapi.json` require an active `admin` or `super_admin` account with `panel.access`.
+- Both the UI and `/admin/api-docs/openapi.json` require an active account authorized for the admin panel through `panel.access`.
 - `packages/nuxt-api` can regenerate TypeScript contract types from the protected backend specification during development or before a release.
 
 ### 🎨 Design & UI/UX
@@ -94,7 +98,10 @@ commercial support are separate from that licence.
 - **Clean Code:** Structured Filament Resources with separation of Schemas, Tables, and Pages.
 - **Commercial Module Boundary:** Paid packages require the Douwyn Starter Kit Platform 2 capability, remain in private distribution, and are rejected by unsupported hosts.
 - **Plug-in Filament Modules:** Auto-discovered packages can attach their own resources, pages, widgets, migrations, routes, and commands without editing the root panel provider.
-- **Database Agnostic:** Optimized for both PostgreSQL (default) and MySQL.
+- **Database:** PostgreSQL is the default application database; MySQL is configurable. The public automated suite uses SQLite in memory.
+- **Long-lived Runtime:** Octane/Swoole configuration, scoped request services,
+  worker recycling, strict production preflight checks, and graceful reload
+  guidance are included.
 - **Developer Experience:** Production-oriented defaults and helper commands.
 
 The starter-kit remains the mandatory root application. It is not converted
@@ -111,6 +118,7 @@ boundary is summarized in [commercial modules](docs/commercial-modules.md).
 - **Admin Panel:** Filament v5
 - **Frontend:** Livewire v4, Tailwind CSS v4
 - **Auth:** Spatie Permission, Custom 2FA
+- **Application Server:** Laravel Octane with Swoole
 - **Database:** PostgreSQL / MySQL
 
 ---
@@ -119,12 +127,18 @@ boundary is summarized in [commercial modules](docs/commercial-modules.md).
 
 ### Requirements
 
-- PHP 8.5 with the extensions required by Laravel, plus GD and native
-  Mbstring.
-- Composer 2 and Bun.
-- PostgreSQL or MySQL for the application database.
-- Redis with the `phpredis` extension when running the distributed mobile-token
-  concurrency suite or Redis-backed production features.
+- PHP 8.5 with the extensions required by Laravel, plus GD, native Mbstring,
+  and OPcache. Run `composer check-platform-reqs` and `composer check:runtime`
+  after installing dependencies to verify the active CLI runtime.
+- Composer 2.2 or newer and Bun 1.3 or newer. Vite also needs Node.js 20.19+
+  or 22.12+ when its CLI runs under Node.
+- PostgreSQL or MySQL and the corresponding PHP PDO extension for the
+  application database; PDO SQLite for the public automated tests.
+- Redis with the `phpredis` extension for Redis-backed features; the default
+  local database-backed session, cache, and queue drivers do not require Redis.
+- The stable Swoole extension for the PHP 8.5 CLI runtime when serving the
+  application through Octane. It is optional for the conventional local
+  `artisan serve` workflow.
 
 Laravel Herd users can pin this checkout to the required runtime before
 installing dependencies:
@@ -137,14 +151,14 @@ herd composer install
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/douwyn/douwyn-starter-kit.git
+git clone https://github.com/douwyncom/douwyn-starter-kit.git
 cd douwyn-starter-kit
 ```
 
 ### 2. Install dependencies
 ```bash
 composer install
-bun install
+bun install --frozen-lockfile
 ```
 
 No private registry credentials are required to install the public core. Add a
@@ -157,8 +171,15 @@ cp .env.example .env
 php artisan key:generate
 ```
 
+Generate a key only for a new installation. Keep the existing `APP_KEY` when
+upgrading because it protects stored personal data and authentication secrets.
+Set `APP_URL` to the actual Laravel origin (for example,
+`http://localhost:8000` for `artisan serve`).
+
 ### 4. Database & Starter Kit Data
-Configure your database in `.env`, then run:
+Create the database and a database user first, then configure the matching
+`DB_*` values in `.env`. For MySQL, also set `DB_CONNECTION=mysql` and
+`DB_PORT=3306`. Run:
 ```bash
 php artisan migrate
 php artisan app:starter-kit-install
@@ -182,48 +203,97 @@ php artisan app:starter-kit-user
 ```
 
 ### 6. Start Development
+Run these in separate terminals:
+
 ```bash
 php artisan serve
+```
+
+```bash
 bun run dev
 ```
 
-In production, run Laravel's scheduler so expired sessions and verification codes are pruned:
+Open `http://localhost:8000/admin` and sign in with the Super Admin account.
+The Laravel application does not include a Nuxt frontend; integrate a separate
+Nuxt app using the [client guide](docs/nuxt-integration.md).
+
+Run a queue worker in another terminal for queued account email notifications:
+
 ```bash
-php artisan schedule:work
+php artisan queue:work --tries=3 --timeout=60
 ```
+
+The default `MAIL_MAILER=log` writes email to `storage/logs/laravel.log`.
+Configure a real mail transport before enabling email flows for users. When
+serving public media from the local `public` disk, run `php artisan storage:link`.
+
+To exercise the long-lived runtime, install Swoole for the active PHP 8.5 CLI
+and use Octane as the HTTP server after stopping `artisan serve` on port 8000:
+
+```bash
+composer check:octane
+php artisan octane:start --server=swoole --host=127.0.0.1 --workers=1 --task-workers=1 --max-requests=100
+```
+
+See the complete [English Octane/Swoole operations guide](docs/octane-swoole.md)
+or [Vietnamese guide](docs/octane-swoole.vi.md) before using this runtime in
+production.
+
+In production, supervise the scheduler and queue worker separately from the
+HTTP server. A scheduler host can invoke Laravel once per minute through cron:
+
+```cron
+* * * * * cd /path/to/douwyn-starter-kit && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Use `php artisan schedule:work` for local testing or a separately supervised
+scheduler process. Set `APP_ENV=production`, `APP_DEBUG=false`, the correct
+HTTPS `APP_URL`, and secure session cookies in production. Preserve and back up
+the encryption keys separately from the database.
 
 Run the queue worker for application jobs and warm the API documentation cache
 as part of each release:
 
 ```bash
-php artisan queue:work --tries=3
 php artisan scramble:cache
 ```
 
-For PHP 8.5 production deployments, verify the runtime used by PHP-FPM and
-queue workers as well as the CLI runtime:
+The queue worker runs continuously in its own process:
+
+```bash
+php artisan queue:work --tries=3 --timeout=60 --memory=384 --max-jobs=500 --max-time=3600
+```
+
+For Octane/Swoole production deployments, verify the exact CLI runtime used by
+the process monitor, then rebuild caches and gracefully reload every long-lived
+process after a release:
 
 ```bash
 composer check:runtime
+composer check:octane
 php artisan about --only=environment
+php artisan octane:reload
+php artisan queue:restart
 ```
 
-PHP 8.5 always loads OPcache. Remove legacy `zend_extension=opcache.so` (or
-`php_opcache.dll`) directives and keep `opcache.enable=1` for the production
-web SAPI. After each release, rebuild Laravel's caches and restart long-running
-workers. Measure request latency, throughput, CPU, and memory against the PHP
-8.4 baseline before claiming an application-level performance improvement.
+Keep the Octane listener reset list intact, use a shared cache for sessions,
+rate limits, and distributed locks, and never expose the Octane port directly
+to the internet. Start with bounded request lifetimes and measure per-worker
+RSS, latency, database connections, and file descriptors across several worker
+generations before production rollout.
 
 ---
 
 ## 🧪 Testing
 
-Run the comprehensive test suite using Pest:
+The public Pest suite uses an in-memory SQLite database and does not need
+PostgreSQL, Redis, Swoole, or paid modules. Clear cached configuration before
+running it, and use `composer test` so the project script performs that step:
 
 ```bash
 composer check:runtime
 composer check:public-boundary
-php artisan test
+composer test
 vendor/bin/pint --test
 bun run build
 bun run nuxt-api:typecheck
@@ -236,20 +306,15 @@ Filament plugin attachment are covered by the platform contract tests. The
 Nuxt checks remain intentional because `@douwyn/nuxt-api` is an official
 starter-kit client component.
 
-Mobile refresh rotation also has a separate two-process integration suite. It
-requires PostgreSQL, Redis with the `phpredis` extension, and a dedicated
-`douwyn_starter_kit_test` database. Never point this suite at development or
-production data.
+The public suite does not include a two-process mobile-token concurrency test.
+The retained `phpunit.distributed.xml` is configuration for optional integration
+fixtures; a clean clone has no `tests/Integration` suite to run. Validate
+concurrency and database-specific behavior in a dedicated test environment
+before deploying those workloads. Never point integration fixtures at
+development or production data.
 
-```bash
-DB_DATABASE=douwyn_starter_kit_test php artisan migrate --force
-vendor/bin/pest --configuration phpunit.distributed.xml
-```
-
-The suite verifies that concurrent retries with the same idempotency UUID
-return the same token pair, while concurrent reuse with different UUIDs revokes
-the complete mobile device family. Run both the standard and distributed suites
-locally before publishing a release.
+For contribution requirements and the maintainer release checklist, see
+[CONTRIBUTING.md](CONTRIBUTING.md) and [Git releases](docs/git-release.md).
 
 ---
 

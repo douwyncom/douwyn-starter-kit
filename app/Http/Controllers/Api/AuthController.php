@@ -55,7 +55,7 @@ class AuthController extends Controller
 
             if (! Hash::check($request->validated('current_password'), $lockedUser->password)) {
                 throw ValidationException::withMessages([
-                    'current_password' => [__('pages/account.password.current_password_helper')],
+                    'current_password' => [__('auth.errors.current_password_incorrect')],
                 ]);
             }
 
@@ -83,7 +83,7 @@ class AuthController extends Controller
                 : 'nuxt_session',
         );
 
-        return response()->json(['message' => __('Password changed successfully.')]);
+        return response()->json(['message' => __('auth.messages.password_changed')]);
     }
 
     /** List the authenticated user's API tokens and devices. */
@@ -126,6 +126,6 @@ class AuthController extends Controller
             $accessToken->delete();
         }
 
-        return response()->json(['message' => __('API token revoked.')]);
+        return response()->json(['message' => __('auth.messages.api_token_revoked')]);
     }
 }

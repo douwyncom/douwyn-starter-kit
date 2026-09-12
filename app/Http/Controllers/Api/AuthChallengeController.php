@@ -55,7 +55,7 @@ class AuthChallengeController extends Controller
             );
 
             return MobileTokenPairResource::make($pair)
-                ->additional(['message' => __('Logged in successfully.')])
+                ->additional(['message' => __('auth.messages.logged_in')])
                 ->response();
         }
 
@@ -74,7 +74,7 @@ class AuthChallengeController extends Controller
         );
 
         return response()->json([
-            'message' => __('Logged in successfully.'),
+            'message' => __('auth.messages.logged_in'),
             'data' => [
                 ...$data,
                 'user' => UserResource::make($data['user']),
@@ -106,7 +106,7 @@ class AuthChallengeController extends Controller
         );
 
         return response()->json([
-            'message' => __('Logged in successfully.'),
+            'message' => __('auth.messages.logged_in'),
             'data' => [
                 'credential_type' => AuthCredentialType::SESSION->value,
                 'user' => UserResource::make($challenge->user->load('profile')),

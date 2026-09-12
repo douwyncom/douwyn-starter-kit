@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 return [
     'navigation_label' => 'Roles',
+    'resource_label' => 'role',
+    'plural_resource_label' => 'Roles',
     'columns' => [
         'name' => 'Role',
         'guard' => 'Guard',
@@ -21,8 +23,14 @@ return [
         'section_permissions_helper' => 'Assign permissions to this role.',
         'new_permission' => 'New permission',
         'create_permission' => 'Create permission',
+        'create_action' => 'Create',
         'permission_name' => 'Permission name',
         'permission_placeholder' => 'e.g. users.create or Users Create',
         'permission_helper' => 'Tip: use search to quickly find permissions.',
+    ],
+    'messages' => [
+        'system_role_immutable' => 'System role names and guards cannot be changed.',
+        'super_admin_requires_panel_access' => 'The super administrator role must retain panel access.',
+        'invalid_permission_name' => 'The permission name is invalid.',
     ],
 ];

@@ -23,15 +23,15 @@ class VerifyAccountEmail extends Notification implements ShouldBeEncrypted, Shou
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Verify your email address'))
-            ->line(__('Confirm that this email address belongs to your account.'))
+            ->subject(__('notifications.verify_email.subject'))
+            ->line(__('notifications.verify_email.intro'))
             ->action(
-                __('Verify email address'),
+                __('notifications.verify_email.action'),
                 AccountActionUrl::make(
                     (string) config('auth_lifecycle.frontend_urls.email_verification'),
                     $this->token,
                 ),
             )
-            ->line(__('If you did not create this account, you can ignore this email.'));
+            ->line(__('notifications.verify_email.outro'));
     }
 }

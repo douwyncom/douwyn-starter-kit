@@ -21,8 +21,8 @@ return [
         'reset' => 'Các giá trị đã được đặt lại. Nhấp vào Lưu thay đổi để áp dụng.',
     ],
     'media' => [
-        'title' => 'Media',
-        'subheading' => 'Cấu hình Media và cài đặt chuyển đổi hình ảnh.',
+        'title' => 'Thư viện tệp',
+        'subheading' => 'Cấu hình thư viện tệp và thiết lập chuyển đổi hình ảnh.',
         'section_conversion' => 'Chuyển đổi hình ảnh',
         'section_conversion_desc' => 'Cấu hình tự động chuyển đổi hình ảnh sang các định dạng hiện đại.',
         'convert_format' => 'Định dạng chuyển đổi mặc định',
@@ -30,14 +30,14 @@ return [
         'formats' => [
             'none' => 'Không chuyển đổi',
             'webp' => 'WebP (Được hỗ trợ tốt)',
-            'avif' => 'AVIF (Nén tốt nhất - Yêu cầu PHP GD hỗ trợ)',
+            'avif' => 'AVIF (Nén tốt nhất - Cần phần mở rộng GD của PHP)',
         ],
         'descriptions' => [
             'none' => 'Giữ nguyên định dạng gốc của hình ảnh.',
             'webp' => 'Định dạng hình ảnh hiện đại với khả năng nén vượt trội so với JPEG và PNG.',
-            'avif' => 'Định dạng hình ảnh nén hiệu quả nhất hiện nay, nhưng có thể không được hỗ trợ bởi một số trình duyệt hoặc server cũ.',
+            'avif' => 'Định dạng nén hình ảnh hiệu quả nhất hiện nay, nhưng có thể không được hỗ trợ bởi một số trình duyệt hoặc máy chủ cũ.',
         ],
-        'saved' => 'Cài đặt Media đã được lưu.',
+        'saved' => 'Đã lưu cài đặt thư viện tệp.',
     ],
     'save_change' => 'Lưu thay đổi',
     'saved' => 'Đã lưu cài đặt',

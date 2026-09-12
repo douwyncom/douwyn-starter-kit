@@ -23,7 +23,7 @@ class CreateUser extends CreateRecord
 
         if (! $actor->can('users.assign_roles')) {
             throw ValidationException::withMessages([
-                'data.roles' => __('You are not authorized to assign roles.'),
+                'data.roles' => __('resources/user.messages.cannot_assign_roles'),
             ]);
         }
 
@@ -34,7 +34,7 @@ class CreateUser extends CreateRecord
 
         if ($assignsSystemRole && ! $actor->hasRole('super_admin')) {
             throw ValidationException::withMessages([
-                'data.roles' => __('Only a super administrator can assign administrative roles.'),
+                'data.roles' => __('resources/user.messages.only_super_admin_assign_system_roles'),
             ]);
         }
     }

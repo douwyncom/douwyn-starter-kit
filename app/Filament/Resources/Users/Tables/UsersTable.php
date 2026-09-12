@@ -56,7 +56,13 @@ class UsersTable
 
                 TextColumn::make('two_factor_method')
                     ->label(__('resources/user.columns.two_factor'))
-                    ->formatStateUsing(fn (TwoFactorMethod|string|null $state): string => $state instanceof TwoFactorMethod ? $state->getLabel() : (string) ($state ?: 'None'))
+                    ->formatStateUsing(function (TwoFactorMethod|string|null $state): string {
+                        if ($state instanceof TwoFactorMethod) {
+                            return $state->getLabel();
+                        }
+
+                        return TwoFactorMethod::tryFrom((string) $state)?->getLabel() ?? __('enum.none');
+                    })
                     ->badge()
                     ->color(fn (User $record): string => $record->hasEnabledTwoFactor() ? 'success' : 'gray'),
 

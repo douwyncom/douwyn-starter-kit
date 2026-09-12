@@ -36,7 +36,7 @@ class TokenIssuer
             if ($lockedUser->is_inactive
                 || ! hash_equals($expectedAuthSignature, $this->authSignature->for($lockedUser))) {
                 throw new HttpResponseException(response()->json([
-                    'message' => __('Your authentication state changed. Please sign in again.'),
+                    'message' => __('auth.errors.authentication_state_changed'),
                     'code' => 'authentication_state_changed',
                 ], 401));
             }

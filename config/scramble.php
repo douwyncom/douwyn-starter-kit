@@ -6,6 +6,7 @@ use Dedoc\Scramble\SecurityDocumentation\MiddlewareAuthSecurityStrategy;
 return [
     'api_path' => 'api/v1',
     'api_domain' => null,
+    'servers' => ['Current host' => '/api/v1'],
     'export_path' => 'api.json',
     'cache' => [
         'key' => 'scramble.openapi.v1',

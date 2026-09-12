@@ -48,7 +48,7 @@ class CredentialAuthenticator
             );
 
             throw new HttpResponseException(response()->json([
-                'message' => __('Account is inactive.'),
+                'message' => __('auth.errors.account_inactive'),
                 'code' => 'account_inactive',
             ], 403));
         }

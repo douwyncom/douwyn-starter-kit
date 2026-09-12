@@ -59,7 +59,7 @@ class RecentSecurityEvents extends TableWidget
                     ->state(fn (Activity $record): string => collect([
                         $record->getExtraProperty('channel'),
                         $record->getExtraProperty('reason') ?? $record->getExtraProperty('change'),
-                    ])->filter()->map(fn (string $value): string => str_replace('_', ' ', $value))->implode(' · ') ?: '—')
+                    ])->filter()->map(self::localizeContextValue(...))->implode(' · ') ?: '—')
                     ->fontFamily(FontFamily::Mono),
                 TextColumn::make('ip_address')
                     ->label(__('dashboard.security_events.ip_address'))
@@ -80,5 +80,13 @@ class RecentSecurityEvents extends TableWidget
             ->defaultSort('created_at', 'desc')
             ->paginated([5, 10, 25])
             ->defaultPaginationPageOption(5);
+    }
+
+    private static function localizeContextValue(string $value): string
+    {
+        $key = "resources/activity_log.contexts.$value";
+        $translated = __($key);
+
+        return $translated === $key ? str_replace('_', ' ', $value) : $translated;
     }
 }

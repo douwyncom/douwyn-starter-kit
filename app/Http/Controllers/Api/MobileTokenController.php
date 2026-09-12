@@ -27,7 +27,7 @@ class MobileTokenController extends Controller
         );
 
         return MobileTokenPairResource::make($tokenPair)
-            ->additional(['message' => __('Access refreshed successfully.')]);
+            ->additional(['message' => __('auth.messages.access_refreshed')]);
     }
 
     public function logout(

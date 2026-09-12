@@ -2,9 +2,13 @@
 
 ## Supported versions
 
-Security fixes are made on the current `main` branch and, when practical, the
-latest tagged stable release. Older releases may require upgrading before a
-fix can be applied.
+Security fixes are made on the current `main` branch and, when practical,
+the latest stable application release listed on
+[GitHub Releases](https://github.com/douwyncom/douwyn-starter-kit/releases).
+There is no guaranteed long-term support or backport window for older releases;
+users may need to upgrade to receive a fix. The application release, Platform
+capability, HTTP API, and Nuxt client have independent version numbers; include
+the affected artifact's version when reporting.
 
 ## Report a vulnerability
 

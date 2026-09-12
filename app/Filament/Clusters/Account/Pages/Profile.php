@@ -30,14 +30,15 @@ class Profile extends Page implements HasForms
 
     protected static ?string $cluster = AccountCluster::class;
 
-    protected static ?string $title = 'Profile';
-
     public static function getNavigationLabel(): string
     {
         return __('pages/account.profile.title');
     }
 
-    protected ?string $subheading = 'Manage your personal information.';
+    public function getTitle(): string|Htmlable
+    {
+        return __('pages/account.profile.title');
+    }
 
     public function getSubheading(): string|Htmlable|null
     {
@@ -84,7 +85,7 @@ class Profile extends Page implements HasForms
                             ->columnSpan(['default' => 1, 'lg' => 2])
                             ->schema([
                                 TextInput::make('email')
-                                    ->label('Email')
+                                    ->label(__('pages/account.profile.email'))
                                     ->disabled()
                                     ->dehydrated(false)
                                     ->helperText(__('pages/account.profile.email_helper')),
@@ -164,13 +165,21 @@ class Profile extends Page implements HasForms
             ]
         );
 
+        $locale = (string) ($state['locale'] ?? config('app.locale'));
+        $localeChanged = $locale !== app()->getLocale();
+
+        if ($localeChanged) {
+            session()->put('locale', $locale);
+            app()->setLocale($locale);
+        }
+
         Notification::make()
             ->title(__('pages/account.saved'))
             ->body(__('pages/account.profile.saved'))
             ->success()
             ->send();
 
-        if ($state['locale'] !== app()->getLocale()) {
+        if ($localeChanged) {
             redirect(request()->header('Referer'));
         }
     }

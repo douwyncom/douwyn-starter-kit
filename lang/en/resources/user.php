@@ -5,6 +5,8 @@ declare(strict_types=1);
 return [
     'navigation_label' => 'Users',
     'navigation_group' => 'User management',
+    'resource_label' => 'user',
+    'plural_resource_label' => 'Users',
     'sections' => [
         'account' => 'Account',
         'account_helper' => 'Login credentials and email verification.',
@@ -47,5 +49,7 @@ return [
         'sessions_revoked' => 'Browser login sessions have been revoked.',
         'cannot_deactivate_self' => 'You cannot deactivate your own account.',
         'last_super_admin' => 'The final Super Admin cannot be removed, deactivated, or deleted.',
+        'cannot_assign_roles' => 'You are not authorized to assign roles.',
+        'only_super_admin_assign_system_roles' => 'Only a super administrator can assign administrative roles.',
     ],
 ];

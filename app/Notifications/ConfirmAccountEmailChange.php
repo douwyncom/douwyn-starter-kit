@@ -23,15 +23,15 @@ class ConfirmAccountEmailChange extends Notification implements ShouldBeEncrypte
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('Confirm your new email address'))
-            ->line(__('Confirm this address to finish changing your account email.'))
+            ->subject(__('notifications.confirm_email_change.subject'))
+            ->line(__('notifications.confirm_email_change.intro'))
             ->action(
-                __('Confirm email change'),
+                __('notifications.confirm_email_change.action'),
                 AccountActionUrl::make(
                     (string) config('auth_lifecycle.frontend_urls.email_change'),
                     $this->token,
                 ),
             )
-            ->line(__('If you did not request this change, secure your account immediately.'));
+            ->line(__('notifications.confirm_email_change.outro'));
     }
 }

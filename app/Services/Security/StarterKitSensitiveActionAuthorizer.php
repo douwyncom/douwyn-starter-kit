@@ -60,7 +60,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
         $freshUser = User::query()->whereKey($user->getKey())->first();
 
         if (! $freshUser || $freshUser->is_inactive) {
-            throw new AuthorizationException(__('Account is inactive.'));
+            throw new AuthorizationException(__('auth.errors.account_inactive'));
         }
 
         $factor = $this->configuredFactor($freshUser);
@@ -110,7 +110,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
         if (($result['error'] ?? null) === 'account_inactive') {
             $this->recordFailure($user, $request, $context, 'account_inactive');
 
-            throw new AuthorizationException(__('Account is inactive.'));
+            throw new AuthorizationException(__('auth.errors.account_inactive'));
         }
 
         if (($result['error'] ?? null) === 'invalid_password') {
@@ -118,7 +118,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
             $this->recordFailure($user, $request, $context, 'invalid_password');
 
             throw ValidationException::withMessages([
-                'current_password' => [__('pages/account.password.current_password_helper')],
+                'current_password' => [__('auth.errors.current_password_incorrect')],
             ]);
         }
 
@@ -126,7 +126,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
             $this->recordFailure($user, $request, $context, 'email_factor_not_enabled');
 
             throw ValidationException::withMessages([
-                'two_factor' => [__('Email two-factor authentication is not enabled.')],
+                'two_factor' => [__('auth.errors.email_two_factor_not_enabled')],
             ]);
         }
 
@@ -226,7 +226,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
         if ($error === 'account_inactive') {
             $this->recordFailure($user, $request, $context, $error);
 
-            throw new AuthorizationException(__('Account is inactive.'));
+            throw new AuthorizationException(__('auth.errors.account_inactive'));
         }
 
         if ($error === 'invalid_password') {
@@ -234,7 +234,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
             $this->recordFailure($user, $request, $context, $error);
 
             throw ValidationException::withMessages([
-                'current_password' => [__('pages/account.password.current_password_helper')],
+                'current_password' => [__('auth.errors.current_password_incorrect')],
             ]);
         }
 
@@ -248,7 +248,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
             );
 
             throw ValidationException::withMessages([
-                'otp' => [__('The current two-factor code or a recovery code is required.')],
+                'otp' => [__('auth.errors.current_factor_required')],
             ]);
         }
 
@@ -264,7 +264,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
             $field = $credentials->recoveryCode() !== null ? 'recovery_code' : 'otp';
 
             throw ValidationException::withMessages([
-                $field => [__('Invalid or expired code.')],
+                $field => [__('auth.errors.invalid_or_expired_code')],
             ]);
         }
 
@@ -364,7 +364,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
                 (string) $authenticated->getAuthIdentifier(),
                 (string) $user->getAuthIdentifier(),
             )) {
-            throw new AuthorizationException(__('Unauthenticated.'));
+            throw new AuthorizationException(__('auth.errors.unauthenticated'));
         }
 
         return $user;
@@ -433,7 +433,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
     private function rateLimitException(string $rateKey, string $field): ValidationException
     {
         return ValidationException::withMessages([
-            $field => [__('Too many verification attempts. Please try again in :seconds seconds.', [
+            $field => [__('auth.errors.verification_attempts_throttled_seconds', [
                 'seconds' => RateLimiter::availableIn($rateKey),
             ])],
         ]);
@@ -442,7 +442,7 @@ final class StarterKitSensitiveActionAuthorizer implements SensitiveActionAuthor
     private function invalidAuthorization(): AuthorizationException
     {
         return new AuthorizationException(
-            __('Sensitive-action authorization is invalid or expired.'),
+            __('auth.errors.sensitive_action_authorization_invalid'),
         );
     }
 

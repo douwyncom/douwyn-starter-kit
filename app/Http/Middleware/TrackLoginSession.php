@@ -37,7 +37,7 @@ class TrackLoginSession
 
             if ($request->is('api/*')) {
                 return new JsonResponse([
-                    'message' => __('The browser session has been revoked.'),
+                    'message' => __('api.errors.session_revoked'),
                     'code' => 'session_revoked',
                 ], 401);
             }

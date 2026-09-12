@@ -32,14 +32,15 @@ class GeneralSettings extends Page implements HasForms
 
     protected static ?string $cluster = SettingsCluster::class;
 
-    protected static ?string $title = 'General';
-
     public static function getNavigationLabel(): string
     {
         return __('pages/settings.general.title');
     }
 
-    protected ?string $subheading = 'Base configuration used across the app.';
+    public function getTitle(): string|Htmlable
+    {
+        return __('pages/settings.general.title');
+    }
 
     public function getSubheading(): string|Htmlable|null
     {
@@ -143,11 +144,26 @@ class GeneralSettings extends Page implements HasForms
         SettingsStore::set('general', 'timezone', $state['timezone']);
         SettingsStore::set('general', 'locale', $state['locale']);
 
+        $locale = (string) $state['locale'];
+        $profileLocale = auth()->user()?->profile?->locale;
+        $localeChanged = false;
+
+        if (! in_array($profileLocale, config('app.supported_locales', []), true)
+            && $locale !== app()->getLocale()) {
+            session()->put('locale', $locale);
+            app()->setLocale($locale);
+            $localeChanged = true;
+        }
+
         Notification::make()
             ->title(__('pages/settings.saved'))
             ->body(__('pages/settings.general.saved'))
             ->success()
             ->send();
+
+        if ($localeChanged) {
+            redirect(request()->header('Referer'));
+        }
     }
 
     private function defaults(): array

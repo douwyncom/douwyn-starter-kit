@@ -20,5 +20,4 @@
 /tests/Feature/LedgerUserProvisioningFilamentTest.php export-ignore
 /tests/Integration/DistributedLedgerTest.php export-ignore
 /tests/Support/distributed_ledger_worker.php export-ignore
-CHANGELOG.md export-ignore
 .styleci.yml export-ignore

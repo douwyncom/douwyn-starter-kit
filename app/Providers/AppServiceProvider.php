@@ -6,6 +6,7 @@ use App\Enums\ApiErrorCode;
 use App\Models\PersonalAccessToken;
 use App\Models\Setting;
 use App\Observers\SettingObserver;
+use Dedoc\Scramble\OpenApiContext;
 use Dedoc\Scramble\Scramble;
 use Dedoc\Scramble\Support\Generator\Header as OpenApiHeader;
 use Dedoc\Scramble\Support\Generator\OpenApi;
@@ -43,7 +44,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Setting::observe(SettingObserver::class);
 
-        Scramble::afterOpenApiGenerated(function (OpenApi $openApi) use ($errorCodes): void {
+        Scramble::afterOpenApiGenerated(function (OpenApi $openApi, OpenApiContext $context) use ($errorCodes): void {
+            $this->restoreRelativeApiServers($openApi, $context);
+
             $cookieScheme = SecurityScheme::apiKey('cookie', (string) config('session.cookie'))
                 ->as('sanctumCookie')
                 ->setDescription('First-party Sanctum session cookie. Mutating requests also require CSRF protection.');
@@ -85,7 +88,7 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(30)->by('refresh-ip:'.$request->ip()),
             Limit::perMinute(10)->by('refresh-token:'.hash(
                 'sha256',
-                (string) $request->input('refresh_token'),
+                $this->stringInput($request, 'refresh_token'),
             )),
         ]);
 
@@ -93,7 +96,7 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(10)->by('password-forgot-ip:'.$request->ip()),
             Limit::perMinute(3)->by('password-forgot-email:'.hash_hmac(
                 'sha256',
-                Str::lower(trim((string) $request->input('email'))),
+                Str::lower(trim($this->stringInput($request, 'email'))),
                 (string) config('app.key'),
             )),
         ]);
@@ -102,7 +105,7 @@ class AppServiceProvider extends ServiceProvider
             Limit::perMinute(20)->by('account-token-ip:'.$request->ip()),
             Limit::perMinute(5)->by('account-token:'.hash(
                 'sha256',
-                (string) $request->input('token'),
+                $this->stringInput($request, 'token'),
             )),
         ]);
 
@@ -136,19 +139,26 @@ class AppServiceProvider extends ServiceProvider
 
     private function authAttemptRateKey(Request $request): ?string
     {
-        $email = Str::lower(trim((string) $request->input('email')));
+        $email = Str::lower(trim($this->stringInput($request, 'email')));
 
         if ($email !== '') {
             return 'identity:'.hash_hmac('sha256', $email, (string) config('app.key'));
         }
 
-        $challenge = trim((string) $request->input('challenge_token'));
+        $challenge = trim($this->stringInput($request, 'challenge_token'));
 
         if ($challenge !== '') {
             return 'challenge:'.hash_hmac('sha256', $challenge, (string) config('app.key'));
         }
 
         return null;
+    }
+
+    private function stringInput(Request $request, string $key): string
+    {
+        $value = $request->input($key);
+
+        return is_string($value) ? $value : '';
     }
 
     private function documentApiLifecycle(OpenApi $openApi, ApiErrorCodeRegistry $errorCodes): void
@@ -217,6 +227,26 @@ class AppServiceProvider extends ServiceProvider
                         description: 'Optional migration documentation link with rel="deprecation".',
                         schema: Schema::fromType(new StringType),
                     ));
+                }
+            }
+        }
+    }
+
+    private function restoreRelativeApiServers(OpenApi $openApi, OpenApiContext $context): void
+    {
+        // Scramble expands relative server URLs through Laravel's URL generator.
+        // Restore the configured paths so exported contracts do not depend on APP_URL.
+        foreach ($context->config->get('servers', []) ?: [] as $description => $configuredUrl) {
+            if (! is_string($configuredUrl)
+                || parse_url($configuredUrl, PHP_URL_SCHEME) !== null
+                || str_starts_with($configuredUrl, '//')) {
+                continue;
+            }
+
+            foreach ($openApi->servers as $server) {
+                if ($server->description === (string) $description
+                    && $server->url === url($configuredUrl ?: '/')) {
+                    $server->url = $configuredUrl ?: '/';
                 }
             }
         }

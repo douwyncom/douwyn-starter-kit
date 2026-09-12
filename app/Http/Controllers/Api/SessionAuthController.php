@@ -31,7 +31,7 @@ class SessionAuthController extends Controller
         $sessions->login($user, $request);
 
         return response()->json([
-            'message' => __('Account created successfully.'),
+            'message' => __('auth.messages.account_created'),
             'data' => [
                 'credential_type' => AuthCredentialType::SESSION->value,
                 'user' => UserResource::make($user->load('profile')),
@@ -58,7 +58,7 @@ class SessionAuthController extends Controller
             );
 
             return response()->json([
-                'message' => __('Two-factor authentication is required.'),
+                'message' => __('auth.messages.two_factor_required'),
                 'code' => 'two_factor_required',
                 'data' => [
                     'challenge_token' => $issuedChallenge->plainTextToken,
@@ -73,7 +73,7 @@ class SessionAuthController extends Controller
         $telemetry->loginSucceeded($user, $request, 'nuxt_session', AuthCredentialType::SESSION);
 
         return response()->json([
-            'message' => __('Logged in successfully.'),
+            'message' => __('auth.messages.logged_in'),
             'data' => [
                 'credential_type' => AuthCredentialType::SESSION->value,
                 'user' => UserResource::make($user->load('profile')),
@@ -85,6 +85,6 @@ class SessionAuthController extends Controller
     {
         $sessions->logout($request);
 
-        return response()->json(['message' => __('Logged out successfully.')]);
+        return response()->json(['message' => __('auth.messages.logged_out')]);
     }
 }

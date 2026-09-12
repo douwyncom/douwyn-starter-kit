@@ -6,6 +6,7 @@ use App\Enums\AuthCredentialType;
 use App\Enums\TwoFactorMethod;
 use App\Models\User;
 use App\Rules\PasswordWithinHashLimit;
+use App\Services\Auth\AuthSignature;
 use App\Services\Security\SecurityTelemetry;
 use App\Support\EmailTwoFactor;
 use App\Support\TwoFactor;
@@ -17,6 +18,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -71,9 +73,15 @@ class Login extends SimplePage
             redirect()->intended(Filament::getUrl());
         }
 
+        $pendingUser = $this->getPendingUser();
+
+        if ($pendingUser) {
+            $this->useUserLocale($pendingUser);
+        }
+
         $this->pendingUserUuid = session('pending_user_uuid');
         $this->otpChannel = session('pending_otp_channel');
-        $this->step = $this->getPendingUser() ? 'otp' : 'credentials';
+        $this->step = $pendingUser ? 'otp' : 'credentials';
 
         $this->credentialsForm->fill([
             'email' => '',
@@ -191,6 +199,8 @@ class Login extends SimplePage
             $user->forceFill(['password' => $password])->save();
         }
 
+        $this->useUserLocale($user);
+
         $channel = $this->resolveUserOtpChannel($user);
 
         if (blank($channel)) {
@@ -214,11 +224,12 @@ class Login extends SimplePage
         session([
             'pending_user_uuid' => $this->pendingUserUuid,
             'pending_otp_channel' => $this->otpChannel,
+            'pending_auth_signature' => app(AuthSignature::class)->for($user),
             'pending_started_at' => now()->timestamp,
         ]);
 
         if ($channel === TwoFactorMethod::EMAIL->value) {
-            $this->sendEmailOtp($user);
+            $this->sendEmailOtp($user, 'data.credentials.email');
         }
 
         app(SecurityTelemetry::class)->twoFactorChallengeIssued(
@@ -435,7 +446,7 @@ class Login extends SimplePage
         return null;
     }
 
-    private function sendEmailOtp(User $user): void
+    private function sendEmailOtp(User $user, string $errorField = 'data.otp.otp'): void
     {
         try {
             $this->rateLimit(5);
@@ -451,9 +462,19 @@ class Login extends SimplePage
 
         try {
             EmailTwoFactor::send($user->uuid, $user->email, purpose: 'login');
-        } catch (Throwable $e) {
+        } catch (ValidationException $exception) {
+            $message = collect($exception->errors())->flatten()->first();
+
             throw ValidationException::withMessages([
-                'data.otp.otp' => $e->getMessage(),
+                $errorField => is_string($message)
+                    ? $message
+                    : __('auth.errors.email_code_send_failed'),
+            ]);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            throw ValidationException::withMessages([
+                $errorField => __('auth.errors.email_code_send_failed'),
             ]);
         }
     }
@@ -485,7 +506,21 @@ class Login extends SimplePage
             return null;
         }
 
-        return User::query()->where('uuid', $pendingUserUuid)->first();
+        $user = User::query()->where('uuid', $pendingUserUuid)->first();
+        $signature = session('pending_auth_signature');
+
+        if (! $user
+            || ! is_string($signature)
+            || ! hash_equals($signature, app(AuthSignature::class)->for($user))
+            || ! $user->hasEnabledTwoFactor()
+            || session('pending_otp_channel') !== $this->resolveUserOtpChannel($user)
+            || ($this->pendingUserUuid !== null && $this->pendingUserUuid !== $pendingUserUuid)) {
+            $this->clearPending();
+
+            return null;
+        }
+
+        return $user;
     }
 
     private function clearPending(): void
@@ -495,8 +530,17 @@ class Login extends SimplePage
 
         session()->forget('pending_user_uuid');
         session()->forget('pending_otp_channel');
+        session()->forget('pending_auth_signature');
         session()->forget('pending_remember');
         session()->forget('pending_started_at');
+    }
+
+    private function useUserLocale(User $user): void
+    {
+        $locale = $user->preferredLocale();
+
+        session()->put('locale', $locale);
+        App::setLocale($locale);
     }
 
     private function syncOtpUiMeta(): void

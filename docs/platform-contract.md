@@ -73,6 +73,7 @@ not need to import application classes under `App\`:
 | User model, table, and key | `Contracts\UserModelResolver` |
 | Web/API locale selection | `Contracts\LocaleResolver` |
 | Password/current-2FA step-up | `Contracts\SensitiveActionAuthorizer` and `Security\SensitiveAction*` DTOs |
+| Optional bounded host reports | `Contracts\SystemInsightsReader` |
 | API error catalogue | `Api\ApiErrorCodeRegistry` |
 | Issued token abilities | `Auth\TokenAbilityRegistry` and `Auth\TokenAbilityProfile` |
 
@@ -165,7 +166,7 @@ $authorization = $stepUp->authorize(
     request(),
 );
 
-// Call this on the same singleton, in the same request, immediately before
+// Call this on the same scoped instance, in the same request, immediately before
 // executing the protected operation.
 $stepUp->consume(
     auth()->user(),
@@ -177,11 +178,15 @@ $stepUp->consume(
 
 The action is a stable non-sensitive lowercase identifier; the optional subject
 is HMAC-fingerprinted in telemetry. Only the exact object issued by the bound
-singleton can be consumed. It is single-use, expires within 60 seconds, and is
+scoped instance can be consumed. It is single-use, expires within 60 seconds, and is
 bound to the actor, context, request/session, and current authentication state.
 Constructing, cloning, serializing, or replaying the DTO does not authorize an
 operation. Do not place passwords, OTPs, recovery codes, or the DTO in logs,
 queues, caches, or session data.
+
+The user-model resolver, private-storage resolver, and sensitive-action
+authorizer are scoped to one request or queue job and are reset between Octane
+operations. Do not capture them in a worker-lifetime singleton.
 
 Resolve the configured user model rather than importing `App\Models\User`:
 
@@ -202,6 +207,14 @@ They prefer the authenticated profile locale, then the appropriate request
 preference (web session or API `Accept-Language`), then the General Settings
 locale, and finally application configuration. Only configured `en` and `vi`
 values are accepted.
+
+Filament runs the web locale middleware as persistent Livewire middleware, so
+actions, validation errors, and notifications remain in the same language as
+the page that initiated them. Changing a profile language updates the current
+session immediately; changing the General Settings language does the same for
+users without an explicit profile preference. Queued account notifications
+use the recipient's `HasLocalePreference` value, while API registration stores
+the resolved `Accept-Language` value when the client omits `locale`.
 
 Registries are singletons. A module may extend them during its provider's
 `boot()` method; registrations then affect subsequently issued credentials,
@@ -240,6 +253,53 @@ A module using only the original Platform 2 contracts may correctly require
 API or media-disk contracts requires `^2.1`. Module and platform release
 numbers do not need to match. A module using private storage or
 sensitive-action authorization contracts requires `^2.2`.
+
+## Optional host reports
+
+`Contracts\SystemInsightsReader` is an additive, container-resolved host seam.
+It has no dependency on a private module and exposes no arbitrary query, table,
+filesystem, log or mutation interface. A consumer supporting older Platform
+2.2 hosts must check both `interface_exists(SystemInsightsReader::class)` and
+`app()->bound(SystemInsightsReader::class)` before offering these reports.
+Other functionality remains available when this optional seam is absent.
+
+The host implementation authorizes every report call, including inactive-account
+checks. `authorize(actor, report)` lets a consumer determine which reports to
+offer without reading their data. Report names and host permissions are:
+
+| Report | Method | Host permission |
+| --- | --- | --- |
+| `users_statistics` | `usersStatistics(actor, start, end, comparisonStart = null, comparisonEnd = null)` with `DateTimeImmutable` bounds | `users.view` |
+| `queue_status` | `queueStatus(actor)` | `system.queue.view` |
+| `access_guide` | `accessGuide(actor, locale)` | `panel.access` |
+
+Registration counts use an inclusive UTC start and exclusive UTC end. Results
+include the previous interval of equal elapsed duration by default, numerical
+delta and a percentage rounded to two decimals. Supply both optional comparison
+bounds to compare complete calendar months or another explicit interval; each
+interval is validated independently and does not need the same duration.
+Percentage is `null` when the comparison count is zero. The reader bounds
+intervals to 367 elapsed days, allowing a
+consumer's 366-calendar-day interval across a daylight-saving offset change.
+Current total/active/inactive accounts are labeled with the observation time;
+they describe `is_inactive`, not login activity or historical account status.
+No user identifier, email, profile or authentication secret is returned.
+
+Queue reports count rows across the configured database jobs table and, when
+supported, all rows in the configured failed-job database table. Counts separate
+unreserved ready, unreserved delayed and reserved rows. A reserved row is not
+proof of a live worker. Payloads, queue names, exception text and connection
+credentials are never returned. Unsupported backends and unavailable storage
+return explicit status and `null` counts instead of zero; the reader does not
+contact Redis/SQS/other backends or perform retry/delete/restart operations.
+
+The access guide accepts only explicit `en` or `vi` and returns curated host
+instructions maintained alongside the user/role forms and policies. It does not
+inspect a caller-provided path or grant access. Token restrictions are a separate
+consumer HTTP concern; the host reader always checks actor permissions.
+`app:starter-kit-install` creates `system.queue.view` idempotently and does not
+grant it to `admin` or `staff`. The existing `super_admin` all-permissions install
+behavior is preserved.
 
 ## Compatibility policy
 

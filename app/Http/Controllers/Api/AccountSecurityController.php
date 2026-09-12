@@ -64,7 +64,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('Authenticator setup started.'),
+            'message' => __('auth.messages.authenticator_setup_started'),
             'data' => $this->serializeSetup($setup),
         ], 201, self::SENSITIVE_RESPONSE_HEADERS);
     }
@@ -84,7 +84,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('Authenticator two-factor authentication enabled.'),
+            'message' => __('auth.messages.authenticator_enabled'),
             'data' => $result,
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
@@ -104,7 +104,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('A verification code has been sent to your email address.'),
+            'message' => __('auth.messages.email_code_sent'),
             'data' => $this->serializeSetup($setup),
         ], 201, self::SENSITIVE_RESPONSE_HEADERS);
     }
@@ -122,7 +122,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('A verification code has been sent to your email address.'),
+            'message' => __('auth.messages.email_code_sent'),
         ]);
     }
 
@@ -141,7 +141,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('Email two-factor authentication enabled.'),
+            'message' => __('auth.messages.email_two_factor_enabled'),
             'data' => $result,
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }
@@ -159,7 +159,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('A verification code has been sent to your email address.'),
+            'message' => __('auth.messages.email_code_sent'),
         ]);
     }
 
@@ -179,7 +179,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('Two-factor authentication disabled.'),
+            'message' => __('auth.messages.two_factor_disabled'),
             'data' => ['two_factor' => $status],
         ]);
     }
@@ -200,7 +200,7 @@ class AccountSecurityController extends Controller
         );
 
         return response()->json([
-            'message' => __('Recovery codes regenerated.'),
+            'message' => __('auth.messages.recovery_codes_regenerated'),
             'data' => $result,
         ], headers: self::SENSITIVE_RESPONSE_HEADERS);
     }

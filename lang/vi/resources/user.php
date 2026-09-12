@@ -5,6 +5,8 @@ declare(strict_types=1);
 return [
     'navigation_label' => 'Người dùng',
     'navigation_group' => 'Quản lý người dùng',
+    'resource_label' => 'người dùng',
+    'plural_resource_label' => 'Người dùng',
     'sections' => [
         'account' => 'Tài khoản',
         'account_helper' => 'Thông tin đăng nhập và xác minh email.',
@@ -34,7 +36,7 @@ return [
         'active' => 'Hoạt động',
         'two_factor' => '2FA',
         'sessions' => 'Phiên',
-        'api_tokens' => 'API token',
+        'api_tokens' => 'Mã API',
     ],
     'actions' => [
         'activate' => 'Kích hoạt',
@@ -46,6 +48,8 @@ return [
         'status_updated' => 'Đã cập nhật trạng thái tài khoản.',
         'sessions_revoked' => 'Đã thu hồi các phiên đăng nhập trình duyệt.',
         'cannot_deactivate_self' => 'Bạn không thể vô hiệu hóa tài khoản của chính mình.',
-        'last_super_admin' => 'Không thể xóa, vô hiệu hóa hoặc gỡ vai trò Super Admin cuối cùng.',
+        'last_super_admin' => 'Không thể xóa, vô hiệu hóa hoặc gỡ vai trò của quản trị viên cấp cao cuối cùng.',
+        'cannot_assign_roles' => 'Bạn không có quyền gán vai trò.',
+        'only_super_admin_assign_system_roles' => 'Chỉ quản trị viên cấp cao mới có thể gán vai trò quản trị hệ thống.',
     ],
 ];

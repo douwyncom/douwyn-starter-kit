@@ -24,7 +24,7 @@ class EditRole extends EditRecord
 
             if ($submittedName !== $record->name || $submittedGuard !== $record->guard_name) {
                 throw ValidationException::withMessages([
-                    'data.name' => __('System role names and guards cannot be changed.'),
+                    'data.name' => __('resources/role.messages.system_role_immutable'),
                 ]);
             }
         }
@@ -41,7 +41,7 @@ class EditRole extends EditRecord
 
         if ($panelAccess && ! in_array((string) $panelAccess->getKey(), $selectedPermissions, true)) {
             throw ValidationException::withMessages([
-                'data.permissions' => __('The super administrator role must retain panel access.'),
+                'data.permissions' => __('resources/role.messages.super_admin_requires_panel_access'),
             ]);
         }
     }

@@ -25,6 +25,10 @@ return [
         'expired' => 'Expired',
         'revoked' => 'Revoked',
     ],
+    'devices' => [
+        'unknown_browser' => 'Unknown browser',
+        'unknown_device' => 'Unknown device',
+    ],
     'actions' => [
         'view_user' => 'Manage user',
         'revoke' => 'Revoke session',

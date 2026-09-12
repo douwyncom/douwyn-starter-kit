@@ -6,47 +6,70 @@ and private modules maintain their own compatibility versions.
 
 ## [Unreleased]
 
-## [1.2.0] - 2026-08-15
+## [1.2.0] - 2026-09-06
 
 ### Added
 
-- Platform 2.2 validated private-storage resolver for confidential local/S3
-  module attachments.
-- Platform 2.2 sensitive-action authorization contract with password,
-  current 2FA/recovery verification, rate limiting, and security telemetry.
-- Permission-based Filament panel access resolver so private modules can use
-  least-privilege roles without granting the built-in `admin` role.
-- Regression coverage for Filament email/authenticator login flows and opaque
-  browser-session identifier resolution, ownership, revocation, and legacy
-  backfill behavior.
+- Platform 2.2 private-storage and sensitive-action authorization contracts,
+  with permission-based Filament panel access for least-privilege roles.
+- Laravel Octane with Swoole configuration, scoped request services, runtime
+  preflight checks, Supervisor template, and English/Vietnamese operations guides.
+- English/Vietnamese localization coverage for UI, validation, API errors,
+  account notifications, and two-factor email delivery.
+- GitHub Actions quality gates and tag-based releases, plus issue and pull
+  request templates for public contributions.
 
 ### Changed
 
-- Raised the commercial-module platform contract from `2.1.0` to `2.2.0`;
-  modules targeting an older Platform release must publish a compatible
-  Platform 2.2 version before installation.
-- Canonicalized new boolean setting metadata to `bool` while retaining read and
-  write compatibility with existing `boolean` rows.
-- Removed the public roadmap for commercial features and dormant third-party
-  OTP login branches from the open-source core; Filament now exposes only the
-  built-in email and authenticator-app factors.
-- Updated the Nuxt API package build so TypeScript declarations are emitted
-  before export validation and build warnings fail the release check.
-- Corrected PHP 8.5 string interpolation, Eloquent generic annotations, and the
-  mutable authorization registry declaration so IDE/static analysis matches
-  runtime behavior.
-- Regenerated the OpenAPI and TypeScript contracts with accurate nullable and
-  `date-time` metadata for user and authentication responses.
+- Raised the independent platform capability from `2.1.0` to `2.2.0`.
+- Redesigned the Filament administration theme and clarified panel access,
+  installation, Nuxt package builds, upgrade steps, and public test coverage.
+- Made generated OpenAPI server URLs relative to the current host so the
+  public contract is reproducible across development and CI environments.
+- Canonicalized boolean setting metadata while retaining existing `boolean`
+  rows, and corrected generated nullable/date-time API metadata.
+- Included the changelog in source release archives.
+
+### Fixed
+
+- Preserved module-specific API error codes and continued rendering the
+  original error when locale resolution fails.
+- Return validation errors for malformed email, password, and token JSON
+  inputs instead of failing before validation.
+- Preserved locale selection through Livewire requests, account/settings
+  changes, pending 2FA logins, public pages, and early API exceptions.
+- Honored `.env` Octane runtime requirements and exported environment
+  overrides; corrected the OpenSwoole PHP 8.5 minimum version check.
+- Refreshed user-model configuration, storage resolvers, sensitive-action
+  authorization state, and permission state between Octane operations.
+- Corrected Nginx PHP/dotfile handling and queue timeout guidance in the
+  deployment examples.
 
 ### Security
 
-- Re-query and lock each current profile row during key rotation so a
-  concurrent profile update cannot be overwritten by an earlier snapshot.
-- Generalized the public-boundary guard to reject tracked `modules/` files,
-  private module namespaces, and non-core routes in generated OpenAPI/Nuxt
-  contracts.
-- Updated `league/commonmark`, Nuxt, and affected JavaScript transitive
-  dependencies to patched releases; Composer and Bun security audits are clean.
+- Invalidated pending Filament 2FA challenges when passwords or factor
+  configuration change.
+- Updated Filament to 5.7.8 and Livewire to 4.4.3 to address published security
+  advisories; updated Browserslist to the patched 4.28.9 release line.
+- Re-query and lock current profile rows during encryption-key rotation,
+  preventing concurrent profile edits from being overwritten.
+- Strengthened the public-boundary guard against private modules and
+  non-core routes appearing in tracked files or generated API contracts.
+
+### Upgrade notes
+
+- Keep `APP_KEY` unchanged and back up the database and encryption keys.
+  Review [profile encryption](docs/profile-data-encryption.md) before upgrading
+  from a release older than 1.1.0.
+- Install the committed lockfiles, run `php artisan migrate --force` and
+  `php artisan app:starter-kit-install`, rebuild frontend assets and application
+  caches, then restart queue workers and reload Octane if used.
+- Private modules must declare compatibility with Platform 2.2 before use.
+  Application, platform, HTTP API, and Nuxt package versions are independent.
+- Users already waiting for a 2FA code during deployment must restart login.
+- Conventional Laravel serving remains supported. Octane requires a compatible
+  Swoole/OpenSwoole extension; follow the operations guide and validate worker
+  isolation and load on the actual deployment environment before rollout.
 
 ## [1.1.0] - 2026-07-28
 

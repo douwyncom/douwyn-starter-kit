@@ -46,10 +46,6 @@ class Security extends Page implements HasForms
 
     protected static ?string $cluster = AccountCluster::class;
 
-    protected static ?string $title = 'Security';
-
-    protected ?string $subheading = 'Configure two-factor authentication (2FA).';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
     protected static ?int $navigationSort = 1;
@@ -68,6 +64,11 @@ class Security extends Page implements HasForms
     public array $newRecoveryCodes = [];
 
     public static function getNavigationLabel(): string
+    {
+        return __('pages/account.security.title');
+    }
+
+    public function getTitle(): string|Htmlable
     {
         return __('pages/account.security.title');
     }
@@ -111,7 +112,7 @@ class Security extends Page implements HasForms
                                     ->schema([
                                         TextInput::make('current_password')
                                             ->label(__('pages/account.password.current_password'))
-                                            ->helperText(__('Confirm your password before changing or regenerating two-factor settings.'))
+                                            ->helperText(__('pages/account.security.current_password_helper'))
                                             ->password()
                                             ->revealable()
                                             ->maxLength(72)
@@ -119,10 +120,10 @@ class Security extends Page implements HasForms
                                             ->autocomplete('current-password'),
 
                                         TextInput::make('current_factor_code')
-                                            ->label(__('Current 2FA or recovery code'))
+                                            ->label(__('pages/account.security.current_factor_code'))
                                             ->helperText(fn (): string => $this->isEmailEnabled()
-                                                ? __('Request an email code below, then enter it here. A recovery code is also accepted.')
-                                                : __('Enter the current authenticator code or a recovery code.'))
+                                                ? __('pages/account.security.current_factor_email_helper')
+                                                : __('pages/account.security.current_factor_app_helper'))
                                             ->password()
                                             ->revealable()
                                             ->maxLength(64)
@@ -131,14 +132,14 @@ class Security extends Page implements HasForms
 
                                         Actions::make([
                                             Action::make('sendCurrentFactorEmailCode')
-                                                ->label(__('Send current-factor email code'))
+                                                ->label(__('pages/account.security.send_current_factor_email_code'))
                                                 ->icon(Heroicon::OutlinedEnvelope)
                                                 ->visible(fn (): bool => $this->isEmailEnabled())
                                                 ->action('sendCurrentFactorEmailCode'),
                                         ])->visible(fn (): bool => $this->isEmailEnabled()),
 
                                         Radio::make('two_factor_method')
-                                            ->label('2FA method')
+                                            ->label(__('pages/account.security.two_factor_method'))
                                             ->options($this->methodOptions())
                                             ->descriptions($this->methodDescriptions())
                                             ->required()
@@ -206,7 +207,7 @@ class Security extends Page implements HasForms
                                         Actions::make([
                                             Action::make('sendEmailCode')
                                                 ->label(fn (): string => $this->isEmailPending()
-                                                    ? __('Resend verification code')
+                                                    ? __('pages/account.security.resend_verification_code')
                                                     : __('pages/account.security.email_send_code'))
                                                 ->icon(Heroicon::OutlinedEnvelope)
                                                 ->action('sendEmailCode'),
@@ -237,7 +238,7 @@ class Security extends Page implements HasForms
                             ->schema([
                                 SchemaView::make('filament.clusters.account.partials.recovery-codes')
                                     ->viewData(fn () => [
-                                        'method' => $this->user()->two_factor_method?->value ?? TwoFactorMethod::NONE->value,
+                                        'method' => ($this->user()->two_factor_method ?? TwoFactorMethod::NONE)->getLabel(),
                                         'enabled' => $this->isEnabled(),
                                         'codes' => $this->newRecoveryCodes,
                                         'remaining' => count((array) ($this->user()->two_factor_recovery_codes ?? [])),
@@ -294,8 +295,8 @@ class Security extends Page implements HasForms
             $this->fillFormFromUser();
 
             Notification::make()
-                ->title(__('Saved'))
-                ->body(__('Two-factor authentication disabled.'))
+                ->title(__('pages/account.saved'))
+                ->body(__('pages/account.security.disabled_body'))
                 ->success()
                 ->send();
 
@@ -323,10 +324,10 @@ class Security extends Page implements HasForms
         $this->clearStepUpFields();
 
         Notification::make()
-            ->title(__('Saved'))
+            ->title(__('pages/account.saved'))
             ->body($method === TwoFactorMethod::APP
-                ? __('Scan the new authenticator secret and confirm its code.')
-                : __('A verification code has been sent to your email address.'))
+                ? __('pages/account.security.app_setup_started')
+                : __('pages/account.security.email_setup_started'))
             ->success()
             ->send();
     }
@@ -349,7 +350,7 @@ class Security extends Page implements HasForms
 
         Notification::make()
             ->title(__('pages/account.security.regenerated'))
-            ->body(__('The active authenticator remains valid until this new secret is confirmed.'))
+            ->body(__('pages/account.security.active_authenticator_until_confirmed'))
             ->info()
             ->send();
     }
@@ -360,7 +361,7 @@ class Security extends Page implements HasForms
 
         if (! $token || ! $this->isAppPending()) {
             throw ValidationException::withMessages([
-                'data.otp_code' => [__('The two-factor setup is invalid or expired.')],
+                'data.otp_code' => [__('pages/account.security.setup_invalid_or_expired')],
             ]);
         }
 
@@ -446,7 +447,7 @@ class Security extends Page implements HasForms
 
         if (! $token || ! $this->isEmailPending()) {
             throw ValidationException::withMessages([
-                'data.email_code' => [__('The two-factor setup is invalid or expired.')],
+                'data.email_code' => [__('pages/account.security.setup_invalid_or_expired')],
             ]);
         }
 
@@ -660,8 +661,8 @@ class Security extends Page implements HasForms
     private function notifyNoChanges(): void
     {
         Notification::make()
-            ->title(__('Saved'))
-            ->body(__('No two-factor changes were required.'))
+            ->title(__('pages/account.saved'))
+            ->body(__('pages/account.security.no_changes'))
             ->success()
             ->send();
     }
