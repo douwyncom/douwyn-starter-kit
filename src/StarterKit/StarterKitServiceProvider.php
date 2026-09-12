@@ -63,7 +63,7 @@ final class StarterKitServiceProvider extends ServiceProvider
     {
         // Resolving the registry here executes compatibility checks registered
         // by every auto-discovered module before the application can serve work.
-        (void)$modules->count();
+        (void) $modules->count();
 
         if ($this->app->runningInConsole()) {
             $this->commands([
