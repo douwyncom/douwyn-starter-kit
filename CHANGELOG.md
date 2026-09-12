@@ -6,10 +6,12 @@ and private modules maintain their own compatibility versions.
 
 ## [Unreleased]
 
-## [1.2.0] - 2026-09-06
+## [1.2.0] - 2026-09-12
 
 ### Added
 
+- Added the optional SystemInsightsReader contract for authorized user
+  statistics, queue aggregates, and bilingual access instructions.
 - Platform 2.2 private-storage and sensitive-action authorization contracts,
   with permission-based Filament panel access for least-privilege roles.
 - Laravel Octane with Swoole configuration, scoped request services, runtime
@@ -32,6 +34,11 @@ and private modules maintain their own compatibility versions.
 
 ### Fixed
 
+- Fixed PHP cast spacing in the platform service provider.
+- Made public OpenAPI response metadata reproducible with empty or migrated
+  databases, preserving nullable profile fields and date-time formats. Corrected
+  the generated name types for users without a profile, aligned Nuxt user
+  timestamp types, and added regression coverage for schema-independent generation.
 - Preserved module-specific API error codes and continued rendering the
   original error when locale resolution fails.
 - Return validation errors for malformed email, password, and token JSON

@@ -69,8 +69,8 @@ export interface User {
   email_verified_at: ISODateString | null
   two_factor_enabled: boolean
   profile: UserProfile
-  created_at: ISODateString
-  updated_at: ISODateString
+  created_at: ISODateString | null
+  updated_at: ISODateString | null
 }
 
 export interface AccountActionTokenPayload {

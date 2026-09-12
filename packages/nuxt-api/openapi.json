@@ -6549,7 +6549,8 @@
                                                     "type": "boolean"
                                                 },
                                                 "expires_at": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "format": "date-time"
                                                 }
                                             },
                                             "required": [
@@ -7687,10 +7688,16 @@
                         "type": "object",
                         "properties": {
                             "first_name": {
-                                "type": "string"
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
                             },
                             "last_name": {
-                                "type": "string"
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
                             },
                             "phone": {
                                 "type": [

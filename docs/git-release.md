@@ -118,16 +118,30 @@ php artisan test --compact
 bun install --frozen-lockfile
 bun audit
 bun run build
+bun run api:generate
 bun run nuxt-api:typecheck
 bun run nuxt-api:test
 bun run nuxt-api:build
-bun run api:generate
-git diff --exit-code -- packages/nuxt-api/openapi.json packages/nuxt-api/src/openapi.ts
+git diff --exit-code -- packages/nuxt-api/openapi.json packages/nuxt-api/src/openapi.ts packages/nuxt-api/dist
 ```
 
 Regenerate API artifacts in a checkout without private modules. If the API
 intentionally changes, review and commit the generated diff before running the
 last check again. Do not commit local absolute server URLs.
+
+If `check:public-boundary` passes but the generated-file check fails, the
+committed OpenAPI/TypeScript artifacts differ from a fresh generation. Review
+the diff, fix response type metadata in the PHP source when needed, then run
+`bun run api:generate` followed by `bun run nuxt-api:build` and commit all three
+artifact locations above. Do not edit generated types by hand or disable the
+check.
+
+Public response types must remain stable without database tables. CI exports
+the contract in a separate process using an empty SQLite `:memory:` database;
+migrations run by the test process do not persist into that export process.
+Use explicit Scramble field annotations for nullable model attributes and
+date/time values when inference would depend on the database schema. The
+public contract regression test compares exports with and without migrations.
 
 The public PHP suite uses SQLite. PostgreSQL/MySQL concurrency, Redis locks,
 paid-module integration, and real Swoole worker behavior require separate

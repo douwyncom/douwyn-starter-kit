@@ -857,8 +857,8 @@ export interface components {
             email_verified_at: string | null;
             two_factor_enabled: boolean;
             profile: {
-                first_name: string;
-                last_name: string;
+                first_name: string | null;
+                last_name: string | null;
                 phone: string | null;
                 locale: string | null;
                 timezone: string | null;
@@ -3723,6 +3723,7 @@ export interface operations {
                             challenge_token: string;
                             method: string;
                             recovery_available: boolean;
+                            /** Format: date-time */
                             expires_at: string;
                         };
                     };

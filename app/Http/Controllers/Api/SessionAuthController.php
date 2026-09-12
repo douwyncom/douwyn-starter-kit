@@ -12,6 +12,7 @@ use App\Services\Auth\CredentialAuthenticator;
 use App\Services\Auth\SessionIssuer;
 use App\Services\Auth\UserRegistrationService;
 use App\Services\Security\SecurityTelemetry;
+use Carbon\CarbonInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -64,6 +65,7 @@ class SessionAuthController extends Controller
                     'challenge_token' => $issuedChallenge->plainTextToken,
                     'method' => $user->two_factor_method->value,
                     'recovery_available' => ! empty($user->two_factor_recovery_codes),
+                    /** @var CarbonInterface */
                     'expires_at' => $issuedChallenge->challenge->expires_at,
                 ],
             ], 202, self::AUTH_RESPONSE_HEADERS);

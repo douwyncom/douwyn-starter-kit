@@ -91,10 +91,11 @@ jobs:
           bun run nuxt-api:typecheck
           bun run nuxt-api:build
 
-      - name: Verify the public source boundary and generated files
-        run: |
-          composer check:public-boundary
-          git diff --exit-code
+      - name: Verify the public source boundary
+        run: composer check:public-boundary
+
+      - name: Verify generated files are committed
+        run: git diff --exit-code
 
       - name: Audit PHP dependencies
         run: composer audit --locked --no-interaction
