@@ -54,6 +54,8 @@ and private modules maintain their own compatibility versions.
 
 ### Security
 
+- Updated js-yaml to 4.3.2 and SVGO to 4.1.0 to address dependency advisories
+  detected by the release audit.
 - Invalidated pending Filament 2FA challenges when passwords or factor
   configuration change.
 - Updated Filament to 5.7.8 and Livewire to 4.4.3 to address published security
