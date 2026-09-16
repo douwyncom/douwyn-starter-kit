@@ -6,15 +6,16 @@ use App\Filament\Resources\ActivityLogs\Pages\ManageActivityLogs;
 use App\Filament\Resources\ActivityLogs\Schemas\ActivityLogForm;
 use App\Filament\Resources\ActivityLogs\Tables\ActivityLogsTable;
 use BackedEnum;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Models\Activity;
+use UnitEnum;
 
 class ActivityLogResource extends Resource
 {
@@ -49,6 +50,13 @@ class ActivityLogResource extends Resource
         return auth()->user()?->can('activity_logs.view') ?? false;
     }
 
+    public static function getAuthorizationResponse(string|UnitEnum $action, ?Model $record = null): Response
+    {
+        return in_array($action, ['viewAny', 'view'], true) && static::canAccess()
+            ? Response::allow()
+            : Response::deny();
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ActivityLogForm::configure($schema);
@@ -58,18 +66,11 @@ class ActivityLogResource extends Resource
     {
         return ActivityLogsTable::configure($table)
             ->recordActions([
-                ViewAction::make()->visible(fn (): bool => auth()->user()?->can('activity_logs.view') ?? false),
-                DeleteAction::make()
-                    ->authorize(fn (): bool => auth()->user()?->can('activity_logs.delete') ?? false)
-                    ->visible(fn (): bool => auth()->user()?->can('activity_logs.delete') ?? false),
+                ViewAction::make()
+                    ->modalWidth(Width::SevenExtraLarge)
+                    ->authorize(fn (Activity $record): bool => static::canView($record)),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorize(fn (): bool => auth()->user()?->can('activity_logs.delete') ?? false)
-                        ->visible(fn (): bool => auth()->user()?->can('activity_logs.delete') ?? false),
-                ]),
-            ]);
+            ->toolbarActions([]);
     }
 
     public static function getPages(): array

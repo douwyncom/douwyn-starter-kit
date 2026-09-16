@@ -11,6 +11,7 @@ return [
         'security' => 'Security',
     ],
     'fields' => [
+        'id' => 'Log ID',
         'log_name' => 'Log Name',
         'description' => 'Description',
         'event' => 'Event',

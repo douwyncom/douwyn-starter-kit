@@ -6,6 +6,13 @@ and private modules maintain their own compatibility versions.
 
 ## [Unreleased]
 
+### Fixed
+
+- Made system activity logs read-only in the admin panel, including server-side
+  rejection of delete actions even for legacy delete permissions. Display the
+  log ID explicitly and preserve subject/causer UUIDs and sanitized nested
+  properties in the detail modal.
+
 ## [1.2.0] - 2026-09-12
 
 ### Added

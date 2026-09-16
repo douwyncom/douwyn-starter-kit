@@ -13,6 +13,7 @@ return [
         'security' => 'Bảo mật',
     ],
     'fields' => [
+        'id' => 'ID nhật ký',
         'log_name' => 'Tên nhật ký',
         'description' => 'Mô tả',
         'event' => 'Sự kiện',

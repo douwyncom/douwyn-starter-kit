@@ -78,7 +78,6 @@ class StarterKitInstallCommand extends Command
 
                 // Activity logs
                 'activity_logs.view',
-                'activity_logs.delete',
 
                 'system.queue.view',
             ];

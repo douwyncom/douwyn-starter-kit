@@ -5,7 +5,7 @@ namespace App\Filament\Resources\ActivityLogs\Schemas;
 use App\Support\ActivityLogSanitizer;
 use App\Support\Timezone;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -18,7 +18,7 @@ class ActivityLogForm
     {
         return $schema->components([
             Grid::make(1)
-                ->columnSpan(2)
+                ->columnSpanFull()
                 ->schema([
                     Grid::make([
                         'default' => 1,
@@ -33,6 +33,11 @@ class ActivityLogForm
                             ->schema([
                                 Grid::make(2)
                                     ->schema([
+                                        TextInput::make('id')
+                                            ->label(__('resources/activity_log.fields.id'))
+                                            ->formatStateUsing(fn (int|string|null $state): ?string => $state === null ? null : (string) $state)
+                                            ->readOnly()
+                                            ->dehydrated(false),
                                         TextInput::make('log_name')
                                             ->label(__('resources/activity_log.fields.log_name'))
                                             ->formatStateUsing(self::localizeLogName(...)),
@@ -67,21 +72,29 @@ class ActivityLogForm
                                 TextInput::make('subject_type')
                                     ->label(__('resources/activity_log.fields.subject_type')),
                                 TextInput::make('subject_id')
-                                    ->label(__('resources/activity_log.fields.subject_id')),
+                                    ->label(__('resources/activity_log.fields.subject_id'))
+                                    ->readOnly()
+                                    ->dehydrated(false),
                                 TextInput::make('causer_type')
                                     ->label(__('resources/activity_log.fields.causer_type')),
                                 TextInput::make('causer_id')
-                                    ->label(__('resources/activity_log.fields.causer_id')),
+                                    ->label(__('resources/activity_log.fields.causer_id'))
+                                    ->readOnly()
+                                    ->dehydrated(false),
                             ]),
 
                         Section::make(__('resources/activity_log.sections.properties'))
                             ->columnSpanFull()
                             ->schema([
-                                KeyValue::make('properties')
+                                Textarea::make('properties')
                                     ->label(__('resources/activity_log.fields.properties'))
-                                    ->keyLabel(__('resources/activity_log.fields.field'))
-                                    ->valueLabel(__('resources/activity_log.fields.value'))
-                                    ->formatStateUsing(fn (mixed $state): array => ActivityLogSanitizer::sanitize($state)),
+                                    ->rows(12)
+                                    ->readOnly()
+                                    ->dehydrated(false)
+                                    ->formatStateUsing(fn (mixed $state): string => json_encode(
+                                        ActivityLogSanitizer::sanitize($state),
+                                        JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE | JSON_THROW_ON_ERROR,
+                                    )),
                             ]),
                     ]),
                 ]),
