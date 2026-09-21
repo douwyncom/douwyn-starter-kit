@@ -6,6 +6,12 @@ and private modules maintain their own compatibility versions.
 
 ## [Unreleased]
 
+### Changed
+
+- Updated all Filament packages from 5.7.8 to 5.8.4 and raised the minimum
+  supported Filament version to 5.8.4 while retaining the Filament 5 / Livewire 4
+  stack.
+
 ### Fixed
 
 - Made system activity logs read-only in the admin panel, including server-side
