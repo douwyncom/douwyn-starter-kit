@@ -18,6 +18,7 @@ class ApiDeviceController extends Controller
         $sessions = ApiDeviceSession::query()
             ->where('user_uuid', $request->user()->getAuthIdentifier())
             ->latest('last_seen_at')
+            ->latest('id')
             ->paginate(20);
 
         return ApiDeviceSessionResource::collection($sessions);

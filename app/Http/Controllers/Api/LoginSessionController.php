@@ -37,6 +37,7 @@ class LoginSessionController extends Controller
         $sessions = $user->loginSessions()
             ->active()
             ->latest('last_active_at')
+            ->latest('id')
             ->paginate(20);
 
         return LoginSessionResource::collection($sessions)->additional([
