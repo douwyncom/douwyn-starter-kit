@@ -53,10 +53,10 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => Color::Neutral,
                 'secondary' => Color::Neutral,
                 'gray' => Color::Neutral,
-                'danger' => Color::Neutral,
-                'success' => Color::Neutral,
-                'warning' => Color::Neutral,
-                'info' => Color::Neutral,
+                'danger' => Color::Red,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'info' => Color::Blue,
             ])
             ->font('Manrope Variable', provider: LocalFontProvider::class)
             ->monoFont('IBM Plex Mono', provider: LocalFontProvider::class)
