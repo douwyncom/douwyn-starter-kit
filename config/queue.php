@@ -44,6 +44,20 @@ return [
             'after_commit' => false,
         ],
 
+        // Domain inventory sync can run for 30 minutes; keep its reservation separate.
+        'database-domains' => [
+            'driver' => 'database',
+            'connection' => env('DB_QUEUE_CONNECTION'),
+            'table' => env('DB_QUEUE_TABLE', 'jobs'),
+            'queue' => env('DOMAINS_QUEUE', 'domains'),
+            'retry_after' => max(
+                (int) env('DOMAINS_QUEUE_RETRY_AFTER', 2100),
+                (int) env('DOMAINS_OPERATION_TIMEOUT', 60) + 300,
+                (int) env('DOMAINS_SYNC_OPERATION_TIMEOUT', 1800) + 300,
+            ),
+            'after_commit' => true,
+        ],
+
         'beanstalkd' => [
             'driver' => 'beanstalkd',
             'host' => env('BEANSTALKD_QUEUE_HOST', 'localhost'),

@@ -15,6 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Database\Eloquent\Builder;
 
 class RecentLoginSessions extends TableWidget
 {
@@ -32,6 +33,19 @@ class RecentLoginSessions extends TableWidget
     public function getTableHeading(): string
     {
         return __('dashboard.recent_sessions.heading');
+    }
+
+    public function getAllSelectableTableRecordKeys(): array
+    {
+        return $this->getFilteredTableQuery()->limit(1000)->get()
+            ->map(fn (LoginSession $record): string => $this->getTableRecordKey($record))->all();
+    }
+
+    public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
+    {
+        return $this->withRawLoginSessionSelection(
+            fn (): Builder => parent::getSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize),
+        );
     }
 
     public function table(Table $table): Table

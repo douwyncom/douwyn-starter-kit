@@ -120,7 +120,8 @@ class RoleForm
                                         modifyQueryUsing: fn ($query) => $query->where('guard_name', 'web')->orderBy('name'),
                                     )
                                     // ✅ Make labels readable (prevents ugly wrapping)
-                                    ->getOptionLabelFromRecordUsing(fn ($record): string => (string) $record->name)
+                                    ->getOptionLabelFromRecordUsing(fn ($record): string => $record->name === 'tables.export'
+                                        ? __('table.bulk.export_permission') : (string) $record->name)
                                     ->searchable()
                                     ->bulkToggleable()
                                     // ✅ Only increase columns when the container is wide enough

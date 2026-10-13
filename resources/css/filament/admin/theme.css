@@ -1,5 +1,15 @@
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 
+@source '../../../../vendor/douwyncom/starter-kit-domains/src/Filament/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-domains/resources/views/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-telegram/src/Filament/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-discord/src/Filament/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-telegram/resources/views/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-whatsapp/src/Filament/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-licensing/src/Filament/**/*';
+@source '../../../../vendor/douwyncom/starter-kit-licensing/resources/views/**/*';
+
+
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 

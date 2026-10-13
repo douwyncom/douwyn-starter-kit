@@ -14,6 +14,10 @@ and private modules maintain their own compatibility versions.
 
 ### Fixed
 
+- Record editable module models and configuration changes in the system activity
+  log, redact secrets before storage, and audit Telegram menu mutations and
+  successful remote command changes. Add filtering by module log name.
+
 - Made system activity logs read-only in the admin panel, including server-side
   rejection of delete actions even for legacy delete permissions. Display the
   log ID explicitly and preserve subject/causer UUIDs and sanitized nested

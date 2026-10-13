@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Enums\ApiErrorCode;
+use App\Filament\Tables\SelectableTable;
 use App\Models\PersonalAccessToken;
 use App\Models\Setting;
 use App\Observers\SettingObserver;
@@ -19,6 +20,7 @@ use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Dedoc\Scramble\Support\Generator\Types\ObjectType;
 use Dedoc\Scramble\Support\Generator\Types\StringType;
 use Douwyn\StarterKit\Api\ApiErrorCodeRegistry;
+use Filament\Tables\Table;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -33,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(Table::class, SelectableTable::class);
+
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
         Scramble::ignoreDefaultRoutes();
     }

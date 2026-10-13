@@ -115,4 +115,10 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'branding' => [
+        'name' => env('MAIL_BRAND_NAME', 'Douwyn'),
+        'url' => env('MAIL_BRAND_URL', 'https://douwyn.com'),
+        'support_address' => env('MAIL_SUPPORT_ADDRESS', 'contact@douwyn.com'),
+    ],
+
 ];

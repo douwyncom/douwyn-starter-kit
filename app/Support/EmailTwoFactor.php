@@ -2,9 +2,9 @@
 
 namespace App\Support;
 
+use App\Mail\TwoFactorCodeMail;
 use App\Models\TwoFactorCode;
 use App\Models\User;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -83,19 +83,9 @@ class EmailTwoFactor
             });
 
             $record = $delivery['record'];
-            $previousLocale = App::currentLocale();
-
-            try {
-                App::setLocale($delivery['locale']);
-                Mail::raw(__('notifications.two_factor.body', [
-                    'code' => $code,
-                    'minutes' => self::CODE_EXPIRATION_MINUTES,
-                ]), function ($message) use ($email): void {
-                    $message->to($email)->subject(__('notifications.two_factor.subject'));
-                });
-            } finally {
-                App::setLocale($previousLocale);
-            }
+            Mail::to($email)
+                ->locale($delivery['locale'])
+                ->send(new TwoFactorCodeMail($code, self::CODE_EXPIRATION_MINUTES, $purpose));
         } catch (Throwable $exception) {
             RateLimiter::decrement($key);
 

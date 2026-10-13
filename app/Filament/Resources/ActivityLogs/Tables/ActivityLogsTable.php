@@ -8,6 +8,7 @@ use Filament\Support\Enums\FontFamily;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogsTable
 {
@@ -57,6 +58,15 @@ class ActivityLogsTable
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('log_name')
+                    ->label(__('resources/activity_log.fields.log_name'))
+                    ->options(static fn (): array => Activity::query()
+                        ->whereNotNull('log_name')
+                        ->distinct()
+                        ->orderBy('log_name')
+                        ->pluck('log_name')
+                        ->mapWithKeys(static fn (string $name): array => [$name => self::localizeLogName($name)])
+                        ->all()),
                 SelectFilter::make('event')
                     ->label(__('resources/activity_log.fields.event'))
                     ->options([
@@ -64,6 +74,7 @@ class ActivityLogsTable
                         'updated' => __('resources/activity_log.events.updated'),
                         'deleted' => __('resources/activity_log.events.deleted'),
                         'restored' => __('resources/activity_log.events.restored'),
+                        'commands_updated' => __('resources/activity_log.events.commands_updated'),
                         ...SecurityEvent::options(),
                     ]),
             ])

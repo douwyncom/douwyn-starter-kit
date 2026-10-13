@@ -24,5 +24,28 @@ return [
     'two_factor' => [
         'subject' => 'Mã xác minh của bạn',
         'body' => "Mã xác minh của bạn là: :code\n\nMã này sẽ hết hạn sau :minutes phút.",
+        'preheader' => 'Mã xác minh dùng một lần của bạn có hiệu lực trong :minutes phút.',
+        'eyebrow' => 'Bảo mật tài khoản',
+        'title' => 'Xác minh danh tính của bạn.',
+        'code_label' => 'Mã xác minh',
+        'expires' => 'Hiệu lực :minutes phút',
+        'one_time' => 'Mã chỉ dùng một lần. Nhập mã tại màn hình xác minh đang mở.',
+        'security_title' => 'Giữ mã này cho riêng bạn.',
+        'security_body' => 'Không chia sẻ mã với bất kỳ ai, kể cả người tự xưng là nhân viên hỗ trợ. Chúng tôi không bao giờ yêu cầu bạn gửi mã qua email, điện thoại hoặc tin nhắn.',
+        'not_requested' => 'Nếu bạn không thực hiện yêu cầu này, hãy bỏ qua email. Mã sẽ tự hết hạn.',
+        'help' => 'Cần trợ giúp?',
+        'automated' => 'Email được gửi tự động để bảo vệ tài khoản của bạn.',
+        'contexts' => [
+            'login' => 'Xác nhận đăng nhập',
+            'setup' => 'Thiết lập xác thực hai yếu tố',
+            'security' => 'Xác nhận thao tác bảo mật',
+            'verification' => 'Xác minh tài khoản',
+        ],
+        'intros' => [
+            'login' => 'Chúng tôi đã nhận được yêu cầu đăng nhập vào tài khoản của bạn. Sử dụng mã bên dưới để tiếp tục.',
+            'setup' => 'Bạn đang thiết lập xác thực hai yếu tố qua email. Sử dụng mã bên dưới để xác nhận phương thức bảo mật này.',
+            'security' => 'Một thao tác bảo mật cần được xác nhận trên tài khoản của bạn. Sử dụng mã bên dưới để tiếp tục yêu cầu đang thực hiện.',
+            'verification' => 'Sử dụng mã bên dưới để hoàn tất yêu cầu xác minh tài khoản của bạn.',
+        ],
     ],
 ];

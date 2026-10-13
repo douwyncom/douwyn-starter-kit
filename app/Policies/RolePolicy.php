@@ -49,6 +49,11 @@ class RolePolicy
             && ! $role->isSystemRole();
     }
 
+    public function deleteAny(User $user): bool
+    {
+        return $user->hasRole('super_admin') && $user->hasPermissionTo('roles.delete');
+    }
+
     /**
      * Determine whether the user can restore the model.
      */

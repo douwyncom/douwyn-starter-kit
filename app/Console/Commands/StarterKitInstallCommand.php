@@ -46,6 +46,7 @@ class StarterKitInstallCommand extends Command
             $permissions = [
                 // Panel
                 'panel.access',
+                'tables.export',
 
                 // Users
                 'users.view',
@@ -86,6 +87,7 @@ class StarterKitInstallCommand extends Command
                 'super_admin' => ['*'], // special handling
                 'admin' => [
                     'panel.access',
+                    'tables.export',
                     'users.view', 'users.create', 'users.update', 'users.delete',
                     'login_sessions.view', 'login_sessions.revoke',
                     'roles.view',

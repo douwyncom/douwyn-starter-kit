@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Roles\Tables;
 
+use App\Models\Role;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -10,6 +11,7 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 
 class RolesTable
 {
@@ -59,8 +61,11 @@ class RolesTable
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete')
-                        ->visible(fn () => auth()->user()?->hasRole(['super_admin']) ?? false),
+                        ->authorize(fn (): bool => auth()->user()?->can('deleteAny', Role::class) ?? false)
+                        ->authorizeIndividualRecords(fn (Role $record): bool => ! $record->isSystemRole()
+                            && (auth()->user()?->can('delete', $record) ?? false))
+                        ->visible(fn (): bool => auth()->user()?->can('deleteAny', Role::class) ?? false)
+                        ->before(fn () => Gate::authorize('deleteAny', Role::class)),
                 ]),
             ]);
     }

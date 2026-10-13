@@ -4,10 +4,12 @@ namespace App\Filament\Resources\Users\Tables;
 
 use App\Enums\TokenRevokeReason;
 use App\Enums\TwoFactorMethod;
+use App\Filament\Actions\ChangeSelectedUserStatus;
 use App\Filament\Resources\LoginSessions\LoginSessionResource;
 use App\Models\User;
 use App\Services\Security\SecurityTelemetry;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\FontFamily;
@@ -166,6 +168,12 @@ class UsersTable
                         );
                         Notification::make()->title(__('resources/user.messages.sessions_revoked'))->success()->send();
                     }),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    ChangeSelectedUserStatus::make(inactive: false),
+                    ChangeSelectedUserStatus::make(inactive: true),
+                ]),
             ])
             ->defaultSort('created_at', 'desc');
     }

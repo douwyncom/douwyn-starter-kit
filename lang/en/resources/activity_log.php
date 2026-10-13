@@ -28,6 +28,7 @@ return [
         'new' => 'New Value',
     ],
     'events' => [
+        'commands_updated' => 'Commands updated',
         'created' => 'Created',
         'updated' => 'Updated',
         'deleted' => 'Deleted',

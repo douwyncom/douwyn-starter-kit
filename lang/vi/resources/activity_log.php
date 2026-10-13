@@ -30,6 +30,7 @@ return [
         'new' => 'Giá trị mới',
     ],
     'events' => [
+        'commands_updated' => 'Đã cập nhật lệnh Telegram',
         'created' => 'Đã tạo',
         'updated' => 'Đã cập nhật',
         'deleted' => 'Đã xóa',

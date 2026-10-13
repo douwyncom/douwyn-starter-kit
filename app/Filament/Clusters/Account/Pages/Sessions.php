@@ -21,10 +21,12 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 
 class Sessions extends Page implements HasTable
 {
     use InteractsWithTable, UsesOpaqueLoginSessionTableKeys {
+        InteractsWithTable::getSelectedTableRecordsQuery as protected baseSelectedTableRecordsQuery;
         UsesOpaqueLoginSessionTableKeys::getTableRecordKey insteadof InteractsWithTable;
         UsesOpaqueLoginSessionTableKeys::resolveTableRecord insteadof InteractsWithTable;
     }
@@ -117,6 +119,19 @@ class Sessions extends Page implements HasTable
                     }),
             ])
             ->defaultSort('last_active_at', 'desc');
+    }
+
+    public function getAllSelectableTableRecordKeys(): array
+    {
+        return $this->getFilteredTableQuery()->limit(1000)->get()
+            ->map(fn (LoginSession $record): string => $this->getTableRecordKey($record))->all();
+    }
+
+    public function getSelectedTableRecordsQuery(bool $shouldFetchSelectedRecords = true, ?int $chunkSize = null): Builder
+    {
+        return $this->withRawLoginSessionSelection(
+            fn (): Builder => $this->baseSelectedTableRecordsQuery($shouldFetchSelectedRecords, $chunkSize),
+        );
     }
 
     protected function getHeaderActions(): array

@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Douwyn\StarterKit\Audit\SanitizesActivityLogs;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 trait HasAuditLogs
 {
     use LogsActivity;
+    use SanitizesActivityLogs;
 
     public function getActivitylogOptions(): LogOptions
     {
