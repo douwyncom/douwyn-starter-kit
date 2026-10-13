@@ -30,13 +30,6 @@
         "composer-runtime-api": "^2.2",
         "composer/semver": "^3.4",
         "dedoc/scramble": "^0.13.33",
-        "douwyncom/starter-kit-discord": "^0.1@dev",
-        "douwyncom/starter-kit-domains": "^0.1@dev",
-        "douwyncom/starter-kit-hotel-booking": "^1.0@dev",
-        "douwyncom/starter-kit-licensing": "^0.1@dev",
-        "douwyncom/starter-kit-telegram": "^1.1@dev",
-        "douwyncom/starter-kit-whatsapp": "^0.1@dev",
-        "douwyncom/starter-kit-zalo-oa": "^0.1@dev",
         "ext-gd": "*",
         "ext-mbstring": "*",
         "filament/filament": "^5.8.4",
@@ -116,34 +109,6 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
-        ],
-        "test:domains": "@php vendor/bin/phpunit --configuration modules/starter-kit-domains/phpunit.xml",
-        "test:hotel-booking": "@php artisan test modules/starter-kit-hotel-booking/tests",
-        "test:telegram": "@php vendor/bin/phpunit --configuration modules/starter-kit-telegram/phpunit.xml",
-        "test:whatsapp": "@php vendor/bin/phpunit --configuration modules/starter-kit-whatsapp/phpunit.xml",
-        "test:licensing": "@php vendor/bin/phpunit --configuration modules/starter-kit-licensing/phpunit.xml",
-        "test:app-services": "@php modules/app-services-integration/tests/run.php",
-        "queue:domains": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan queue:work database-domains --queue=domains --timeout=1860 --tries=50"
-        ],
-        "queue:telegram": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan queue:work database --queue=telegram-inbound,telegram-outbound,telegram-broadcast,telegram-campaigns --timeout=80 --tries=3"
-        ],
-        "queue:whatsapp": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan queue:work database --queue=whatsapp-inbound,whatsapp-outbound,whatsapp-broadcast,whatsapp-campaigns --timeout=60"
-        ],
-        "test:zalo-oa": "@php vendor/bin/phpunit --configuration modules/starter-kit-zalo-oa/phpunit.xml",
-        "queue:zalo-oa": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan queue:work --queue=zalo-oa-inbound,zalo-oa-outbound,zalo-oa-campaigns --timeout=65"
-        ],
-        "test:discord": "@php vendor/bin/phpunit --configuration modules/starter-kit-discord/phpunit.xml",
-        "queue:discord": [
-            "Composer\\Config::disableProcessTimeout",
-            "@php artisan queue:work database --queue=discord-inbound,discord-outbound,discord-broadcast,discord-campaigns --timeout=60"
         ]
     },
     "extra": {
@@ -164,23 +129,5 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true,
-    "repositories": {
-        "starter-kit-local": {
-            "type": "path",
-            "url": "modules/starter-kit-*",
-            "options": {
-                "symlink": true,
-                "versions": {
-                    "douwyncom/starter-kit-domains": "0.1.x-dev",
-                    "douwyncom/starter-kit-hotel-booking": "1.0.x-dev",
-                    "douwyncom/starter-kit-telegram": "1.1.x-dev",
-                    "douwyncom/starter-kit-whatsapp": "0.1.x-dev",
-                    "douwyncom/starter-kit-licensing": "0.1.x-dev",
-                    "douwyncom/starter-kit-zalo-oa": "0.1.x-dev",
-                    "douwyncom/starter-kit-discord": "0.1.x-dev"
-                }
-            }
-        }
-    }
+    "prefer-stable": true
 }

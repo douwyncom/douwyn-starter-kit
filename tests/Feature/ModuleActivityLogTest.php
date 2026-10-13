@@ -3,6 +3,7 @@
 use App\Models\Permission;
 use App\Models\Setting;
 use App\Models\User;
+use Composer\InstalledVersions;
 use Douwyn\StarterKit\Modules\Telegram\Contracts\TelegramClient;
 use Douwyn\StarterKit\Modules\Telegram\Filament\Resources\Menus\Pages\EditMenu;
 use Douwyn\StarterKit\Modules\Telegram\Filament\Resources\Menus\RelationManagers\MenuItemsRelationManager;
@@ -17,7 +18,15 @@ use Spatie\Activitylog\Models\Activity;
 
 uses(RefreshDatabase::class);
 
+function requireTelegramAuditModule(): void
+{
+    if (! InstalledVersions::isInstalled('douwyncom/starter-kit-telegram')) {
+        test()->markTestSkipped('The optional Telegram package is not installed in this host.');
+    }
+}
+
 it('audits bot create edit credential rotation and delete with UUID subject and actor', function () {
+    requireTelegramAuditModule();
     $user = User::factory()->create();
     $this->actingAs($user);
     $bot = Bot::query()->create([
@@ -50,6 +59,7 @@ it('audits bot create edit credential rotation and delete with UUID subject and 
 });
 
 it('does not retain an activity when a model transaction rolls back', function () {
+    requireTelegramAuditModule();
     $uuid = null;
     try {
         (new Bot)->getConnection()->transaction(function () use (&$uuid) {
@@ -64,6 +74,7 @@ it('does not retain an activity when a model transaction rolls back', function (
 });
 
 it('logs Telegram menu creation and edits', function () {
+    requireTelegramAuditModule();
     $bot = Bot::query()->create(['name' => 'Menu bot', 'token' => 'secret']);
     $menu = Menu::query()->create(['bot_uuid' => $bot->getKey(), 'name' => 'Menu', 'slug' => 'audit-menu']);
     $menu->update(['name' => 'New menu']);
@@ -82,6 +93,7 @@ it('redacts configuration values in stored core setting logs', function () {
 });
 
 it('records successful remote Telegram command changes and does not log failures', function () {
+    requireTelegramAuditModule();
     $bot = Bot::query()->create([
         'name' => 'Commands bot', 'token' => 'private-token',
         'telegram_bot_id' => 998877, 'is_active' => true,
@@ -101,6 +113,7 @@ it('records successful remote Telegram command changes and does not log failures
 });
 
 it('audits menu item reorder single delete and bulk delete through the admin UI', function () {
+    requireTelegramAuditModule();
     $this->artisan('app:starter-kit-install')->assertSuccessful();
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $actor = User::factory()->create()->assignRole('super_admin');
@@ -131,6 +144,7 @@ it('audits menu item reorder single delete and bulk delete through the admin UI'
 });
 
 it('audits both menus when publishing a new default Telegram menu', function () {
+    requireTelegramAuditModule();
     $this->artisan('app:starter-kit-install')->assertSuccessful();
     Filament::setCurrentPanel(Filament::getPanel('admin'));
     $actor = User::factory()->create()->assignRole('super_admin');

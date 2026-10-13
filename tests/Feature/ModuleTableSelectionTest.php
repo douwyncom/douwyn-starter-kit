@@ -7,6 +7,7 @@ use App\Filament\Tables\SelectableTable;
 use App\Models\Permission;
 use App\Models\User;
 use Composer\Autoload\ClassLoader;
+use Composer\InstalledVersions;
 use Douwyn\StarterKit\Modules\Telegram\Models\Bot;
 use Douwyn\StarterKit\Modules\Telegram\Models\Contact;
 use Filament\Facades\Filament;
@@ -20,7 +21,8 @@ use Illuminate\Support\Facades\Schema;
 uses(RefreshDatabase::class);
 
 it('keeps the shared bulk action in every commercial module resource table', function (): void {
-    if (glob(base_path('modules/starter-kit-*/composer.json')) === []) {
+    $installedModules = array_filter(InstalledVersions::getInstalledPackages(), fn (string $package): bool => str_starts_with($package, 'douwyncom/starter-kit-') && $package !== 'douwyncom/starter-kit-platform');
+    if ($installedModules === [] || glob(base_path('modules/starter-kit-*/composer.json')) === []) {
         $this->markTestSkipped('Commercial modules are not part of the public starter-kit checkout.');
     }
     $this->artisan('app:starter-kit-install')->assertSuccessful();
