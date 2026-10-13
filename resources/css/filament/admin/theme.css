@@ -86,27 +86,27 @@
 
 :root {
     color-scheme: light;
-    --dw-background: #f4f4f0;
-    --dw-chrome: rgb(244 244 240 / 0.88);
-    --dw-surface: #fbfbf8;
-    --dw-surface-muted: #eaeae5;
-    --dw-text: #111113;
-    --dw-text-muted: #66666c;
-    --dw-text-faint: #68686e;
-    --dw-hairline: rgb(17 17 19 / 0.12);
-    --dw-hairline-strong: rgb(17 17 19 / 0.25);
-    --dw-action: #111113;
-    --dw-action-text: #f4f4f0;
-    --dw-focus: #111113;
-    --dw-error: #b42318;
-    --dw-error-surface: #fff1f0;
-    --dw-success: #027a48;
-    --dw-success-surface: #ecfdf3;
-    --dw-warning: #854a0e;
-    --dw-warning-surface: #fff7e6;
-    --dw-info: #175cd3;
-    --dw-info-surface: #eff8ff;
-    --dw-overlay: rgb(13 13 15 / 0.62);
+    --dw-background: #ffffff;
+    --dw-chrome: #ffffff;
+    --dw-surface: #ffffff;
+    --dw-surface-muted: #ffffff;
+    --dw-text: #000000;
+    --dw-text-muted: #000000;
+    --dw-text-faint: #000000;
+    --dw-hairline: rgb(0 0 0 / 0.12);
+    --dw-hairline-strong: rgb(0 0 0 / 0.25);
+    --dw-action: #000000;
+    --dw-action-text: #ffffff;
+    --dw-focus: #000000;
+    --dw-error: var(--dw-text);
+    --dw-error-surface: var(--dw-surface);
+    --dw-success: var(--dw-text);
+    --dw-success-surface: var(--dw-surface);
+    --dw-warning: var(--dw-text);
+    --dw-warning-surface: var(--dw-surface);
+    --dw-info: var(--dw-text);
+    --dw-info-surface: var(--dw-surface);
+    --dw-overlay: rgb(0 0 0 / 0.62);
     --dw-qr-surface: #fff;
     --dw-control-radius: 0.375rem;
     --dw-surface-radius: 0.625rem;
@@ -114,32 +114,32 @@
     --dw-duration-fast: 160ms;
     --dw-duration-state: 240ms;
     --dw-ease: cubic-bezier(0.16, 1, 0.3, 1);
-    --dw-shadow-dropdown: 0 1rem 2.5rem rgb(17 17 19 / 0.12);
-    --dw-shadow-dialog: 0 2rem 5rem rgb(17 17 19 / 0.18);
+    --dw-shadow-dropdown: 0 1rem 2.5rem rgb(0 0 0 / 0.12);
+    --dw-shadow-dialog: 0 2rem 5rem rgb(0 0 0 / 0.18);
 }
 
 .dark {
     color-scheme: dark;
-    --dw-background: #0d0d0f;
-    --dw-chrome: rgb(13 13 15 / 0.88);
-    --dw-surface: #151517;
-    --dw-surface-muted: #202023;
-    --dw-text: #f1f1ec;
-    --dw-text-muted: #a5a5a9;
-    --dw-text-faint: #919197;
-    --dw-hairline: rgb(241 241 236 / 0.13);
-    --dw-hairline-strong: rgb(241 241 236 / 0.27);
-    --dw-action: #f1f1ec;
-    --dw-action-text: #0d0d0f;
-    --dw-focus: #f1f1ec;
-    --dw-error: #ffb4ab;
-    --dw-error-surface: #3a1715;
-    --dw-success: #75e0a7;
-    --dw-success-surface: #123222;
-    --dw-warning: #f5c26b;
-    --dw-warning-surface: #33260c;
-    --dw-info: #84adff;
-    --dw-info-surface: #102a56;
+    --dw-background: #000000;
+    --dw-chrome: #000000;
+    --dw-surface: #000000;
+    --dw-surface-muted: #000000;
+    --dw-text: #ffffff;
+    --dw-text-muted: #ffffff;
+    --dw-text-faint: #ffffff;
+    --dw-hairline: rgb(255 255 255 / 0.13);
+    --dw-hairline-strong: rgb(255 255 255 / 0.27);
+    --dw-action: #ffffff;
+    --dw-action-text: #000000;
+    --dw-focus: #ffffff;
+    --dw-error: var(--dw-text);
+    --dw-error-surface: var(--dw-surface);
+    --dw-success: var(--dw-text);
+    --dw-success-surface: var(--dw-surface);
+    --dw-warning: var(--dw-text);
+    --dw-warning-surface: var(--dw-surface);
+    --dw-info: var(--dw-text);
+    --dw-info-surface: var(--dw-surface);
     --dw-overlay: rgb(0 0 0 / 0.68);
     --dw-shadow-dropdown: 0 1.25rem 3rem rgb(0 0 0 / 0.38);
     --dw-shadow-dialog: 0 2rem 6rem rgb(0 0 0 / 0.5);
@@ -289,22 +289,23 @@ samp,
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
 .fi-sidebar-item.fi-sidebar-item-has-active-child-items > .fi-sidebar-item-btn,
 .fi-topbar-item.fi-active .fi-topbar-item-btn {
-    border-inline-start: 2px solid var(--dw-hairline-strong);
-    background: var(--dw-surface-muted);
+    border-inline-start: 2px solid var(--dw-action);
+    background: var(--dw-action);
 }
 
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-sidebar-item-label,
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn > .fi-icon,
 .fi-sidebar-item.fi-sidebar-item-has-active-child-items > .fi-sidebar-item-btn > .fi-sidebar-item-label,
+.fi-sidebar-item.fi-sidebar-item-has-active-child-items > .fi-sidebar-item-btn > .fi-icon,
 .fi-topbar-item.fi-active .fi-topbar-item-label,
 .fi-topbar-item.fi-active .fi-topbar-item-btn > .fi-icon {
-    color: var(--dw-text);
+    color: var(--dw-action-text);
 }
 
-.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:hover,
-.fi-sidebar-item.fi-sidebar-item-has-url > .fi-sidebar-item-btn:focus-visible,
-.fi-topbar-item-btn:hover,
-.fi-topbar-item-btn:focus-visible {
+.fi-sidebar-item.fi-sidebar-item-has-url:not(.fi-active):not(.fi-sidebar-item-has-active-child-items) > .fi-sidebar-item-btn:hover,
+.fi-sidebar-item.fi-sidebar-item-has-url:not(.fi-active):not(.fi-sidebar-item-has-active-child-items) > .fi-sidebar-item-btn:focus-visible,
+.fi-topbar-item:not(.fi-active) .fi-topbar-item-btn:hover,
+.fi-topbar-item:not(.fi-active) .fi-topbar-item-btn:focus-visible {
     background: var(--dw-surface-muted);
 }
 
@@ -315,7 +316,7 @@ samp,
 
 .fi-global-search-field .fi-input-wrp {
     min-height: 2.5rem;
-    background: color-mix(in srgb, var(--dw-surface) 84%, transparent);
+    background: var(--dw-surface);
 }
 
 .fi-global-search-results-ctn {
@@ -389,6 +390,15 @@ a.fi-breadcrumbs-item-label:is(:hover, :focus-visible) {
     min-height: 2.75rem;
 }
 
+/* Keep action icons and loading indicators on the button's foreground color.
+   Filament's separate icon palette can disappear on our inverted dark-theme CTA. */
+.fi-btn > .fi-icon,
+.fi-btn.fi-outlined.fi-color > .fi-icon,
+.fi-btn:not(.fi-outlined).fi-color:not(label) > .fi-icon,
+.fi-btn > .fi-icon:is(:checked + label > .fi-icon) {
+    color: currentColor;
+}
+
 .fi-icon-btn {
     border-radius: var(--dw-control-radius);
     transition:
@@ -397,15 +407,16 @@ a.fi-breadcrumbs-item-label:is(:hover, :focus-visible) {
         transform var(--dw-duration-press) var(--dw-ease);
 }
 
-.fi-btn.fi-color-primary:not(.fi-outlined):not(label) {
+.fi-btn.fi-color:not(.fi-outlined):not(label) {
     background: var(--dw-action);
     color: var(--dw-action-text);
     box-shadow: none;
 }
 
-.fi-btn.fi-color-primary:not(.fi-outlined):not(label):hover {
+.fi-btn.fi-color:not(.fi-outlined):not(label):hover {
     background: var(--dw-action);
-    opacity: 0.82;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
 }
 
 .fi-btn:not(.fi-disabled):not([disabled]):active,
@@ -681,8 +692,8 @@ input[type='radio'].fi-radio-input:not(:checked) {
 .fi-tabs-item.fi-active,
 .fi-tabs-item.fi-active .fi-tabs-item-label,
 .fi-tabs-item.fi-active > .fi-icon {
-    background: var(--dw-surface-muted);
-    color: var(--dw-text);
+    background: var(--dw-action);
+    color: var(--dw-action-text);
 }
 
 /* Overlays and feedback */
@@ -770,9 +781,64 @@ input[type='radio'].fi-radio-input:not(:checked) {
     color: var(--dw-text-muted);
 }
 
-.fi-badge {
+.fi-badge,
+.fi-badge.fi-color {
+    border: 1px solid var(--dw-hairline-strong);
     border-radius: var(--dw-control-radius);
+    background: var(--dw-surface);
+    color: var(--dw-text);
     box-shadow: none;
+}
+
+.fi-badge .fi-icon,
+.fi-badge .fi-icon.fi-color {
+    color: currentColor;
+}
+
+.fi-btn.fi-outlined,
+.fi-btn.fi-outlined.fi-color {
+    background: var(--dw-surface);
+    color: var(--dw-text);
+}
+
+.fi-link.fi-color,
+.fi-icon-btn,
+.fi-icon-btn.fi-color,
+.fi-icon-btn > .fi-icon,
+.fi-fo-field-wrp-label > sup {
+    color: var(--dw-text);
+}
+
+.fi-toggle,
+.fi-toggle.fi-color {
+    border-color: var(--dw-text);
+    background: var(--dw-surface);
+}
+
+.fi-toggle.fi-toggle-on {
+    background: var(--dw-action);
+}
+
+.fi-toggle > :first-child {
+    background: var(--dw-text);
+}
+
+.fi-toggle.fi-toggle-on > :first-child {
+    background: var(--dw-action-text);
+}
+
+.fi-toggle .fi-icon,
+.fi-toggle.fi-color .fi-icon {
+    color: var(--dw-surface);
+}
+
+.fi-toggle.fi-toggle-on .fi-icon {
+    color: var(--dw-action);
+}
+
+.fi-no-notification.fi-color {
+    background: var(--dw-surface);
+    color: var(--dw-text);
 }
 
 .fi-theme-switcher {
@@ -797,8 +863,12 @@ input[type='radio'].fi-radio-input:not(:checked) {
 .fi-theme-switcher-btn.fi-active,
 .fi-theme-switcher-btn:hover,
 .fi-theme-switcher-btn:focus-visible {
-    background: var(--dw-surface-muted);
-    color: var(--dw-text);
+    background: var(--dw-action);
+    color: var(--dw-action-text);
+}
+
+.fi-theme-switcher-btn > .fi-icon {
+    color: currentColor;
 }
 
 .fi-theme-switcher-btn:focus-visible {
