@@ -99,7 +99,7 @@ the repository public.
 Application tags, the platform capability, HTTP API, Nuxt package, and private
 modules have independent version streams. Choose the next application SemVer
 from existing remote tags; never reuse or move a published tag. The current
-application release is `v1.3.0` with Platform `2.2.0`.
+application release is `v1.3.1` with Platform `2.2.0`.
 
 Prepare changes on a focused branch and update `CHANGELOG.md` with the actual
 release date, behavior changes, security fixes, and upgrade notes. Do not claim
@@ -163,11 +163,11 @@ GitHub Actions quality job to pass. Then tag that exact commit. For example:
 git switch main
 git pull --ff-only
 git status --short
-git tag -a v1.3.0 -m "Douwyn Starter Kit v1.3.0"
-git push origin v1.3.0
+git tag -a v1.3.1 -m "Douwyn Starter Kit v1.3.1"
+git push origin v1.3.1
 ```
 
-Replace `v1.3.0` with the new, unused version when making the next release.
+Replace `v1.3.1` with the new, unused version when making the next release.
 Use `git tag -s` when signing is configured. Push only the intended tag;
 avoid `git push --tags` and never force-push release tags.
 

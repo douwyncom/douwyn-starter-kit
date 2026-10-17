@@ -6,6 +6,24 @@ and private modules maintain their own compatibility versions.
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-10-17
+
+### Changed
+
+- Updated the reference Nuxt client development stack to Nuxt 4.6.2 and aligned
+  its Nuxt Kit and Bun type dependencies. Bun 1.4.3 remains the pinned stable
+  runtime for local checks and GitHub Actions.
+- Documented Nuxt 4.6.2's higher Node.js runtime requirement and explicit Bun
+  execution commands for downstream Nuxt applications.
+
+### Upgrade notes
+
+- Install the committed Bun lockfile and rebuild the Nuxt client. The Laravel
+  HTTP API, Platform 2.2.0, and independent Nuxt client package version are unchanged.
+- The two existing development-tool audit exceptions remain in place until
+  2026-11-16; upgrading Nuxt does not resolve them. See the
+  [dependency audit policy](docs/security-audit.md) for scope and limitations.
+
 ## [1.3.0] - 2026-10-17
 
 ### Added
@@ -198,7 +216,9 @@ and private modules maintain their own compatibility versions.
   public root dependency graph; paid modules are installed only by authorized
   customer applications or private integration fixtures.
 
-[Unreleased]: https://github.com/douwyncom/douwyn-starter-kit/compare/v1.2.0...HEAD
-[1.2.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/douwyncom/douwyn-starter-kit/releases/tag/v1.0.0
+[Unreleased]: https://github.com/douwyncom/douwyn-starter-kit/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/douwyncom/douwyn-starter-kit/compare/d69862b82f322d196ca380bd6cda5993dc6361a7...v1.3.1
+[1.3.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/85f54859e7c3a1901ba78c875eebc22a6d229e46...d69862b82f322d196ca380bd6cda5993dc6361a7
+[1.2.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/587125a4ac05df9c846f0decefffa01023def04d...85f54859e7c3a1901ba78c875eebc22a6d229e46
+[1.1.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/e27555a3050c373ff5a60b67e122e83f10bc4b68...587125a4ac05df9c846f0decefffa01023def04d
+[1.0.0]: https://github.com/douwyncom/douwyn-starter-kit/commit/e27555a3050c373ff5a60b67e122e83f10bc4b68

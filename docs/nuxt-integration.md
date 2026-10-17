@@ -52,6 +52,15 @@ direct stateful configuration below does not implement that architecture.
 
 ## Nuxt module
 
+The reference development stack uses Nuxt 4.6.2, Nuxt Kit 4.6.2, and Bun 1.4.3.
+The client still declares Nuxt `^4.0.0` compatibility; this development-tool
+upgrade does not change its authentication API or independently versioned package.
+
+If running Nuxt with Node.js instead of Bun, Nuxt 4.6.2 requires Node
+`^22.22.3 || ^24.15.0 || >=26.0.0`. This is stricter than the Laravel admin
+asset build's Node requirement. Use `bun --bun run dev` / `bun --bun run build`
+in the Nuxt application to explicitly run its scripts on Bun.
+
 The [`packages/nuxt-api`](../packages/nuxt-api) package provides `useApi()`,
 `useAuth()`, `useAccountLifecycle()`, and `useApiMetadata()` for Nuxt 4. A
 monorepo can use a workspace dependency after building the package. To use it

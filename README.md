@@ -132,6 +132,9 @@ boundary is summarized in [commercial modules](docs/commercial-modules.md).
   after installing dependencies to verify the active CLI runtime.
 - Composer 2.2 or newer and Bun 1.4.3 (the pinned release-check runtime). Vite also needs Node.js 20.19+
   or 22.12+ when its CLI runs under Node.
+  The Nuxt 4.6.2 reference client has a higher Node requirement; see
+  [Nuxt runtime setup](docs/nuxt-integration.md#nuxt-module), or run its scripts
+  explicitly with Bun.
 - PostgreSQL or MySQL and the corresponding PHP PDO extension for the
   application database; PDO SQLite for the public automated tests.
 - Redis with the `phpredis` extension for Redis-backed features; the default

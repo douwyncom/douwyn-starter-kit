@@ -51,6 +51,15 @@ Khi đó triển khai Nitro BFF và giữ credential ở cookie `HttpOnly` của
 
 ## Nuxt module
 
+Stack phát triển tham chiếu sử dụng Nuxt 4.6.2, Nuxt Kit 4.6.2 và Bun 1.4.3.
+Client vẫn khai báo tương thích Nuxt `^4.0.0`; lần nâng công cụ phát triển này
+không thay đổi API xác thực hay phiên bản package được quản lý độc lập.
+
+Nếu chạy Nuxt bằng Node.js thay vì Bun, Nuxt 4.6.2 yêu cầu Node
+`^22.22.3 || ^24.15.0 || >=26.0.0`, cao hơn yêu cầu build asset trang quản trị
+Laravel. Trong ứng dụng Nuxt, dùng `bun --bun run dev` / `bun --bun run build`
+để chạy rõ ràng bằng Bun.
+
 Package [`packages/nuxt-api`](../packages/nuxt-api) cung cấp `useApi()`,
 `useAuth()`, `useAccountLifecycle()` và `useApiMetadata()` cho Nuxt 4. Trong
 monorepo có thể dùng workspace dependency sau khi build. Để dùng từ repository
