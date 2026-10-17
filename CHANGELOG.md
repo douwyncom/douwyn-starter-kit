@@ -1,224 +1,69 @@
 # Changelog
 
-All notable changes to Douwyn Starter Kit are documented here. Releases use
-Semantic Versioning for the application; the platform, HTTP API, Nuxt client,
-and private modules maintain their own compatibility versions.
+All notable public releases of Douwyn Starter Kit are documented here.
+Application, platform, HTTP API, and Nuxt client versions are independent.
 
 ## [Unreleased]
 
-## [1.3.1] - 2026-10-17
+## [1.0.0] - 2026-10-17
 
-### Changed
+This is the consolidated public baseline of the current codebase, not a rollback
+to an earlier development snapshot. Pre-launch release tags were retired at
+the maintainer's request; the source commit history remains intact.
 
-- Updated the reference Nuxt client development stack to Nuxt 4.6.2 and aligned
-  its Nuxt Kit and Bun type dependencies. Bun 1.4.3 remains the pinned stable
-  runtime for local checks and GitHub Actions.
-- Documented Nuxt 4.6.2's higher Node.js runtime requirement and explicit Bun
-  execution commands for downstream Nuxt applications.
+### Included
 
-### Upgrade notes
+- PHP 8.5, Laravel 13, Filament 5.8.4, Livewire 4, and Tailwind CSS 4 backend
+  and administration stack, with English/Vietnamese localization.
+- Sanctum session authentication for first-party Nuxt applications and mobile
+  access tokens with rotating refresh tokens, device binding, idempotent retry,
+  and refresh-token reuse revocation.
+- Email verification, password recovery, email changes, TOTP/email two-factor
+  authentication, recovery controls, and branded HTML/plain-text OTP emails.
+- Permission-controlled user, role, permission, setting, and login-session
+  administration, security dashboard widgets, and protected Scramble API docs.
+- Permission-gated table selection, bounded CSV exports, and bulk actions with
+  current-session, self-deactivation, and last-super-admin protections.
+- Authenticated encryption of personal profile data, verified legacy-data
+  migration, safe key rotation, and redaction of sensitive audit properties.
+- Read-only system activity logs with explicit record IDs and UUID references.
+- Nuxt 4.6.2 reference client stack, Nuxt Kit 4.6.2, Bun 1.4.3 tooling, generated
+  OpenAPI/TypeScript contracts, and SSR-safe cookie/header forwarding.
+- Platform 2.2.0 extension contracts, private/public storage conventions, scoped
+  services, and optional Octane/Swoole deployment configuration.
+- Apache-2.0 licensing, contribution/security/support policies, bilingual
+  integration/operations guides, and GitHub Quality/tag-release automation.
+- A standalone public dependency graph and source archive excluding commercial
+  modules, private integration fixtures, and local environment data.
 
-- Install the committed Bun lockfile and rebuild the Nuxt client. The Laravel
-  HTTP API, Platform 2.2.0, and independent Nuxt client package version are unchanged.
-- The two existing development-tool audit exceptions remain in place until
-  2026-11-16; upgrading Nuxt does not resolve them. See the
-  [dependency audit policy](docs/security-audit.md) for scope and limitations.
+### Security and verification
 
-## [1.3.0] - 2026-10-17
+- Includes the CommonMark 2.10.3, Symfony HttpFoundation/Yaml 8.1.9, and compatible
+  JavaScript dependency security updates from the development baseline.
+- The JavaScript audit policy still has two exact, maintainer-approved Nuxt
+  development-tool exceptions expiring on 2026-11-16. They are not a claim of
+  zero vulnerabilities and do not apply to downstream production dependency
+  paths. See the [dependency audit policy](docs/security-audit.md).
+- Public checks cover 169 PHP tests, 13 Nuxt client tests, 5 audit-policy tests,
+  PHP formatting, frontend/client builds, and generated contract reproducibility.
+  PostgreSQL/Redis concurrency and real Swoole worker behavior require separate
+  deployment-level validation.
 
-### Added
+### Installation and deployment notes
 
-- Permission-gated row selection and bulk actions for core admin lists, with
-  bounded CSV exports, formula-injection protection, and sensitive-field redaction.
-- Bulk user activation/deactivation and session revocation while protecting
-  the current session, the acting administrator, and the last active super-admin.
-- Branded English/Vietnamese OTP emails with HTML and plain-text alternatives.
-- Public regression tests for mobile login, idempotent refresh rotation,
-  refresh-token reuse revocation, logout, and inactive-account rejection.
+- Follow the [installation guide](https://github.com/douwyncom/douwyn-starter-kit/blob/v1.0.0/README.md) and committed lockfiles.
+  Run migrations and `php artisan app:starter-kit-install`, then build assets.
+- Existing development installations must back up the database and preserve
+  `APP_KEY`. Review [profile encryption](docs/profile-data-encryption.md) before
+  migrating plaintext data or rotating keys.
+- Nuxt runs on Bun 1.4.3; when using Node.js instead, Nuxt 4.6.2 requires
+  `^22.22.3 || ^24.15.0 || >=26.0.0`. See the [Nuxt guide](docs/nuxt-integration.md).
+- Restart queue workers/reload Octane after deployments when those services are
+  used. Conventional Laravel serving does not require Swoole.
+- `tables.export` is granted to the default admin and super-admin roles; grant it
+  explicitly to any other role authorized to export data.
+- Application version 1.0.0 does not reset Platform 2.2.0 or the independent Nuxt
+  client package version. Commercial modules remain separately distributed.
 
-### Changed
-
-- Updated Filament to 5.8.4, retaining Filament 5 / Livewire 4.
-- Unified navigation contrast and semantic status colors in the admin theme.
-- Added core query indexes and kept public tests independent of paid modules.
-  Commercial-only test fixtures and benchmarks are excluded from Git and release
-  archives but can remain in the maintainer's local workspace.
-- Standardized release checks on Bun 1.4.3 and refreshed JavaScript lockfiles.
-
-### Fixed
-
-- Restored standalone installation without commercial Composer requirements,
-  path repositories, or module registration.
-- Stabilized login/device session pagination and opaque session identifiers
-  used by bulk actions.
-- Made system activity logs read-only, including server-side rejection of
-  legacy delete permissions. Preserved IDs/UUIDs and sanitized nested properties
-  in detail views, and redacted configuration secrets before storing audit data.
-
-### Security
-
-- Updated CommonMark to 2.10.3, Symfony HttpFoundation/Yaml to 8.1.9, and affected
-  JavaScript dependencies to compatible patched releases.
-- Added a tested, fail-closed JavaScript audit policy. All non-exempt advisories
-  remain blocking. Two maintainer-approved, unpatched Nuxt development-tool
-  advisories are restricted to exact packages/versions and expire on 2026-11-16;
-  see [dependency audit policy](docs/security-audit.md). They are not a claim of
-  zero vulnerabilities and cannot be exempted in production dependency paths.
-
-### Upgrade notes
-
-- Back up the database and preserve `APP_KEY`; changing it can make encrypted
-  profile data unreadable. Install the committed Composer/Bun lockfiles, run
-  `php artisan migrate --force` and `php artisan app:starter-kit-install`, rebuild
-  assets/caches, and restart queue workers or reload Octane when used.
-- The new `tables.export` permission is granted to the default admin and
-  super-admin roles by migration. Grant it explicitly to other authorized roles.
-- Platform remains 2.2.0; HTTP API and Nuxt package version streams are unchanged.
-- Consumers must audit their own Nuxt/Nitro deployment separately; the temporary
-  development-tool exceptions do not transfer to downstream applications.
-
-## [1.2.0] - 2026-09-12
-
-### Added
-
-- Added the optional SystemInsightsReader contract for authorized user
-  statistics, queue aggregates, and bilingual access instructions.
-- Platform 2.2 private-storage and sensitive-action authorization contracts,
-  with permission-based Filament panel access for least-privilege roles.
-- Laravel Octane with Swoole configuration, scoped request services, runtime
-  preflight checks, Supervisor template, and English/Vietnamese operations guides.
-- English/Vietnamese localization coverage for UI, validation, API errors,
-  account notifications, and two-factor email delivery.
-- GitHub Actions quality gates and tag-based releases, plus issue and pull
-  request templates for public contributions.
-
-### Changed
-
-- Raised the independent platform capability from `2.1.0` to `2.2.0`.
-- Redesigned the Filament administration theme and clarified panel access,
-  installation, Nuxt package builds, upgrade steps, and public test coverage.
-- Made generated OpenAPI server URLs relative to the current host so the
-  public contract is reproducible across development and CI environments.
-- Canonicalized boolean setting metadata while retaining existing `boolean`
-  rows, and corrected generated nullable/date-time API metadata.
-- Included the changelog in source release archives.
-
-### Fixed
-
-- Fixed PHP cast spacing in the platform service provider.
-- Made public OpenAPI response metadata reproducible with empty or migrated
-  databases, preserving nullable profile fields and date-time formats. Corrected
-  the generated name types for users without a profile, aligned Nuxt user
-  timestamp types, and added regression coverage for schema-independent generation.
-- Preserved module-specific API error codes and continued rendering the
-  original error when locale resolution fails.
-- Return validation errors for malformed email, password, and token JSON
-  inputs instead of failing before validation.
-- Preserved locale selection through Livewire requests, account/settings
-  changes, pending 2FA logins, public pages, and early API exceptions.
-- Honored `.env` Octane runtime requirements and exported environment
-  overrides; corrected the OpenSwoole PHP 8.5 minimum version check.
-- Refreshed user-model configuration, storage resolvers, sensitive-action
-  authorization state, and permission state between Octane operations.
-- Corrected Nginx PHP/dotfile handling and queue timeout guidance in the
-  deployment examples.
-
-### Security
-
-- Updated js-yaml to 4.3.2 and SVGO to 4.1.0 to address dependency advisories
-  detected by the release audit.
-- Invalidated pending Filament 2FA challenges when passwords or factor
-  configuration change.
-- Updated Filament to 5.7.8 and Livewire to 4.4.3 to address published security
-  advisories; updated Browserslist to the patched 4.28.9 release line.
-- Re-query and lock current profile rows during encryption-key rotation,
-  preventing concurrent profile edits from being overwritten.
-- Strengthened the public-boundary guard against private modules and
-  non-core routes appearing in tracked files or generated API contracts.
-
-### Upgrade notes
-
-- Keep `APP_KEY` unchanged and back up the database and encryption keys.
-  Review [profile encryption](docs/profile-data-encryption.md) before upgrading
-  from a release older than 1.1.0.
-- Install the committed lockfiles, run `php artisan migrate --force` and
-  `php artisan app:starter-kit-install`, rebuild frontend assets and application
-  caches, then restart queue workers and reload Octane if used.
-- Private modules must declare compatibility with Platform 2.2 before use.
-  Application, platform, HTTP API, and Nuxt package versions are independent.
-- Users already waiting for a 2FA code during deployment must restart login.
-- Conventional Laravel serving remains supported. Octane requires a compatible
-  Swoole/OpenSwoole extension; follow the operations guide and validate worker
-  isolation and load on the actual deployment environment before rollout.
-
-## [1.1.0] - 2026-07-28
-
-### Added
-
-- Platform 2.1 locale-only middleware for public, translated module APIs.
-- Platform 2.1 public media-disk convention with local-public and S3 support.
-- Local release-check procedure for PHP, Nuxt, and distributed authentication
-  tests.
-- Authenticated at-rest encryption for personal data in `user_profiles`,
-  including typed encrypted date/enum casts, verified legacy-data migration,
-  tamper detection, and a current-key re-encryption command.
-- Profile encryption deployment, backup, query-limitation, and `APP_KEY`
-  rotation documentation.
-
-### Changed
-
-- Raised the commercial-module platform contract from `2.0.0` to `2.1.0`.
-- Replaced the removed GitHub quality workflow with documented local release
-  checks and the Composer public-boundary command.
-- Disabled database search/sort operations that depended on encrypted profile
-  names, and redacted profile PII keys from security activity properties.
-
-### Security
-
-- Protected profile fields are hidden from generic model serialization while
-  authorized API resources and Filament forms continue to receive decrypted
-  values.
-- Added `APP_PREVIOUS_KEYS` guidance and a verified
-  `app:user-profiles-reencrypt` workflow for safe application-key rotation.
-
-## [1.0.0] - 2026-07-23
-
-### Added
-
-- Apache-2.0 licensing for the public core and official Nuxt API package.
-- Community contribution, conduct, security, support, notice, and trademark
-  policies for public-source development.
-- Commercial-module boundary documentation plus Git and Composer guards that
-  reject private module sources and dependencies from the public repository.
-- Platform 2 authenticated API middleware and configured user-model resolver.
-- Shared `en`/`vi` locale resolution for web and API requests.
-- Extensible API error-code and token-ability profile registries.
-- Platform 2 compatibility capability and runtime host validation.
-- Stable `Douwyn\StarterKit` contracts, module registry, and diagnostic command.
-- Auto-discovered module provider with optional Filament plugin integration.
-- Private module scaffold and Git/module release documentation.
-- A runtime guard for PHP 8.5, native GD/Mbstring, and the built-in OPcache
-  extension.
-
-### Changed
-
-- Raised the minimum runtime to PHP 8.5 and the commercial-module platform
-  contract to `2.0.0`; modules targeting Platform 1 must publish a compatible
-  Platform 2 release before installation.
-- Adopted the PHP 8.5 driver-specific `Pdo\Mysql` SSL option constants.
-- Require native Mbstring for authentication normalization and bounded text
-  processing instead of relying on a userland polyfill.
-- Standardized contact, bug-reporting, security, and commercial support
-  channels on `contact@douwyn.com` and `https://douwyn.com`.
-- Pinned `js-yaml` to the patched 4.3 release line to address
-  `GHSA-52cp-r559-cp3m` in the OpenAPI generation toolchain.
-- Removed the commercial Ledger package and local path repository from the
-  public root dependency graph; paid modules are installed only by authorized
-  customer applications or private integration fixtures.
-
-[Unreleased]: https://github.com/douwyncom/douwyn-starter-kit/compare/v1.3.1...HEAD
-[1.3.1]: https://github.com/douwyncom/douwyn-starter-kit/compare/d69862b82f322d196ca380bd6cda5993dc6361a7...v1.3.1
-[1.3.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/85f54859e7c3a1901ba78c875eebc22a6d229e46...d69862b82f322d196ca380bd6cda5993dc6361a7
-[1.2.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/587125a4ac05df9c846f0decefffa01023def04d...85f54859e7c3a1901ba78c875eebc22a6d229e46
-[1.1.0]: https://github.com/douwyncom/douwyn-starter-kit/compare/e27555a3050c373ff5a60b67e122e83f10bc4b68...587125a4ac05df9c846f0decefffa01023def04d
-[1.0.0]: https://github.com/douwyncom/douwyn-starter-kit/commit/e27555a3050c373ff5a60b67e122e83f10bc4b68
+[Unreleased]: https://github.com/douwyncom/douwyn-starter-kit/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/douwyncom/douwyn-starter-kit/releases/tag/v1.0.0
