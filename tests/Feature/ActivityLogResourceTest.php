@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Filament\Resources\ActivityLogs\ActivityLogResource;
 use App\Filament\Resources\ActivityLogs\Pages\ManageActivityLogs;
 use App\Models\Permission;
+use App\Models\Setting;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,6 +14,17 @@ use Livewire\Livewire;
 use Spatie\Activitylog\Models\Activity;
 
 uses(RefreshDatabase::class);
+
+it('redacts configuration values before storing core setting activity logs', function (): void {
+    $setting = Setting::query()->create([
+        'group' => 'integrations', 'key' => 'api_secret', 'type' => 'string',
+        'value' => 'sensitive-setting-value', 'is_encrypted' => true, 'autoload' => false,
+    ]);
+    $log = Activity::query()->where('subject_id', $setting->getKey())->sole();
+
+    expect($log->properties['attributes']['value'])->toBe('[REDACTED]')
+        ->and($log->toJson())->not->toContain('sensitive-setting-value');
+});
 
 beforeEach(function (): void {
     $this->artisan('app:starter-kit-install')->assertSuccessful();

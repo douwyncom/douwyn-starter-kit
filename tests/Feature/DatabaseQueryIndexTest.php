@@ -33,15 +33,6 @@ function installedQueryIndexGroups(): array
         ];
     }
 
-    $manifest = base_path('modules/testing/query-indexes.php');
-    if (! is_file($manifest) && glob(base_path('modules/starter-kit-*/database/migrations/*.php')) !== []) {
-        throw new LogicException('Private module migrations require the query-index regression catalog.');
-    }
-    foreach (is_file($manifest) ? require $manifest : [] as $definition) {
-        $definition['connection'] = config($definition['connection']) ?: null;
-        $groups[] = $definition;
-    }
-
     // Inspect every present table, even if another optional table is not installed.
     // Consolidated create migrations must never be called again on existing tables.
     foreach ($groups as &$group) {

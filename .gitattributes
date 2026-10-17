@@ -20,4 +20,9 @@
 /tests/Feature/LedgerUserProvisioningFilamentTest.php export-ignore
 /tests/Integration/DistributedLedgerTest.php export-ignore
 /tests/Support/distributed_ledger_worker.php export-ignore
+/tests/Feature/LedgerBulkActionsFilamentTest.php export-ignore
+/tests/Feature/ModuleActivityLogTest.php export-ignore
+/tests/Feature/ModuleTableSelectionTest.php export-ignore
+/tests/Fixtures/ledger-bulk-actions-table.blade.php export-ignore
+/benchmarks/postgresql-indexes.php export-ignore
 .styleci.yml export-ignore

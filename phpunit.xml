@@ -13,6 +13,9 @@
         </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+            <exclude>tests/Feature/LedgerBulkActionsFilamentTest.php</exclude>
+            <exclude>tests/Feature/ModuleActivityLogTest.php</exclude>
+            <exclude>tests/Feature/ModuleTableSelectionTest.php</exclude>
         </testsuite>
     </testsuites>
     <source>

@@ -105,10 +105,21 @@ if (file_exists($root.'/.git')) {
     } else {
         $trackedModuleFiles = [];
         $gitExitCode = 0;
+        $privatePaths = [
+            'modules',
+            'tests/Feature/Ledger*',
+            'tests/Feature/ModuleActivityLogTest.php',
+            'tests/Feature/ModuleTableSelectionTest.php',
+            'tests/Fixtures/ledger-bulk-actions-table.blade.php',
+            'tests/Integration/DistributedLedgerTest.php',
+            'tests/Support/distributed_ledger_worker.php',
+            'benchmarks/postgresql-indexes.php',
+        ];
         exec(
             sprintf(
-                'git -C %s ls-files -- modules 2>&1',
+                'git -C %s ls-files -- %s 2>&1',
                 escapeshellarg($root),
+                implode(' ', array_map(escapeshellarg(...), $privatePaths)),
             ),
             $trackedModuleFiles,
             $gitExitCode,

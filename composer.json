@@ -68,6 +68,11 @@
         }
     },
     "autoload-dev": {
+        "exclude-from-classmap": [
+            "/tests/Feature/LedgerBulkActionsFilamentTest.php",
+            "/tests/Feature/ModuleActivityLogTest.php",
+            "/tests/Feature/ModuleTableSelectionTest.php"
+        ],
         "psr-4": {
             "Tests\\": "tests/"
         }

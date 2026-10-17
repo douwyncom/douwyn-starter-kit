@@ -130,7 +130,7 @@ boundary is summarized in [commercial modules](docs/commercial-modules.md).
 - PHP 8.5 with the extensions required by Laravel, plus GD, native Mbstring,
   and OPcache. Run `composer check-platform-reqs` and `composer check:runtime`
   after installing dependencies to verify the active CLI runtime.
-- Composer 2.2 or newer and Bun 1.3 or newer. Vite also needs Node.js 20.19+
+- Composer 2.2 or newer and Bun 1.4.3 (the pinned release-check runtime). Vite also needs Node.js 20.19+
   or 22.12+ when its CLI runs under Node.
 - PostgreSQL or MySQL and the corresponding PHP PDO extension for the
   application database; PDO SQLite for the public automated tests.
@@ -293,9 +293,13 @@ running it, and use `composer test` so the project script performs that step:
 ```bash
 composer check:runtime
 composer check:public-boundary
-composer test
 vendor/bin/pint --test
+composer audit --locked
+bun install --frozen-lockfile
+bun run audit:js:test
+bun run audit:js
 bun run build
+composer test
 bun run nuxt-api:typecheck
 bun run nuxt-api:test
 bun run nuxt-api:build
@@ -305,6 +309,11 @@ The root Composer capability, runtime platform version, module registry, and
 Filament plugin attachment are covered by the platform contract tests. The
 Nuxt checks remain intentional because `@douwyn/nuxt-api` is an official
 starter-kit client component.
+
+The JavaScript gate currently has two time-limited, maintainer-approved Nuxt
+development-tool exceptions, not a zero-vulnerability claim. All other findings
+remain blocking. See the [dependency audit policy](docs/security-audit.md) for
+exact advisories, scope, expiry, and downstream deployment limitations.
 
 The public suite does not include a two-process mobile-token concurrency test.
 The retained `phpunit.distributed.xml` is configuration for optional integration

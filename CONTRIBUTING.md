@@ -42,9 +42,12 @@ questions follow [SUPPORT.md](SUPPORT.md).
    composer check:runtime
    composer check:public-boundary
    vendor/bin/pint --test
-   composer test
    bun install --frozen-lockfile
+   composer audit --locked
+   bun run audit:js:test
+   bun run audit:js
    bun run build
+   composer test
    bun run nuxt-api:typecheck
    bun run nuxt-api:test
    bun run nuxt-api:build

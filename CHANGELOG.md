@@ -6,22 +6,58 @@ and private modules maintain their own compatibility versions.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-10-17
+
+### Added
+
+- Permission-gated row selection and bulk actions for core admin lists, with
+  bounded CSV exports, formula-injection protection, and sensitive-field redaction.
+- Bulk user activation/deactivation and session revocation while protecting
+  the current session, the acting administrator, and the last active super-admin.
+- Branded English/Vietnamese OTP emails with HTML and plain-text alternatives.
+- Public regression tests for mobile login, idempotent refresh rotation,
+  refresh-token reuse revocation, logout, and inactive-account rejection.
+
 ### Changed
 
-- Updated all Filament packages from 5.7.8 to 5.8.4 and raised the minimum
-  supported Filament version to 5.8.4 while retaining the Filament 5 / Livewire 4
-  stack.
+- Updated Filament to 5.8.4, retaining Filament 5 / Livewire 4.
+- Unified navigation contrast and semantic status colors in the admin theme.
+- Added core query indexes and kept public tests independent of paid modules.
+  Commercial-only test fixtures and benchmarks are excluded from Git and release
+  archives but can remain in the maintainer's local workspace.
+- Standardized release checks on Bun 1.4.3 and refreshed JavaScript lockfiles.
 
 ### Fixed
 
-- Record editable module models and configuration changes in the system activity
-  log, redact secrets before storage, and audit Telegram menu mutations and
-  successful remote command changes. Add filtering by module log name.
+- Restored standalone installation without commercial Composer requirements,
+  path repositories, or module registration.
+- Stabilized login/device session pagination and opaque session identifiers
+  used by bulk actions.
+- Made system activity logs read-only, including server-side rejection of
+  legacy delete permissions. Preserved IDs/UUIDs and sanitized nested properties
+  in detail views, and redacted configuration secrets before storing audit data.
 
-- Made system activity logs read-only in the admin panel, including server-side
-  rejection of delete actions even for legacy delete permissions. Display the
-  log ID explicitly and preserve subject/causer UUIDs and sanitized nested
-  properties in the detail modal.
+### Security
+
+- Updated CommonMark to 2.10.3, Symfony HttpFoundation/Yaml to 8.1.9, and affected
+  JavaScript dependencies to compatible patched releases.
+- Added a tested, fail-closed JavaScript audit policy. All non-exempt advisories
+  remain blocking. Two maintainer-approved, unpatched Nuxt development-tool
+  advisories are restricted to exact packages/versions and expire on 2026-11-16;
+  see [dependency audit policy](docs/security-audit.md). They are not a claim of
+  zero vulnerabilities and cannot be exempted in production dependency paths.
+
+### Upgrade notes
+
+- Back up the database and preserve `APP_KEY`; changing it can make encrypted
+  profile data unreadable. Install the committed Composer/Bun lockfiles, run
+  `php artisan migrate --force` and `php artisan app:starter-kit-install`, rebuild
+  assets/caches, and restart queue workers or reload Octane when used.
+- The new `tables.export` permission is granted to the default admin and
+  super-admin roles by migration. Grant it explicitly to other authorized roles.
+- Platform remains 2.2.0; HTTP API and Nuxt package version streams are unchanged.
+- Consumers must audit their own Nuxt/Nitro deployment separately; the temporary
+  development-tool exceptions do not transfer to downstream applications.
 
 ## [1.2.0] - 2026-09-12
 
