@@ -1,5 +1,5 @@
 {
-    "openapi": "3.1.0",
+    "openapi": "3.1.2",
     "info": {
         "title": "Douwyn API Documentation",
         "version": "1.0.0",
@@ -4411,7 +4411,7 @@
                                                         "type": "string"
                                                     },
                                                     "current": {
-                                                        "type": "string"
+                                                        "type": "boolean"
                                                     }
                                                 },
                                                 "required": [
@@ -4751,7 +4751,8 @@
                                             "type": "object",
                                             "properties": {
                                                 "credential_type": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "const": "session"
                                                 },
                                                 "user": {
                                                     "$ref": "#/components/schemas/UserResource"
@@ -5977,7 +5978,8 @@
                                             "type": "object",
                                             "properties": {
                                                 "credential_type": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "const": "session"
                                                 },
                                                 "user": {
                                                     "$ref": "#/components/schemas/UserResource"
@@ -6094,7 +6096,8 @@
                                             "type": "object",
                                             "properties": {
                                                 "credential_type": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "const": "session"
                                                 },
                                                 "user": {
                                                     "$ref": "#/components/schemas/UserResource"

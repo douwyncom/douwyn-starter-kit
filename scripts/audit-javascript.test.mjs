@@ -13,6 +13,32 @@ const lock = () => ({
 });
 const audit = { example: [{ url: 'https://github.com/advisories/GHSA-test-test-test', severity: 'high' }] };
 
+test('accepts a clean report with no active exceptions', () => {
+    expect(checkAudit(lock(), {}, now, [])).toEqual({ errors: [], accepted: [] });
+});
+
+test('does not retain the retired node-forge or braces exceptions', () => {
+    for (const [name, id] of [
+        ['node-forge', 'GHSA-86w9-cpqp-85rv'],
+        ['braces', 'GHSA-vfj7-8cjw-p6xm'],
+    ]) {
+        const result = checkAudit(lock(), {
+            [name]: [{ url: `https://github.com/advisories/${id}`, severity: 'high' }],
+        }, now);
+        expect(result.errors.some((error) => error.startsWith(`${name}:`))).toBe(true);
+    }
+});
+
+test('limits the approved deepmerge exception to low severity and its deadline', () => {
+    const fixture = lock();
+    fixture.packages.nuxt[2].dependencies = { deepmerge: '^4.3.1' };
+    fixture.packages.deepmerge = ['deepmerge@4.3.1', '', {}];
+    const finding = { url: 'https://github.com/advisories/GHSA-gcqx-w48m-w2h4', severity: 'low' };
+    expect(checkAudit(fixture, { deepmerge: [finding] }, now).errors).toEqual([]);
+    expect(checkAudit(fixture, { deepmerge: [{ ...finding, severity: 'high' }] }, now).errors.length).toBeGreaterThan(0);
+    expect(checkAudit(fixture, { deepmerge: [finding] }, new Date('2026-11-16T00:00:00Z')).errors.length).toBeGreaterThan(0);
+});
+
 test('accepts only the exact approved development advisory and version', () => {
     expect(checkAudit(lock(), audit, now, policy).errors).toEqual([]);
     expect(checkAudit(lock(), audit, now, policy).accepted).toHaveLength(1);

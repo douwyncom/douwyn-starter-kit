@@ -51,11 +51,11 @@ Khi đó triển khai Nitro BFF và giữ credential ở cookie `HttpOnly` của
 
 ## Nuxt module
 
-Stack phát triển tham chiếu sử dụng Nuxt 4.6.2, Nuxt Kit 4.6.2 và Bun 1.4.3.
+Stack phát triển tham chiếu sử dụng Nuxt 4.6.3, Nuxt Kit 4.6.3 và Bun 1.4.4.
 Client vẫn khai báo tương thích Nuxt `^4.0.0`; lần nâng công cụ phát triển này
 không thay đổi API xác thực hay phiên bản package được quản lý độc lập.
 
-Nếu chạy Nuxt bằng Node.js thay vì Bun, Nuxt 4.6.2 yêu cầu Node
+Nếu chạy Nuxt bằng Node.js thay vì Bun, Nuxt 4.6.3 yêu cầu Node
 `^22.22.3 || ^24.15.0 || >=26.0.0`, cao hơn yêu cầu build asset trang quản trị
 Laravel. Trong ứng dụng Nuxt, dùng `bun --bun run dev` / `bun --bun run build`
 để chạy rõ ràng bằng Bun.
@@ -77,7 +77,7 @@ Sau đó, từ repository Nuxt, cài đúng tệp tarball do lệnh trên tạo 
 
 ```bash
 # Thay đường dẫn theo tên tệp mà npm pack in ra
-bun add /tmp/douwyn-nuxt-api-0.1.0.tgz
+bun add /tmp/douwyn-nuxt-api-0.1.1.tgz
 ```
 
 Số phiên bản client độc lập với tag của ứng dụng. Không cài Git root làm npm

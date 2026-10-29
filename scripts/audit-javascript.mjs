@@ -2,8 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 // Maintainer-approved, development-tool-only exceptions. See docs/security-audit.md.
 export const exceptions = [
-    { name: 'braces', version: '3.0.3', id: 'GHSA-vfj7-8cjw-p6xm', expires: '2026-11-16' },
-    { name: 'node-forge', version: '1.4.0', id: 'GHSA-86w9-cpqp-85rv', expires: '2026-11-16' },
+    { name: 'deepmerge', version: '4.3.1', id: 'GHSA-gcqx-w48m-w2h4', severity: 'low', expires: '2026-11-16' },
 ];
 
 export function checkAudit(lock, advisories, now = new Date(), policy = exceptions) {
@@ -51,6 +50,7 @@ export function checkAudit(lock, advisories, now = new Date(), policy = exceptio
             const versions = records.get(name) ?? [];
             if (!exception || production.has(name) || !tooling.has(name)
                 || versions.length === 0 || versions.some((entry) => entry.version !== exception.version)
+                || (exception.severity && exception.severity !== finding.severity)
                 || now >= new Date(`${exception.expires}T00:00:00Z`)) {
                 errors.push(`${name}: ${id ?? finding.url ?? 'unknown advisory'} (${finding.severity})`);
                 continue;
@@ -80,6 +80,9 @@ if (import.meta.main) {
         const advisories = JSON.parse(output);
         if (!advisories || Array.isArray(advisories) || typeof advisories !== 'object') {
             throw new Error('Unexpected Bun audit response.');
+        }
+        if (result.exitCode !== 0 && Object.keys(advisories).length === 0) {
+            throw new Error('Bun audit failed without an advisory report.');
         }
         const lock = Bun.JSONC.parse(await Bun.file(new URL('../bun.lock', import.meta.url)).text());
         const { errors, accepted } = checkAudit(lock, advisories);

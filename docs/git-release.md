@@ -99,7 +99,7 @@ the repository public.
 Application tags, the platform capability, HTTP API, Nuxt package, and private
 modules have independent version streams. Choose the next application SemVer
 from existing remote tags; never reuse or move a published tag. The current
-application release is `v1.0.0` with Platform `2.2.0`.
+application release is `v1.0.1` with Platform `2.2.0`.
 
 On 2026-10-17 the maintainer explicitly retired the pre-launch tags and
 consolidated the current codebase into the public `v1.0.0` baseline. This was
@@ -168,11 +168,11 @@ GitHub Actions quality job to pass. Then tag that exact commit. For example:
 git switch main
 git pull --ff-only
 git status --short
-git tag -a v1.0.0 -m "Douwyn Starter Kit v1.0.0"
-git push origin v1.0.0
+git tag -a v1.0.1 -m "Douwyn Starter Kit v1.0.1"
+git push origin v1.0.1
 ```
 
-Replace `v1.0.0` with the new, unused version when making the next release.
+Replace `v1.0.1` with the new, unused version when making the next release.
 Use `git tag -s` when signing is configured. Push only the intended tag;
 avoid `git push --tags` and never force-push release tags.
 

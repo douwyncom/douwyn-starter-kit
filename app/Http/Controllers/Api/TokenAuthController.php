@@ -185,6 +185,7 @@ class TokenAuthController extends Controller
             'code' => 'two_factor_required',
             'data' => [
                 'challenge_token' => $issuedChallenge->plainTextToken,
+                /** @var string */
                 'method' => $user->two_factor_method->value,
                 'recovery_available' => ! empty($user->two_factor_recovery_codes),
                 /** @var CarbonInterface */

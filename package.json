@@ -1,7 +1,7 @@
 {
     "$schema": "https://www.schemastore.org/package.json",
     "private": true,
-    "packageManager": "bun@1.4.3",
+    "packageManager": "bun@1.4.4",
     "type": "module",
     "workspaces": [
         "packages/*"
@@ -24,7 +24,7 @@
         "form-data": ">=4.0.6",
         "js-yaml": "^4.3.2",
         "nanoid": "^3.3.16",
-        "nuxt": "^4.6.2",
+        "nuxt": "^4.6.3",
         "picomatch": "^4.0.5",
         "postcss": "^8.5.23",
         "rollup": ">=4.59.0",
@@ -32,9 +32,9 @@
         "tar": "^7.5.21"
     },
     "devDependencies": {
-        "@nuxt/kit": "^4.6.2",
+        "@nuxt/kit": "^4.6.3",
         "@tailwindcss/vite": "^4.3.3",
-        "@types/bun": "^1.4.3",
+        "@types/bun": "^1.4.4",
         "axios": "^1.20.0",
         "brace-expansion": "^5.0.12",
         "concurrently": "^9.2.5",

@@ -2805,7 +2805,7 @@ export interface operations {
                             last_used_at: string;
                             expires_at: string;
                             created_at: string;
-                            current: string;
+                            current: boolean;
                         }[];
                     };
                 };
@@ -2950,7 +2950,8 @@ export interface operations {
                         /** @constant */
                         message: "Logged in successfully.";
                         data: {
-                            credential_type: string;
+                            /** @constant */
+                            credential_type: "session";
                             user: components["schemas"]["UserResource"];
                         };
                     };
@@ -3474,7 +3475,8 @@ export interface operations {
                         /** @constant */
                         message: "Account created successfully.";
                         data: {
-                            credential_type: string;
+                            /** @constant */
+                            credential_type: "session";
                             user: components["schemas"]["UserResource"];
                         };
                     };
@@ -3523,7 +3525,8 @@ export interface operations {
                         /** @constant */
                         message: "Logged in successfully.";
                         data: {
-                            credential_type: string;
+                            /** @constant */
+                            credential_type: "session";
                             user: components["schemas"]["UserResource"];
                         };
                     };

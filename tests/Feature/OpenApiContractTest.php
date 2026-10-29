@@ -94,6 +94,9 @@ it('exports the same OpenAPI contract with or without a migrated database schema
 
         expect($memoryDocument)->toBe($migratedDocument);
 
+        $token = $memoryDocument['paths']['/auth/tokens']['get']['responses']['200']['content']['application/json']['schema']['properties']['data']['items'];
+        expect($token['properties']['current']['type'])->toBe('boolean');
+
         $user = $memoryDocument['components']['schemas']['UserResource'];
 
         foreach (['email_verified_at', 'created_at', 'updated_at'] as $field) {
@@ -109,7 +112,10 @@ it('exports the same OpenAPI contract with or without a migrated database schema
         }
 
         foreach (['/auth/session/login', '/auth/token/login'] as $loginPath) {
-            $challengeExpiry = $memoryDocument['paths'][$loginPath]['post']['responses']['202']['content']['application/json']['schema']['properties']['data']['properties']['expires_at'];
+            $challenge = $memoryDocument['paths'][$loginPath]['post']['responses']['202']['content']['application/json']['schema']['properties']['data']['properties'];
+            $challengeExpiry = $challenge['expires_at'];
+
+            expect($challenge['method'])->toBe(['type' => 'string']);
 
             expect($challengeExpiry)->toMatchArray([
                 'type' => 'string',

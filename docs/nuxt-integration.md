@@ -52,11 +52,11 @@ direct stateful configuration below does not implement that architecture.
 
 ## Nuxt module
 
-The reference development stack uses Nuxt 4.6.2, Nuxt Kit 4.6.2, and Bun 1.4.3.
+The reference development stack uses Nuxt 4.6.3, Nuxt Kit 4.6.3, and Bun 1.4.4.
 The client still declares Nuxt `^4.0.0` compatibility; this development-tool
 upgrade does not change its authentication API or independently versioned package.
 
-If running Nuxt with Node.js instead of Bun, Nuxt 4.6.2 requires Node
+If running Nuxt with Node.js instead of Bun, Nuxt 4.6.3 requires Node
 `^22.22.3 || ^24.15.0 || >=26.0.0`. This is stricter than the Laravel admin
 asset build's Node requirement. Use `bun --bun run dev` / `bun --bun run build`
 in the Nuxt application to explicitly run its scripts on Bun.
@@ -78,7 +78,7 @@ Then install the resulting tarball from the Nuxt repository:
 
 ```bash
 # Use the actual filename printed by npm pack
-bun add /tmp/douwyn-nuxt-api-0.1.0.tgz
+bun add /tmp/douwyn-nuxt-api-0.1.1.tgz
 ```
 
 The client version is independent of the application's release tag. Do not

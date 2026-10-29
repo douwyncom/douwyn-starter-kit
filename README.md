@@ -130,9 +130,9 @@ boundary is summarized in [commercial modules](docs/commercial-modules.md).
 - PHP 8.5 with the extensions required by Laravel, plus GD, native Mbstring,
   and OPcache. Run `composer check-platform-reqs` and `composer check:runtime`
   after installing dependencies to verify the active CLI runtime.
-- Composer 2.2 or newer and Bun 1.4.3 (the pinned release-check runtime). Vite also needs Node.js 20.19+
+- Composer 2.2 or newer and Bun 1.4.4 (the pinned release-check runtime). Vite also needs Node.js 20.19+
   or 22.12+ when its CLI runs under Node.
-  The Nuxt 4.6.2 reference client has a higher Node requirement; see
+  The Nuxt 4.6.3 reference client has a higher Node requirement; see
   [Nuxt runtime setup](docs/nuxt-integration.md#nuxt-module), or run its scripts
   explicitly with Bun.
 - PostgreSQL or MySQL and the corresponding PHP PDO extension for the
@@ -313,10 +313,10 @@ Filament plugin attachment are covered by the platform contract tests. The
 Nuxt checks remain intentional because `@douwyn/nuxt-api` is an official
 starter-kit client component.
 
-The JavaScript gate currently has two time-limited, maintainer-approved Nuxt
-development-tool exceptions, not a zero-vulnerability claim. All other findings
-remain blocking. See the [dependency audit policy](docs/security-audit.md) for
-exact advisories, scope, expiry, and downstream deployment limitations.
+The JavaScript gate blocks findings unless an exact, time-limited development-tool
+exception is explicitly approved. A passing policy check is not automatically a
+zero-vulnerability claim. See the [dependency audit policy](docs/security-audit.md)
+for current findings, scope, expiry, and downstream deployment limitations.
 
 The public suite does not include a two-process mobile-token concurrency test.
 The retained `phpunit.distributed.xml` is configuration for optional integration
